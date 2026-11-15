@@ -1,0 +1,352 @@
+# Android implementation traceability checkpoint (T002–T004, T014)
+metadata:
+  generated: "2026-11-14T21:40:55Z"
+  source_tasks: ".github/modernize/rearchitecture/artifacts/t8-teamlead-plan.md"
+  last_updated: "2026-11-14T21:40:55Z"
+
+summary:
+  total_tasks: 4
+  completed_tasks: 4
+  in_progress_tasks: 0
+  pending_tasks: 0
+  blocked_tasks: 0
+  completion_percentage: 100.0
+
+tasks:
+  - task_id: "T002"
+    description: "Create the single-module native Compose app, pinned Gradle wrapper/build configuration, manifest, app-private resources, and test source sets."
+    status: "completed"
+    implementation:
+      files_changed:
+        - file: "android/settings.gradle.kts"
+          changes:
+            - change_type: "added"
+              description: "Configured plugin/dependency repositories and included :app."
+        - file: "android/app/build.gradle.kts"
+          changes:
+            - change_type: "added"
+              description: "Pinned platform levels and configured Compose and test dependencies."
+        - file: "android/app/src/main/AndroidManifest.xml"
+          changes:
+            - change_type: "added"
+              description: "Declared the native launcher activity and disabled automatic backup."
+        - file: "android/gradle/wrapper/gradle-wrapper.properties"
+          changes:
+            - change_type: "added"
+              description: "Pinned Gradle 9.6.0 and its distribution SHA-256."
+        - file: "android/app/src/test/java/com/nutria/app/app/ScaffoldTest.kt"
+          changes:
+            - change_type: "added"
+              description: "Added a JVM scaffold identity test."
+        - file: "android/app/src/androidTest/java/com/nutria/app/app/MainActivityLaunchTest.kt"
+          changes:
+            - change_type: "added"
+              description: "Added a native activity instrumentation smoke test."
+      commit_hash: ""
+      pr_link: ""
+    verification:
+      build_passed: true
+      test_results:
+        command: "cd android; .\\gradlew.bat clean build assembleDebugAndroidTest"
+        passed: 1
+        failed: 0
+        skipped: 0
+        failures: []
+      notes: "Full build passed. Instrumentation source compiled and packaged but was not run because no device is connected and emulator acceleration is unavailable."
+    upstream_trace:
+      plan_item: "1.2"
+      requirements:
+        - "REQ-001"
+      full_trace: "REQ-001 → Phase 1.2 → T002 → android/ project scaffold; T003 implements the navigation shell."
+
+  - task_id: "T003"
+    description: "Implement Spanish single-activity navigation, the labeled seven-destination drawer and Ajustes app-bar entry, responsive behavior, accessibility labels, and back-stack semantics."
+    status: "completed"
+    implementation:
+      files_changed:
+        - file: "android/app/src/main/java/com/nutria/app/app/MainActivity.kt"
+          changes:
+            - change_type: "modified"
+              description: "Added the native Compose drawer shell, app bar, settings action, back behavior, and truthful staged-screen message."
+        - file: "android/app/src/main/java/com/nutria/app/app/AppDestination.kt"
+          changes:
+            - change_type: "added"
+              description: "Added seven ordered Spanish destinations, registrar alias, unknown-route fallback, and de-duplicating navigation history."
+        - file: "android/app/src/main/java/com/nutria/app/app/SpanishFormats.kt"
+          changes:
+            - change_type: "added"
+              description: "Added es-ES number formatting and dd/MM/yyyy date presentation."
+        - file: "android/app/src/main/res/values/strings.xml"
+          changes:
+            - change_type: "modified"
+              description: "Added Spanish navigation and accessibility strings."
+        - file: "android/app/src/test/java/com/nutria/app/app/NavigationAndLocaleTest.kt"
+          changes:
+            - change_type: "added"
+              description: "Added route, alias/fallback, locale date and number tests."
+        - file: "android/app/src/androidTest/java/com/nutria/app/app/NavigationShellTest.kt"
+          changes:
+            - change_type: "added"
+              description: "Added device UI tests for the Spanish drawer, Ajustes and route history."
+      commit_hash: ""
+      pr_link: ""
+    verification:
+      build_passed: true
+      test_results:
+        command: "From android/: .\\gradlew.bat test build assembleDebugAndroidTest --no-daemon (JDK 17.0.16 and Android SDK 36 activated)"
+        passed: 20
+        failed: 0
+        skipped: 0
+        failures: []
+      notes: "Debug/release builds, lint/check, and instrumentation APK packaging passed. Two Compose UI test methods remain unexecuted because no Android device/emulator is available."
+    upstream_trace:
+      plan_item: "1.2"
+      requirements:
+        - "REQ-001"
+      full_trace: "REQ-001 → Phase 1.2 → T003 → Spanish native navigation shell, localized routes, and host tests."
+
+  - task_id: "T004"
+    description: "Implement the shared encrypted Room/SQLCipher provider, Keystore-wrapped key lifecycle, non-health DataStore boundary, migration bootstrap, backup exclusions, and fail-closed recovery."
+    status: "completed"
+    implementation:
+      files_changed:
+        - file: "android/app/src/main/java/com/nutria/app/data/local/NutriaDatabase.kt"
+          changes:
+            - change_type: "added"
+              description: "Added Room schema version 1 with only storage metadata and an explicit migration registry."
+        - file: "android/app/src/main/java/com/nutria/app/data/local/DatabaseKeyVault.kt"
+          changes:
+            - change_type: "added"
+              description: "Added random passphrase generation, AES-GCM Keystore wrapping, atomic no-backup envelope, and fail-closed recovery."
+        - file: "android/app/src/main/java/com/nutria/app/data/local/EncryptedDatabaseProvider.kt"
+          changes:
+            - change_type: "added"
+              description: "Added SQLCipher Room opening on IO with migration registration and no destructive fallback."
+        - file: "android/app/src/main/java/com/nutria/app/data/local/PreferencesStore.kt"
+          changes:
+            - change_type: "added"
+              description: "Exposed only theme, recommendation filters, breakfast toggle, and service base URL in DataStore."
+        - file: "android/app/src/main/res/xml/backup_rules.xml"
+          changes:
+            - change_type: "added"
+              description: "Excluded all internal and external application data from legacy backup."
+        - file: "android/app/src/main/res/xml/data_extraction_rules.xml"
+          changes:
+            - change_type: "added"
+              description: "Excluded all application data from cloud backup and device transfer."
+        - file: "android/app/schemas/com.nutria.app.data.local.NutriaDatabase/1.json"
+          changes:
+            - change_type: "added"
+              description: "Recorded Room's exported initial schema."
+      commit_hash: ""
+      pr_link: ""
+    verification:
+      build_passed: true
+      test_results:
+        command: "Set-Location android; .\\gradlew.bat clean build assembleDebugAndroidTest --no-daemon"
+        passed: 20
+        failed: 0
+        skipped: 0
+        failures: []
+      notes: "Full clean Gradle build, 20 JVM tests, lint/check, debug/release assembly, and AndroidTest APK packaging passed. Instrumentation runtime remains unavailable; t10 reports no device and emulator acceleration failure."
+    upstream_trace:
+      plan_item: "2.1"
+      requirements:
+        - "REQ-002"
+        - "REQ-003"
+        - "REQ-004"
+        - "REQ-005"
+        - "REQ-006"
+        - "REQ-007"
+        - "REQ-009"
+        - "REQ-011"
+        - "REQ-013"
+        - "REQ-014"
+        - "REQ-015"
+        - "REQ-020"
+        - "REQ-024"
+        - "REQ-025"
+        - "REQ-026"
+      full_trace: "REQ-002–REQ-007, REQ-009, REQ-011, REQ-013–REQ-015, REQ-020, REQ-024–REQ-026 → Phase 2.1 → T004 → encrypted Room/Keystore foundation; feature-owned records are delivered by their vertical tasks."
+
+  - task_id: "T014"
+    description: "Implement period history/correction/finalization, cycle estimates/settings, and private daily cycle journal."
+    status: "completed"
+    implementation:
+      files_changed:
+        - file: "android/app/src/main/java/com/nutria/app/feature/cycle/CycleScreen.kt"
+          changes:
+            - change_type: "modified"
+              description: "Implemented Spanish period, estimate, settings, and private daily journal flows; restores saved today's values before editing."
+        - file: "android/app/src/main/java/com/nutria/app/data/local/CycleRoomRepository.kt"
+          changes:
+            - change_type: "added"
+              description: "Added encrypted Room entities, DAO, and CycleRepository adapter."
+        - file: "android/app/src/main/java/com/nutria/app/data/local/NutriaDatabase.kt"
+          changes:
+            - change_type: "modified"
+              description: "Added cycle entities/DAO and the v2-to-v3 migration in the shared v1-to-v6 chain."
+        - file: "android/app/src/main/java/com/nutria/app/app/MainActivity.kt"
+          changes:
+            - change_type: "modified"
+              description: "Connected the Ciclo destination to the shared local cycle repository."
+        - file: "android/app/src/main/java/com/nutria/app/app/NutriaApplication.kt"
+          changes:
+            - change_type: "modified"
+              description: "Exposed a cached cycle repository backed by the app-private encrypted database provider."
+        - file: "android/app/src/main/java/com/nutria/app/core/data/RepositoryContracts.kt"
+          changes:
+            - change_type: "modified"
+              description: "Added a bounded latest-entry observation contract for the seven-day journal."
+        - file: "android/app/src/main/java/com/nutria/app/core/model/CycleDateInput.kt"
+          changes:
+            - change_type: "added"
+              description: "Added strict dd/MM/yyyy parsing for localized period-date entry."
+        - file: "android/app/src/main/res/values/strings.xml"
+          changes:
+            - change_type: "modified"
+              description: "Added Spanish cycle form, validation, estimate, and privacy strings."
+        - file: "android/app/src/androidTest/java/com/nutria/app/data/local/CycleRepositoryInstrumentedTest.kt"
+          changes:
+            - change_type: "added"
+              description: "Added persistence/reopen coverage for cycle settings, period history, and private notes."
+        - file: "android/app/src/androidTest/java/com/nutria/app/feature/cycle/CycleScreenTest.kt"
+          changes:
+            - change_type: "modified"
+              description: "Covers unknown estimate/caveat, period creation, and preservation of saved journal values while editing."
+        - file: "android/app/src/test/java/com/nutria/app/core/model/CycleRulesTest.kt"
+          changes:
+            - change_type: "modified"
+              description: "Added strict Spanish date-input parser assertions."
+        - file: "README.md"
+          changes:
+            - change_type: "modified"
+              description: "Documented the native cycle slice, encrypted local records, journal restoration, and estimate limitations in Spanish."
+      commit_hash: ""
+      pr_link: ""
+    verification:
+      build_passed: true
+      test_results:
+        command: "From android/: .\\gradlew.bat clean test build assembleDebugAndroidTest --no-daemon --no-parallel --max-workers=1 (OpenJDK 17.0.16 and Android SDK 36 activated)"
+        passed: 61
+        failed: 0
+        skipped: 0
+        failures: []
+      notes: "BUILD SUCCESSFUL; debug/release, lint, check, and AndroidTest APK package passed. Lint: 0 errors, 22 warnings, 1 hint. All three CycleScreenTest methods compiled but were not executed because no device is connected and emulator acceleration is unavailable (exit 6)."
+    upstream_trace:
+      plan_item: "4.3"
+      requirements:
+        - "REQ-013"
+        - "REQ-014"
+        - "REQ-015"
+        - "REQ-016"
+      full_trace: "REQ-013–REQ-016 → Phase 4.3 → T014 → native CycleScreen, CycleRepository/Room schema, strict date parser, and cycle validation/tests."
+
+pending_tasks: []
+blocked_tasks: []
+untracked_changes: []
+
+traceability_chain:
+  - chain_id: "TRACE-REQ-001-T002-T003"
+    requirement: "REQ-001"
+    plan_phase: "Phase 1 — Setup"
+    plan_item: "1.2"
+    tasks:
+      - "T002"
+      - "T003"
+    files:
+      - "android/app/build.gradle.kts"
+      - "android/app/src/main/AndroidManifest.xml"
+      - "android/app/src/main/java/com/nutria/app/app/MainActivity.kt"
+      - "android/app/src/main/java/com/nutria/app/app/AppDestination.kt"
+      - "android/app/src/main/java/com/nutria/app/app/SpanishFormats.kt"
+      - "android/app/src/main/res/values/strings.xml"
+      - "android/app/src/test/java/com/nutria/app/app/NavigationAndLocaleTest.kt"
+      - "android/app/src/androidTest/java/com/nutria/app/app/NavigationShellTest.kt"
+      - "android/gradle/wrapper/gradle-wrapper.properties"
+    status: "complete"
+
+  - chain_id: "TRACE-REQ-LOCAL-PRIVACY-T004"
+    requirement: "REQ-002–REQ-007, REQ-009, REQ-011, REQ-013–REQ-015, REQ-020, REQ-024–REQ-026"
+    plan_phase: "Phase 2 — Foundational capabilities"
+    plan_item: "2.1"
+    tasks:
+      - "T004"
+    files:
+      - "android/app/src/main/java/com/nutria/app/data/local/NutriaDatabase.kt"
+      - "android/app/src/main/java/com/nutria/app/data/local/DatabaseKeyVault.kt"
+      - "android/app/src/main/java/com/nutria/app/data/local/EncryptedDatabaseProvider.kt"
+      - "android/app/src/main/java/com/nutria/app/data/local/PreferencesStore.kt"
+      - "android/app/src/main/res/xml/backup_rules.xml"
+      - "android/app/src/main/res/xml/data_extraction_rules.xml"
+    status: "partial"
+
+  - chain_id: "TRACE-REQ-013-016-T014"
+    requirement: "REQ-013–REQ-016"
+    plan_phase: "Phase 4 — Priority 2 user stories"
+    plan_item: "4.3"
+    tasks:
+      - "T014"
+    files:
+      - "android/app/src/main/java/com/nutria/app/feature/cycle/CycleScreen.kt"
+      - "android/app/src/main/java/com/nutria/app/data/local/CycleRoomRepository.kt"
+      - "android/app/src/main/java/com/nutria/app/data/local/NutriaDatabase.kt"
+      - "android/app/src/main/java/com/nutria/app/core/model/CycleDateInput.kt"
+      - "android/app/src/main/res/values/strings.xml"
+      - "android/app/src/androidTest/java/com/nutria/app/feature/cycle/CycleScreenTest.kt"
+      - "android/app/src/androidTest/java/com/nutria/app/data/local/CycleRepositoryInstrumentedTest.kt"
+    status: "complete"
+
+validation:
+  passed: true
+  errors: []
+  warnings:
+    - "REQ-001 navigation shell is implemented by T003; destination feature behavior remains in downstream tasks."
+    - "SQLCipher/Keystore and backup instrumentation tests are packaged but not executed without an emulator/device."
+    - "T014 Room/Compose instrumentation is compiled and packaged but was not run: no connected device, and emulator acceleration check exits 6."
+  blocking_issues: []
+
+upstream_artifacts_consumed:
+  - ".github/modernize/rearchitecture/artifacts/t4-architect.md"
+  - ".github/modernize/rearchitecture/artifacts/t5-ux.md"
+  - ".github/modernize/rearchitecture/artifacts/t10-devops.md"
+  - ".github/modernize/rearchitecture/artifacts/checkpoints/t8-environment.md"
+  - ".github/modernize/rearchitecture/artifacts/t11-frontend.md"
+  - ".github/modernize/rearchitecture/artifacts/t12-dba.md"
+  - ".github/modernize/rearchitecture/artifacts/t12.1-frontend.md"
+  - ".github/modernize/rearchitecture/artifacts/t14-frontend.md"
+  - ".github/modernize/rearchitecture/artifacts/t1-pm-spec.md"
+  - ".github/modernize/rearchitecture/artifacts/t8-teamlead-plan.md"
+  - ".github/modernize/rearchitecture/artifacts/t6-dba.md"
+  - ".github/modernize/rearchitecture/artifacts/t10-devops.md"
+  - ".github/modernize/rearchitecture/artifacts/checkpoints/t8-environment.md"
+  - ".github/modernize/rearchitecture/artifacts/t11-frontend.md"
+  - ".github/modernize/rearchitecture/artifacts/t12.1-frontend.md"
+  - ".github/modernize/rearchitecture/artifacts/t14-frontend.md"
+  - ".github/modernize/rearchitecture/artifacts/t8-teamlead-plan.md#T004"
+
+evidence_mapping:
+  - upstream: ".github/modernize/rearchitecture/artifacts/t5-ux.md#Information architecture"
+    output: "android/app/src/main/java/com/nutria/app/app/MainActivity.kt and AppDestination.kt"
+    evidence: "All seven approved Spanish destinations and the separate app-bar Ajustes action are present; the 20-test host suite and build pass."
+  - upstream: ".github/modernize/rearchitecture/artifacts/t5-ux.md#Shared layout, content, and interaction rules"
+    output: "android/app/src/main/java/com/nutria/app/app/SpanishFormats.kt and NavigationAndLocaleTest.kt"
+    evidence: "The date is formatted as dd/MM/yyyy and numbers use es-ES; fixed-value assertions pass."
+  - upstream: ".github/modernize/rearchitecture/artifacts/t8-teamlead-plan.md#T003"
+    output: "android/app/src/main/java/com/nutria/app/app/"
+    evidence: "T003 is recorded complete after 20 JVM tests, debug/release build, lint/check, and instrumentation package assembly; device UI execution remains pending."
+  - upstream: ".github/modernize/rearchitecture/artifacts/t8-teamlead-plan.md#T004"
+    output: "android/app/src/main/java/com/nutria/app/data/local/"
+    evidence: "Full clean Gradle build and all 20 JVM tests pass; AndroidTest APK package passes."
+  - upstream: ".github/modernize/rearchitecture/artifacts/t6-dba.md#Encryption,-key-lifecycle,-and-recovery"
+    output: "DatabaseKeyVault.kt and EncryptedDatabaseProvider.kt"
+    evidence: "Keystore AES-GCM envelope and fail-closed paths are implemented and compiled; device verification remains pending."
+  - upstream: ".github/modernize/rearchitecture/artifacts/t6-dba.md#Backup,-retention,-and-deletion"
+    output: "AndroidManifest.xml and res/xml backup rules"
+    evidence: "Debug lint passes and backup-exclusion instrumentation test compiled."
+  - upstream: ".github/modernize/rearchitecture/artifacts/t12.1-frontend.md"
+    output: "Full Gradle test result in t12-dba.md"
+    evidence: "The loopback-only MockWebServer fixture remediation clears the previous shared test failure without weakening production HTTPS policy."
+  - upstream: ".github/modernize/rearchitecture/artifacts/t14-frontend.md"
+    output: "Full Gradle test result in t12-dba.md"
+    evidence: "Preserved the API client's explicit HTTPS/loopback policy while validating all API-client unit tests."

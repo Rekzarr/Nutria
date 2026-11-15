@@ -1,0 +1,20 @@
+## [t6] Designing private Android persistence and sensor boundaries
+- Codebase/domain discoveries: The current app stores all personal state under browser `localStorage:nutria.v1`; there is no server database, account/sync, Health Connect, BLE, or existing Android schema. PWA import/export is absent, so the new app must start independently and leave browser data intact.
+- Wrong assumptions and corrections: App sandboxing and `android:allowBackup=false` alone are not sufficient evidence of encrypted local storage or disabled Android 12+ device-to-device transfer; the design calls for SQLCipher, a Keystore-wrapped DB key, and explicit cloud/device-transfer exclusions.
+- Debugging dead-ends and what actually worked: `context.md`, `decisions.md`, topology/fanout, and a DBA log were absent; t2 `data-model.md`, `architecture_index.md`, task board, and t4 feature/data boundaries provided the needed handoff context. One PowerShell phrase assertion initially missed the artifact's curly-quoted “clear today” wording; `rg` confirmed the intended claim and the assertion was corrected.
+- Techniques/patterns worth reusing: Keep Health Connect aggregate results ephemeral; persist only actual timestamped BLE notifications with explicit gap events; preserve local-date keys independently from event instants; avoid auto-import from browser storage.
+- Learnings consumed: [none]
+
+## [t12] Establishing encrypted Android persistence bootstrap
+- Codebase/domain discoveries: T004 owns shared encrypted database initialization, key lifecycle, non-health preference boundary, migration bootstrap, and backup exclusion only; feature tables/DAOs stay with their vertical feature tasks. Maven metadata confirmed Room 2.8.5, SQLCipher Android 4.20.0, DataStore 1.2.0, and KSP 2.2.10-2.0.2 are published.
+- Wrong assumptions and corrections: The KSP/Kotlin versions matched the scaffold but AGP 9.5's built-in Kotlin guard rejected generated KSP source sets; `android.disallowKotlinSourceSets=false` allowed the pinned build to proceed. A compile error showed the bootstrap path needs a suspend function for its Room DAO calls.
+- Debugging dead-ends and what actually worked: The first full Gradle attempt stopped at the KSP/AGP source-set guard; after the targeted compatibility opt-out, compilation exposed and fixed the DAO suspend call. The next full command compiled main/release/androidTest code but failed 9 existing/parallel API-client unit tests, which rejected HTTP test URLs; the targeted DBA JVM test passed, AndroidTest APK packaging passed, and debug lint passed.
+- Techniques/patterns worth reusing: Wrap a 32-byte SecureRandom entropy value as a Base64 SQLCipher passphrase; AES-GCM-authenticate a versioned envelope under Android Keystore; use AtomicFile in `noBackupFilesDir`; treat a missing envelope beside any database/WAL/journal state as a fatal no-delete condition; zero temporary secret arrays and retain only the factory-required passphrase until database close.
+- Learnings consumed: [dba/android-private-health-persistence]
+
+## [t12] Revalidating encrypted persistence after shared-test remediation
+- Codebase/domain discoveries: T004 remains a shared bootstrap only; feature data tables and application-level database wiring are assigned to later feature slices. The prior full-suite failure was in API tests, not the persistence implementation.
+- Wrong assumptions and corrections: The earlier blocked status became stale after t12.1 corrected the local MockWebServer test setup without relaxing the production HTTPS policy.
+- Debugging dead-ends and what actually worked: `Set-Location android; .\gradlew.bat clean build assembleDebugAndroidTest --no-daemon` with JDK 17/API 36 activation passed with 20 JVM tests; `adb devices -l` still showed no devices, so instrumentation runtime remains unverified.
+- Techniques/patterns worth reusing: Keep the completion evidence and the device-only limitation separate: a passing host build/package test does not imply Keystore or Android backup runtime validation.
+- Learnings consumed: [dba/android-private-health-persistence]

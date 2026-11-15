@@ -1,0 +1,241 @@
+# Plan-to-Tasks Traceability Checkpoint
+metadata:
+  generated: "2026-11-14"
+  source_plan: ".github/modernize/rearchitecture/artifacts/t8-teamlead-plan.md"
+  target_tasks: ".github/modernize/rearchitecture/artifacts/t8-teamlead-plan.md#Task-Breakdown"
+
+summary:
+  total_plan_items: 18
+  covered_plan_items: 18
+  missing_plan_items: 0
+  coverage_percentage: 100.0
+  total_tasks_generated: 19
+  orphan_tasks: 0
+
+phases:
+  - phase_id: "Phase-1"
+    phase_name: "Setup"
+    items:
+      - item_id: "1.1"
+        description: "Inspect Android build-environment readiness"
+        tasks:
+          - task_id: "T001"
+            description: "Inspect JDK 17, SDK 36, Gradle/ADB/emulator readiness and record blockers; no build before scaffold."
+        notes: "Blocked readiness is informational for source work; keep native verification gates blocked."
+      - item_id: "1.2"
+        description: "Create native app structure and Spanish navigation shell"
+        tasks:
+          - task_id: "T002"
+            description: "Create the native Compose app and Gradle wrapper; attempt first build after scaffold."
+          - task_id: "T003"
+            description: "Implement Spanish navigation, accessibility, and back-stack behavior from PWA sources."
+        notes: ""
+  - phase_id: "Phase-2"
+    phase_name: "Foundational capabilities"
+    items:
+      - item_id: "2.1"
+        description: "Private persistence and recovery boundary"
+        tasks:
+          - task_id: "T004"
+            description: "Implement shared encrypted DB/key/backup/migration foundation only."
+          - task_id: "T007"
+            description: "Implement diary and water entities, DAOs, migrations, and feature transactions."
+          - task_id: "T008"
+            description: "Implement home summary and clear-today transaction over diary/water records."
+          - task_id: "T009"
+            description: "Implement recipe/ingredient entities, DAOs, and feature migrations."
+          - task_id: "T012"
+            description: "Implement workout/session/sample entities, DAOs, and feature migrations."
+          - task_id: "T013"
+            description: "Implement calendar assignment entity/DAO/migration and recipe-deletion cleanup."
+          - task_id: "T014"
+            description: "Implement encrypted period/journal entities, DAOs, and feature migrations."
+          - task_id: "T016"
+            description: "Implement settings-owned DataStore values and feature tests."
+        notes: "Shared secure foundation is bounded; feature schemas, DAOs, migrations, and transaction tests stay with their owning vertical tasks."
+      - item_id: "2.2"
+        description: "Shared domain rules and repository contracts"
+        tasks:
+          - task_id: "T005"
+            description: "Implement deterministic domain models/use cases and repository interfaces."
+        notes: ""
+      - item_id: "2.3"
+        description: "Typed API client and contract test harness"
+        tasks:
+          - task_id: "T006"
+            description: "Implement unchanged Nutria API clients and local HTTP contract tests."
+        notes: ""
+  - phase_id: "Phase-3"
+    phase_name: "Priority 1 user stories"
+    items:
+      - item_id: "3.1"
+        description: "Food diary, history, water and undo"
+        tasks:
+          - task_id: "T007"
+            description: "Implement food/water vertical flow and owned persistence with unit/Room/Compose tests."
+        notes: ""
+      - item_id: "3.2"
+        description: "Inicio summary, streak and clear-today"
+        tasks:
+          - task_id: "T008"
+            description: "Implement summary, streak and isolated confirmed clear-today transaction."
+        notes: ""
+      - item_id: "3.3"
+        description: "Recipe authoring, lookup and diary integration"
+        tasks:
+          - task_id: "T009"
+            description: "Implement recipe/ingredient persistence, authoring, lookup and diary snapshot integration."
+        notes: ""
+      - item_id: "3.4"
+        description: "Health Connect daily steps"
+        tasks:
+          - task_id: "T011"
+            description: "Implement Health Connect permission, aggregate and honest UI states."
+        notes: ""
+      - item_id: "3.5"
+        description: "BLE band connection and explicit workouts"
+        tasks:
+          - task_id: "T012"
+            description: "Implement standard GATT connection, owned workout/sample persistence and lifecycle."
+        notes: ""
+  - phase_id: "Phase-4"
+    phase_name: "Priority 2 user stories"
+    items:
+      - item_id: "4.1"
+        description: "Recipe recommendations"
+        tasks:
+          - task_id: "T010"
+            description: "Implement the local recommendation catalog, filters, details and save flow."
+        notes: ""
+      - item_id: "4.2"
+        description: "Meal calendar and menu generation"
+        tasks:
+          - task_id: "T013"
+            description: "Implement calendar persistence, menu generation and recipe-deletion cleanup."
+        notes: ""
+      - item_id: "4.3"
+        description: "Cycle history, estimates and private journal"
+        tasks:
+          - task_id: "T014"
+            description: "Implement encrypted cycle/journal persistence, estimates and privacy/safety language."
+        notes: ""
+      - item_id: "4.4"
+        description: "Explicit photo analysis"
+        tasks:
+          - task_id: "T015"
+            description: "Implement photo consent, preserved API request and valid-result/no-write flow."
+        notes: ""
+      - item_id: "4.5"
+        description: "Goals, themes and privacy/settings disclosures"
+        tasks:
+          - task_id: "T016"
+            description: "Implement settings persistence, goals, themes/cancel and data-flow disclosures."
+        notes: ""
+  - phase_id: "Phase-5"
+    phase_name: "Integration and release gates"
+    items:
+      - item_id: "5.1"
+        description: "Complete parity and contract test journeys"
+        tasks:
+          - task_id: "T017"
+            description: "Run full build, automated suites and requirement journeys with exact evidence."
+        notes: ""
+      - item_id: "5.2"
+        description: "Health Connect and BLE device validation"
+        tasks:
+          - task_id: "T018"
+            description: "Verify actual provider and physical band data/lifecycle behavior."
+        notes: "Requires compatible Android devices and a real standard HR GATT band."
+      - item_id: "5.3"
+        description: "Parity, privacy and legacy-retention conformance review"
+        tasks:
+          - task_id: "T019"
+            description: "Return binary parity verdict backed by all requirement and platform evidence."
+        notes: ""
+
+missing_plan_items: []
+orphan_tasks: []
+
+upstream_trace:
+  - plan_item: "1.1"
+    source_requirements: ["REQ-001"]
+    tasks: ["T001"]
+    full_trace: "REQ-001 → Phase-1.1 → T001"
+  - plan_item: "1.2"
+    source_requirements: ["REQ-001"]
+    tasks: ["T002", "T003"]
+    full_trace: "REQ-001 → Phase-1.2 → T002,T003"
+  - plan_item: "2.1"
+    source_requirements: ["REQ-002", "REQ-003", "REQ-004", "REQ-005", "REQ-006", "REQ-007", "REQ-009", "REQ-011", "REQ-013", "REQ-014", "REQ-015", "REQ-020", "REQ-024", "REQ-026"]
+    tasks: ["T004", "T007", "T008", "T009", "T012", "T013", "T014", "T016"]
+    full_trace: "REQ-002,003,004,005,006,007,009,011,013,014,015,020,024,026 → Phase-2.1 → T004 shared secure foundation + owning vertical persistence tasks T007,T008,T009,T012,T013,T014,T016"
+  - plan_item: "2.2"
+    source_requirements: ["REQ-002", "REQ-003", "REQ-005", "REQ-007", "REQ-010", "REQ-012", "REQ-014", "REQ-021", "REQ-023", "REQ-025"]
+    tasks: ["T005"]
+    full_trace: "REQ-002,003,005,007,010,012,014,021,023,025 → Phase-2.2 → T005"
+  - plan_item: "2.3"
+    source_requirements: ["REQ-008", "REQ-017", "REQ-018", "REQ-019"]
+    tasks: ["T006"]
+    full_trace: "REQ-008,017,018,019 → Phase-2.3 → T006"
+  - plan_item: "3.1"
+    source_requirements: ["REQ-003", "REQ-004", "REQ-005"]
+    tasks: ["T007"]
+    full_trace: "REQ-003,004,005 → Phase-3.1 → T007"
+  - plan_item: "3.2"
+    source_requirements: ["REQ-001", "REQ-002", "REQ-006"]
+    tasks: ["T008"]
+    full_trace: "REQ-001,002,006 → Phase-3.2 → T008"
+  - plan_item: "3.3"
+    source_requirements: ["REQ-007", "REQ-008", "REQ-009"]
+    tasks: ["T009", "T013"]
+    full_trace: "REQ-007,008,009 → Phase-3.3 → T009 recipe/lookup flow + T013 assignment cleanup integration"
+  - plan_item: "3.4"
+    source_requirements: ["REQ-021", "REQ-022"]
+    tasks: ["T011"]
+    full_trace: "REQ-021,022 → Phase-3.4 → T011"
+  - plan_item: "3.5"
+    source_requirements: ["REQ-023", "REQ-024", "REQ-025", "REQ-026"]
+    tasks: ["T012"]
+    full_trace: "REQ-023,024,025,026 → Phase-3.5 → T012"
+  - plan_item: "4.1"
+    source_requirements: ["REQ-010"]
+    tasks: ["T010"]
+    full_trace: "REQ-010 → Phase-4.1 → T010"
+  - plan_item: "4.2"
+    source_requirements: ["REQ-011", "REQ-012"]
+    tasks: ["T013"]
+    full_trace: "REQ-011,012 → Phase-4.2 → T013"
+  - plan_item: "4.3"
+    source_requirements: ["REQ-013", "REQ-014", "REQ-015", "REQ-016"]
+    tasks: ["T014"]
+    full_trace: "REQ-013,014,015,016 → Phase-4.3 → T014"
+  - plan_item: "4.4"
+    source_requirements: ["REQ-017", "REQ-018", "REQ-019"]
+    tasks: ["T015"]
+    full_trace: "REQ-017,018,019 → Phase-4.4 → T015"
+  - plan_item: "4.5"
+    source_requirements: ["REQ-020", "REQ-022", "REQ-026"]
+    tasks: ["T016"]
+    full_trace: "REQ-020,022,026 → Phase-4.5 → T016"
+  - plan_item: "5.1"
+    source_requirements: ["REQ-001", "REQ-002", "REQ-003", "REQ-004", "REQ-005", "REQ-006", "REQ-007", "REQ-008", "REQ-009", "REQ-010", "REQ-011", "REQ-012", "REQ-013", "REQ-014", "REQ-015", "REQ-016", "REQ-017", "REQ-018", "REQ-019", "REQ-020", "REQ-021", "REQ-022", "REQ-023", "REQ-024", "REQ-025", "REQ-026"]
+    tasks: ["T017"]
+    full_trace: "REQ-001–026 → Phase-5.1 → T017"
+  - plan_item: "5.2"
+    source_requirements: ["REQ-021", "REQ-022", "REQ-023", "REQ-024", "REQ-025", "REQ-026"]
+    tasks: ["T018"]
+    full_trace: "REQ-021,022,023,024,025,026 → Phase-5.2 → T018"
+  - plan_item: "5.3"
+    source_requirements: ["REQ-001", "REQ-002", "REQ-003", "REQ-004", "REQ-005", "REQ-006", "REQ-007", "REQ-008", "REQ-009", "REQ-010", "REQ-011", "REQ-012", "REQ-013", "REQ-014", "REQ-015", "REQ-016", "REQ-017", "REQ-018", "REQ-019", "REQ-020", "REQ-021", "REQ-022", "REQ-023", "REQ-024", "REQ-025", "REQ-026"]
+    tasks: ["T019"]
+    full_trace: "REQ-001–026 → Phase-5.3 → T019"
+
+validation:
+  passed: true
+  plan_items_total: 18
+  plan_items_covered: 18
+  coverage_percentage: 100.0
+  errors: []
+  warnings:
+    - "Native build and Android runtime validation remain blocked until a compatible JDK 17/Android SDK/Gradle toolchain is available."
+    - "Device gate T018 remains blocked until compatible Android devices and a physical standard HR GATT band are available; this checkpoint validates plan coverage, not implementation completion."

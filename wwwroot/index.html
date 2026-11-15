@@ -1,0 +1,501 @@
+<!doctype html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="theme-color" content="#f5f6ef">
+    <meta name="description" content="Tu espacio sencillo para cuidar tu alimentación y mantener tus hábitos.">
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="default">
+    <title>nutria — Tu bienestar, a tu ritmo</title>
+    <link rel="manifest" href="manifest.webmanifest">
+    <link rel="icon" href="icon.svg" type="image/svg+xml">
+    <link rel="apple-touch-icon" href="icon.svg">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="styles.css?v=3">
+    <script src="app.js?v=5" defer></script>
+  </head>
+  <body>
+    <div class="app-shell">
+      <aside class="sidebar" aria-label="Navegación principal">
+        <a class="brand" href="#inicio" aria-label="nutria, inicio">
+          <span class="brand-mark" aria-hidden="true">n</span>
+          <span>nutria<span class="brand-period">.</span></span>
+        </a>
+        <p class="sidebar-caption">TU ESPACIO</p>
+        <nav class="main-nav">
+          <a class="nav-link active" href="#inicio" data-tab="inicio"><span class="nav-icon">⌂</span> Resumen</a>
+          <a class="nav-link" href="#comida" data-tab="comida"><span class="nav-icon">＋</span> Comida</a>
+          <a class="nav-link" href="#recetas" data-tab="recetas"><span class="nav-icon">▤</span> Recetas</a>
+          <a class="nav-link" href="#foto" data-tab="foto"><span class="nav-icon">▧</span> Foto</a>
+          <a class="nav-link" href="#ciclo" data-tab="ciclo"><span class="nav-icon">◒</span> Ciclo</a>
+          <a class="nav-link" href="#agua" data-tab="agua"><span class="nav-icon">▦</span> Calendario</a>
+        </nav>
+        <div class="sidebar-bottom">
+          <div class="sidebar-note">
+            <span class="note-spark">✳</span>
+            <p>Un día a la vez.<br><strong>Lo estás haciendo bien.</strong></p>
+          </div>
+          <div class="profile">
+            <span class="avatar">A</span>
+            <span><strong>Mi espacio</strong><small>Plan personal</small></span>
+            <span class="profile-more">···</span>
+          </div>
+        </div>
+      </aside>
+
+      <nav class="mobile-tabbar" aria-label="Pestañas de la aplicación">
+        <a class="mobile-tab active" href="#inicio" data-tab="inicio" aria-current="page"><span class="mobile-tab-icon">⌂</span><span>Inicio</span></a>
+        <a class="mobile-tab" href="#comida" data-tab="comida"><span class="mobile-tab-icon">＋</span><span>Comida</span></a>
+        <a class="mobile-tab" href="#recetas" data-tab="recetas"><span class="mobile-tab-icon">▤</span><span>Recetas</span></a>
+        <a class="mobile-tab" href="#foto" data-tab="foto"><span class="mobile-tab-icon">▧</span><span>Foto</span></a>
+        <a class="mobile-tab" href="#ciclo" data-tab="ciclo"><span class="mobile-tab-icon">◒</span><span>Ciclo</span></a>
+        <a class="mobile-tab" href="#agua" data-tab="agua"><span class="mobile-tab-icon">▦</span><span>Plan</span></a>
+      </nav>
+
+      <main class="main-content">
+        <header class="topbar">
+          <div class="mobile-brand"><span class="brand-mark">n</span> nutria<span class="brand-period">.</span></div>
+          <div class="topbar-date"><span class="date-icon">◷</span><span id="today-label"></span></div>
+          <button class="settings-button" id="goals-button" type="button"><span aria-hidden="true">⚙</span> Ajustes</button>
+        </header>
+
+        <section id="inicio" class="tab-panel" data-tab-panel aria-labelledby="overview-title">
+        <section class="welcome-row">
+          <div>
+            <p class="eyebrow">TU RESUMEN DIARIO</p>
+            <h1 id="overview-title">Hola, ¿cómo va tu día?</h1>
+            <p class="welcome-subtitle">Cada pequeño hábito cuenta. Aquí tienes tu progreso de hoy.</p>
+          </div>
+          <div class="streak-pill"><span>✦</span> <strong id="streak-count">1</strong> día cuidándote</div>
+        </section>
+
+        <section class="overview-grid" aria-label="Resumen de hoy">
+          <article class="card calorie-card">
+            <div class="card-heading">
+              <div><p class="card-label">CALORÍAS</p><p class="card-context">Tu energía de hoy</p></div>
+              <span class="metric-icon orange-icon">✳</span>
+            </div>
+            <div class="calorie-reading"><strong id="calories-consumed">0</strong><span>kcal</span></div>
+            <div class="progress-track calorie-track"><span id="calorie-progress"></span></div>
+            <div class="progress-caption"><span><strong id="calories-remaining">2.000</strong> kcal restantes</span><span>Objetivo <b id="calorie-goal-label">2.000</b></span></div>
+          </article>
+        </section>
+
+        <section class="summary-grid">
+          <article class="card macros-card">
+            <div class="section-heading">
+              <div><h2>Tus macronutrientes</h2><p>El equilibrio que buscas, sin complicaciones.</p></div>
+              <span class="today-tag">HOY</span>
+            </div>
+            <div class="macro-list">
+              <div class="macro-row">
+                <div class="macro-title"><span class="macro-dot protein-dot"></span><strong>Proteínas</strong><span id="protein-values">0 / 120 g</span></div>
+                <div class="progress-track"><span id="protein-progress" class="protein-fill"></span></div>
+              </div>
+              <div class="macro-row">
+                <div class="macro-title"><span class="macro-dot carbs-dot"></span><strong>Carbohidratos</strong><span id="carbs-values">0 / 250 g</span></div>
+                <div class="progress-track"><span id="carbs-progress" class="carbs-fill"></span></div>
+              </div>
+              <div class="macro-row">
+                <div class="macro-title"><span class="macro-dot fat-dot"></span><strong>Grasas</strong><span id="fat-values">0 / 65 g</span></div>
+                <div class="progress-track"><span id="fat-progress" class="fat-fill"></span></div>
+              </div>
+            </div>
+            <div class="macro-footnote"><span>✦</span> Los objetivos son una guía, no una regla.</div>
+          </article>
+
+          <article class="card water-card">
+            <div class="card-heading">
+              <div><p class="card-label">AGUA</p><p class="card-context">Hidratarte también cuenta</p></div>
+              <span class="metric-icon blue-icon">◒</span>
+            </div>
+            <div class="water-reading"><strong id="water-consumed">0</strong><span>ml</span><span class="water-goal">/ <b id="water-goal-label">2.000</b> ml</span></div>
+            <div class="progress-track water-track"><span id="water-progress"></span></div>
+            <div class="water-actions">
+              <span id="water-glasses">○ ○ ○ ○ ○ ○ ○ ○</span>
+              <span class="water-quick-actions">
+                <button class="text-button" type="button" data-water-amount="150">+ 150 ml</button>
+                <button class="text-button" type="button" data-water-amount="250">+ 250 ml</button>
+                <button id="undo-water" class="text-button undo-water" type="button" disabled aria-label="Deshacer última toma de agua">↶ Deshacer</button>
+              </span>
+            </div>
+          </article>
+        </section>
+
+        <section class="summary-meals">
+          <article class="card meals-card">
+            <div class="section-heading meal-heading">
+              <div><h2>Lo que has comido</h2><p id="meal-count-label">Tu día empieza aquí</p></div>
+              <a class="small-link" href="#comida" data-tab="comida">+ Añadir</a>
+            </div>
+            <div id="meal-list" class="meal-list">
+              <div class="empty-state">
+                <span class="empty-icon">✳</span>
+                <strong>Aún no hay comidas</strong>
+                <span>Empieza añadiendo algo que hayas disfrutado.</span>
+                <a href="#comida" data-tab="comida" class="inline-link">Registrar una comida <span>→</span></a>
+              </div>
+            </div>
+          </article>
+        </section>
+
+        </section>
+
+        <section id="comida" class="tab-panel feature-panel" data-tab-panel aria-labelledby="food-title" hidden>
+          <div class="section-heading tab-heading">
+            <div><p class="eyebrow">REGISTRO DE COMIDA</p><h1 id="food-title">Añade algo a tu día</h1><p>Calcula sus nutrientes por peso, onzas o raciones.</p></div>
+          </div>
+          <div class="feature-content">
+            <article class="card tool-card calculator-card">
+              <div class="tool-card-top"><span class="tool-icon calculator-icon">◫</span><span class="tool-step">01</span></div>
+              <h3>Calcula tu comida</h3>
+              <p>Calcula calorías y macros con el peso o la medida que tengas a mano.</p>
+              <form id="food-form" class="form-grid">
+                <label class="field full-field">¿Qué has comido?
+                  <input name="name" required maxlength="60" placeholder="Ej. Avena">
+                </label>
+                <label class="field">Cantidad
+                  <input name="amount" type="number" min="0.1" step="any" value="100" required>
+                </label>
+                <label class="field">Medida
+                  <select name="unit"><option value="g">gramos</option><option value="oz">onzas (oz)</option><option value="portion">raciones</option></select>
+                </label>
+                <label class="field full-field" id="portion-weight-field" hidden>Gramos por ración
+                  <input name="portionWeight" type="number" min="1" step="any" value="150">
+                </label>
+                <p class="field-hint full-field" id="food-amount-hint">Indica los valores nutricionales por cada 100 g.</p>
+                <label class="field">Calorías <span>(kcal / 100 g)</span>
+                  <input name="calories" type="number" min="0" step="any" required placeholder="389">
+                </label>
+                <label class="field">Proteínas <span>(g / 100 g)</span>
+                  <input name="protein" type="number" min="0" step="any" required placeholder="17">
+                </label>
+                <label class="field">Carbohidratos <span>(g / 100 g)</span>
+                  <input name="carbs" type="number" min="0" step="any" required placeholder="66">
+                </label>
+                <label class="field">Grasas <span>(g / 100 g)</span>
+                  <input name="fat" type="number" min="0" step="any" required placeholder="7">
+                </label>
+                <div class="calculation-result full-field" id="calculation-result" aria-live="polite">
+                  <span>Para tu cantidad</span><strong>Completa los valores para calcular</strong>
+                </div>
+                <button class="primary-button full-field" type="submit">Añadir al día <span>→</span></button>
+              </form>
+            </article>
+            <section class="card meal-history-card" aria-labelledby="meal-history-title">
+              <div class="history-heading">
+                <div><h2 id="meal-history-title">Historial de comidas</h2><p>Lo que has comido en los últimos 30 días.</p></div>
+                <span aria-hidden="true">◷</span>
+              </div>
+              <div id="meal-history" class="meal-history" aria-live="polite"></div>
+            </section>
+          </div>
+        </section>
+
+        <section id="recetas" class="tab-panel feature-panel" data-tab-panel aria-labelledby="recipes-title" hidden>
+          <div class="section-heading tab-heading">
+            <div><p class="eyebrow">TU LIBRO DE COCINA</p><h1 id="recipes-title">Mis recetas</h1><p>Clasifica cada receta y calcula sus nutrientes a partir de sus ingredientes.</p></div>
+          </div>
+          <div class="feature-content">
+            <article class="card tool-card recipes-card">
+              <div class="tool-card-top"><span class="tool-icon recipe-icon">▤</span><span class="tool-step">02</span></div>
+              <h3>Guarda tus recetas</h3>
+              <p>Crea tus recetas favoritas y añádelas al diario en un toque.</p>
+              <form id="recipe-form" class="form-grid recipe-form">
+                <label class="field full-field">Nombre de la receta
+                  <input name="name" required maxlength="60" placeholder="Ej. Bowl de yogur y fruta">
+                </label>
+                <label class="field">Para generación aleatoria
+                  <select name="category" required><option value="meal">Comida</option><option value="dinner">Cena</option></select>
+                </label>
+                <p class="field-hint full-field">La categoría solo filtra la generación aleatoria; al editar el calendario puedes elegir cualquier receta.</p>
+                <label class="field">Porciones
+                  <input name="servings" type="number" min="1" step="1" value="1" required>
+                </label>
+                <label class="field">Kcal por receta
+                  <input id="recipe-calories" name="calories" type="number" min="0" step="any" readonly required>
+                </label>
+                <label class="field">Proteínas <span>(g por receta)</span>
+                  <input id="recipe-protein" name="protein" type="number" min="0" step="any" readonly required>
+                </label>
+                <label class="field">Carbohidratos <span>(g por receta)</span>
+                  <input id="recipe-carbs" name="carbs" type="number" min="0" step="any" readonly required>
+                </label>
+                <label class="field">Grasas <span>(g por receta)</span>
+                  <input id="recipe-fat" name="fat" type="number" min="0" step="any" readonly required>
+                </label>
+                <fieldset class="ingredients-fieldset full-field">
+                  <legend>Ingredientes</legend>
+                  <p class="ingredients-hint">Busca cada alimento para importar sus valores por 100 g y añade el peso usado. En medidas como ml o unidades, indica también su equivalente en gramos.</p>
+                  <div id="ingredient-list" class="ingredient-list"></div>
+                  <p class="ingredient-source-note">Se envía solo el nombre buscado a <a href="https://world.openfoodfacts.org/" target="_blank" rel="noreferrer">Open Food Facts</a> (datos bajo <a href="https://opendatacommons.org/licenses/odbl/1-0/" target="_blank" rel="noreferrer">ODbL</a>). Comprueba siempre el envase.</p>
+                  <button id="add-ingredient" class="add-ingredient" type="button">＋ Añadir ingrediente</button>
+                </fieldset>
+                <p id="recipe-calculation-status" class="field-hint full-field recipe-calculation-status" role="status" aria-live="polite">Completa los nutrientes por 100 g y el peso de todos los ingredientes para calcular la receta.</p>
+                <button id="recipe-submit" class="primary-button full-field" type="submit" disabled>Guardar receta <span>＋</span></button>
+              </form>
+              <div class="saved-recipes"><div class="saved-heading"><strong>Tus recetas</strong><span id="recipe-count">0</span></div><div id="recipe-list" class="recipe-list"></div></div>
+            </article>
+            <section class="card recommended-recipes" aria-labelledby="recommendations-title">
+              <div class="recommendations-heading">
+                <div><h2 id="recommendations-title">Descubre recetas nuevas</h2><p>Ideas equilibradas con un máximo de 550 kcal por ración.</p></div>
+                <span aria-hidden="true">✦</span>
+              </div>
+              <p class="recommendations-note">Las calorías y los macronutrientes son estimaciones; pueden variar según los ingredientes y las cantidades reales.</p>
+              <div class="recommendation-controls">
+                <label class="recommendation-filter" for="recommendation-category-filter">Tipo de receta
+                  <select id="recommendation-category-filter">
+                    <option value="all">Comidas y cenas</option>
+                    <option value="meal">Solo comidas</option>
+                    <option value="dinner">Solo cenas</option>
+                  </select>
+                </label>
+                <label class="recommendation-filter" for="recommendation-time-filter">Tiempo máximo
+                  <select id="recommendation-time-filter">
+                    <option value="15">15 minutos</option>
+                    <option value="30">30 minutos</option>
+                    <option value="45">45 minutos</option>
+                    <option value="60">60 minutos</option>
+                  </select>
+                </label>
+                <label class="recommendation-filter" for="recommendation-complexity-filter">Complejidad
+                  <select id="recommendation-complexity-filter">
+                    <option value="all">Cualquiera</option>
+                    <option value="easy">Fácil</option>
+                    <option value="medium">Media</option>
+                    <option value="advanced">Avanzada</option>
+                  </select>
+                </label>
+                <button id="refresh-recommendations" class="secondary-button recommendation-refresh" type="button">Actualizar recetas <span aria-hidden="true">↻</span></button>
+              </div>
+              <p id="recommendation-empty" class="recommendation-empty" role="status" hidden>No hay más recomendaciones para estos filtros. Prueba con más tiempo o complejidad, o revisa tus recetas guardadas.</p>
+              <div id="recommended-recipe-list" class="recommendation-list"></div>
+            </section>
+          </div>
+        </section>
+
+        <section id="foto" class="tab-panel feature-panel" data-tab-panel aria-labelledby="photo-title" hidden>
+          <div class="section-heading tab-heading">
+            <div><p class="eyebrow">COMIDA FUERA DE CASA</p><h1 id="photo-title">Analiza tu plato</h1><p>Haz una foto con la cámara o elige una imagen para estimar sus nutrientes.</p></div>
+          </div>
+          <div class="feature-content">
+            <article class="card tool-card photo-card">
+              <div class="tool-card-top"><span class="tool-icon photo-icon">▧</span><span class="tool-step">03</span></div>
+              <h3>¿Comiste fuera?</h3>
+              <p>Sube una foto y obtén una estimación nutricional para guardar en tu día.</p>
+              <form id="photo-form">
+                <label class="photo-drop" for="meal-photo" id="photo-drop">
+                  <input id="meal-photo" name="photo" type="file" accept="image/jpeg,image/png,image/webp" capture="environment">
+                  <span class="upload-icon">↑</span><strong>Elige una foto o haz una ahora</strong><span>JPG, PNG o WebP · hasta 10 MB</span>
+                </label>
+                <div id="photo-preview-wrap" class="photo-preview-wrap" hidden><img id="photo-preview" alt="Vista previa del plato"><button id="remove-photo" type="button" class="remove-photo" aria-label="Quitar foto">×</button></div>
+                <label class="field photo-name-field">Nombre del plato <span>(opcional)</span><input id="photo-meal-name" name="mealName" maxlength="60" placeholder="Ej. Ensalada del restaurante"></label>
+                <button id="analyze-photo" class="primary-button photo-submit" type="submit" disabled>Analizar con IA <span>✦</span></button>
+                <p class="privacy-note">La foto se enviará a OpenAI solo cuando pulses el botón.</p>
+                <p id="photo-status" class="photo-status" role="status" aria-live="polite"></p>
+              </form>
+            </article>
+          </div>
+        </section>
+
+        <section id="agua" class="tab-panel feature-panel" data-tab-panel aria-labelledby="water-title" hidden>
+          <div class="section-heading tab-heading">
+            <div><p class="eyebrow">PLANIFICACIÓN MENSUAL</p><h1 id="water-title">Tu calendario de comidas</h1><p>Organiza el menú del mes con tus recetas guardadas.</p></div>
+          </div>
+          <div class="calendar-controls">
+            <div class="calendar-month-picker" aria-label="Cambiar mes">
+              <button id="calendar-previous" class="calendar-month-arrow" type="button" aria-label="Mes anterior">‹</button>
+              <strong id="calendar-month-label" aria-live="polite"></strong>
+              <button id="calendar-next" class="calendar-month-arrow" type="button" aria-label="Mes siguiente">›</button>
+            </div>
+            <div class="calendar-options">
+              <label class="third-meal-toggle"><input id="third-meal-toggle" type="checkbox"><span class="toggle-track" aria-hidden="true"></span><span>Añadir desayuno</span></label>
+              <button id="generate-menu" class="primary-button generate-menu-button" type="button"><span aria-hidden="true">✦</span> Generar menú aleatorio</button>
+            </div>
+          </div>
+          <p id="calendar-hint" class="calendar-hint" role="status" aria-live="polite"></p>
+          <div class="calendar-legend"><span>En móvil, toca un día para consultar y editar sus comidas.</span><a href="#recetas" data-tab="recetas">Ver mis recetas →</a></div>
+          <div id="calendar-slot-legend" class="calendar-slot-legend" aria-label="Leyenda de comidas">
+            <span><i class="calendar-key-dot"></i>Comida</span>
+            <span><i class="calendar-key-dot calendar-meal-dinner"></i>Cena</span>
+            <span id="calendar-breakfast-legend"><i class="calendar-key-dot calendar-meal-breakfast"></i>Desayuno</span>
+          </div>
+          <div class="calendar-scroll">
+            <div id="calendar-weekdays" class="calendar-weekdays" role="row">
+              <span>Lun</span><span>Mar</span><span>Mié</span><span>Jue</span><span>Vie</span><span>Sáb</span><span>Dom</span>
+            </div>
+            <div id="calendar-grid" class="calendar-grid" aria-label="Calendario mensual de comidas"></div>
+          </div>
+          <div id="calendar-empty" class="calendar-empty" hidden>
+            <span class="empty-icon">▤</span>
+            <strong>Aún no tienes recetas guardadas</strong>
+            <span>Guarda alguna receta y podrás crear un menú mensual con ella.</span>
+            <a href="#recetas" data-tab="recetas" class="inline-link">Crear una receta <span>→</span></a>
+          </div>
+        </section>
+        <section id="ciclo" class="tab-panel feature-panel" data-tab-panel aria-labelledby="cycle-title" hidden>
+          <div class="section-heading tab-heading">
+            <div><p class="eyebrow">SEGUIMIENTO PERSONAL</p><h1 id="cycle-title">Ciclo menstrual</h1><p>Consulta una estimación de fase y registra cómo te sientes.</p></div>
+          </div>
+          <div class="cycle-content">
+            <article class="card cycle-status-card" aria-labelledby="cycle-phase-title">
+              <div class="cycle-status-layout">
+                <div id="cycle-ring" class="cycle-ring" data-phase="unknown" role="img">
+                  <div class="cycle-ring-center"><strong id="cycle-day-number">—</strong><span id="cycle-day-caption">registra el inicio</span></div>
+                </div>
+                <div class="cycle-status-info">
+                  <p class="eyebrow">FASE ACTUAL ESTIMADA</p>
+                  <h2 id="cycle-phase-title">Añade una fecha de inicio</h2>
+                  <p id="cycle-phase-description">Con una fecha registrada mostraremos una fase aproximada y la próxima fecha estimada.</p>
+                  <p id="cycle-next-estimate" class="cycle-next-estimate" aria-live="polite">Aún no hay una fecha estimada.</p>
+                  <button id="cycle-log-period-shortcut" class="primary-button" type="button">Registrar inicio de regla</button>
+                </div>
+              </div>
+              <p class="cycle-estimate-note">Las fases y fechas son estimaciones basadas en la duración configurada y pueden variar. No confirman ovulación, fertilidad ni embarazo, y no sustituyen orientación profesional.</p>
+            </article>
+            <article class="card cycle-form-card">
+              <h2>Registrar menstruación</h2>
+              <p>Si olvidaste registrarla, elige el día real de inicio, aunque haya sido anterior.</p>
+              <form id="period-form" class="period-form">
+                <label class="field">Fecha de inicio
+                  <input id="period-start" name="start" type="date" required>
+                </label>
+                <label class="field">Fecha de fin <span>(opcional)</span>
+                  <input id="period-end" name="end" type="date">
+                </label>
+                <button class="primary-button" type="submit">Guardar registro</button>
+              </form>
+              <p class="cycle-privacy-note">El registro se guarda solo en este dispositivo.</p>
+            </article>
+            <section class="card cycle-history-card" aria-labelledby="period-list-title">
+              <div class="cycle-history-heading"><div><h2 id="period-list-title">Mis registros</h2><p>Fechas y duración de los periodos guardados.</p></div></div>
+              <div id="period-list" class="period-list" aria-live="polite"></div>
+            </section>
+            <article class="card cycle-settings-card">
+              <h2>Ajusta tus promedios</h2>
+              <p>Personaliza el cálculo según lo que suele durar tu ciclo.</p>
+              <form id="cycle-settings-form" class="cycle-settings-form">
+                <label class="field">Duración del ciclo <span>(días, de inicio a inicio)</span>
+                  <input name="cycleLength" type="number" min="21" max="45" step="1" required>
+                </label>
+                <label class="field">Duración habitual de la regla <span>(días)</span>
+                  <input name="periodLength" type="number" min="2" max="10" step="1" required>
+                </label>
+                <button class="secondary-button" type="submit">Guardar promedios</button>
+              </form>
+            </article>
+            <section class="card cycle-log-card" aria-labelledby="cycle-log-title">
+              <div class="cycle-history-heading"><div><h2 id="cycle-log-title">Síntomas de hoy</h2><p>Lleva un registro sencillo de flujo, dolor y ánimo.</p></div></div>
+              <form id="cycle-day-form" class="cycle-day-form">
+                <label class="field">Flujo
+                  <select name="flow">
+                    <option value="none">Sin flujo</option>
+                    <option value="spotting">Manchado</option>
+                    <option value="light">Leve</option>
+                    <option value="medium">Medio</option>
+                    <option value="heavy">Abundante</option>
+                  </select>
+                </label>
+                <label class="field">Dolor <span><span id="cycle-pain-value">0</span>/10</span>
+                  <input name="pain" type="range" min="0" max="10" step="1" value="0">
+                </label>
+                <label class="field">Ánimo
+                  <select name="mood">
+                    <option value="good">Buen ánimo</option>
+                    <option value="stable" selected>Ánimo estable</option>
+                    <option value="tired">Cansancio</option>
+                    <option value="sensitive">Sensibilidad</option>
+                    <option value="irritable">Irritabilidad</option>
+                  </select>
+                </label>
+                <label class="field full-field">Notas <span>(opcional)</span>
+                  <input name="notes" type="text" maxlength="160" placeholder="Puedes anotar otros síntomas o sensaciones">
+                </label>
+                <button class="primary-button full-field" type="submit">Guardar registro de hoy</button>
+              </form>
+              <div id="cycle-day-list" class="cycle-day-list" aria-live="polite"></div>
+              <p class="cycle-privacy-note">Este diario es personal y permanece en este dispositivo.</p>
+            </section>
+          </div>
+        </section>
+        <footer class="footer"><span>nutria<span class="brand-period">.</span> Hecho para acompañarte, no para exigirte.</span><button id="clear-day" class="clear-button" type="button">Borrar el registro de hoy</button></footer>
+      </main>
+    </div>
+    <div id="toast" class="toast" role="status" aria-live="polite"></div>
+    <dialog id="goals-dialog" class="goals-dialog">
+      <form id="goals-form" method="dialog">
+        <div class="dialog-heading"><div><p class="eyebrow">A TU RITMO</p><h2>Ajustes de la aplicación</h2></div><button class="close-dialog" type="button" aria-label="Cerrar">×</button></div>
+        <p class="dialog-intro">Personaliza el aspecto y tus objetivos diarios.</p>
+        <h3 class="settings-section-title">Objetivos diarios</h3>
+        <div class="form-grid">
+          <label class="field">Calorías <span>(kcal)</span><input name="calories" type="number" min="1" step="1" required></label>
+          <label class="field">Agua <span>(ml)</span><input name="water" type="number" min="50" step="50" required></label>
+          <label class="field">Proteínas <span>(g)</span><input name="protein" type="number" min="1" step="1" required></label>
+          <label class="field">Carbohidratos <span>(g)</span><input name="carbs" type="number" min="1" step="1" required></label>
+          <label class="field full-field">Grasas <span>(g)</span><input name="fat" type="number" min="1" step="1" required></label>
+        </div>
+        <fieldset class="theme-fieldset">
+          <legend>Color de la aplicación</legend>
+          <div class="theme-choices">
+            <label class="theme-choice"><input type="radio" name="theme" value="sage"><span class="theme-swatch theme-swatch-sage" aria-hidden="true"></span><span>Verde natural</span></label>
+            <label class="theme-choice"><input type="radio" name="theme" value="ocean"><span class="theme-swatch theme-swatch-ocean" aria-hidden="true"></span><span>Azul océano</span></label>
+            <label class="theme-choice"><input type="radio" name="theme" value="lavender"><span class="theme-swatch theme-swatch-lavender" aria-hidden="true"></span><span>Lavanda</span></label>
+            <label class="theme-choice"><input type="radio" name="theme" value="coral"><span class="theme-swatch theme-swatch-coral" aria-hidden="true"></span><span>Coral</span></label>
+          </div>
+        </fieldset>
+        <div class="dialog-actions"><button class="secondary-button close-dialog" type="button">Cancelar</button><button class="primary-button" type="submit">Guardar cambios</button></div>
+      </form>
+    </dialog>
+    <dialog id="menu-generator-dialog" class="goals-dialog menu-generator-dialog">
+      <form id="menu-generator-form">
+        <div class="dialog-heading">
+          <div><p class="eyebrow">A TU MEDIDA</p><h2>Generar menú aleatorio</h2></div>
+          <button class="close-dialog" type="button" aria-label="Cerrar">×</button>
+        </div>
+        <p class="dialog-intro">Elige el periodo y prepara una propuesta con las recetas que tienes guardadas.</p>
+        <fieldset class="menu-period-fieldset">
+          <legend>¿Qué periodo quieres planificar?</legend>
+          <label class="menu-period-option">
+            <input type="radio" name="period" value="month" checked>
+            <span class="menu-period-icon">▦</span>
+            <span><strong>Un mes</strong><small id="menu-month-description"></small></span>
+          </label>
+          <label class="menu-period-option">
+            <input type="radio" name="period" value="week">
+            <span class="menu-period-icon">▤</span>
+            <span><strong>Una semana</strong><small>De lunes a domingo</small></span>
+          </label>
+        </fieldset>
+        <div id="menu-week-field" class="menu-week-field" hidden>
+          <label class="field" for="menu-week-date">Elige un día de esa semana
+            <input id="menu-week-date" name="weekDate" type="date" disabled>
+          </label>
+          <p>El menú abarcará desde el lunes hasta el domingo de esa semana.</p>
+        </div>
+        <p id="menu-generator-hint" class="menu-generator-hint" role="status" aria-live="polite"></p>
+        <div class="dialog-actions">
+          <button class="secondary-button close-dialog" type="button">Cancelar</button>
+          <button class="primary-button" type="submit"><span aria-hidden="true">✦</span> Generar menú</button>
+        </div>
+      </form>
+    </dialog>
+    <dialog id="calendar-day-dialog" class="goals-dialog calendar-day-dialog">
+      <form id="calendar-day-form">
+        <div class="dialog-heading">
+          <div><p class="eyebrow">PLAN DEL DÍA</p><h2 id="calendar-day-dialog-title">Comidas del día</h2></div>
+          <button class="close-dialog" type="button" aria-label="Cerrar">×</button>
+        </div>
+        <p class="dialog-intro">Consulta o cambia las recetas asignadas a este día.</p>
+        <div id="calendar-day-edit-slots" class="calendar-day-edit-slots"></div>
+        <div class="dialog-actions">
+          <button class="secondary-button close-dialog" type="button">Cancelar</button>
+          <button class="primary-button" type="submit">Guardar cambios</button>
+        </div>
+      </form>
+    </dialog>
+  </body>
+</html>

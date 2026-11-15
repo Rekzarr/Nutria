@@ -1,0 +1,30 @@
+unit: photo-meal
+side_effects:
+  - source_loc: "wwwroot/app.js:1930"
+    effect: "Uploads the selected photo and optional dish name to Nutria's meal-analysis endpoint."
+    must_preserve: true
+  - source_loc: "wwwroot/app.js:1953"
+    effect: "After a valid estimate, stores a photo-sourced meal entry in the current day."
+    must_preserve: true
+branches:
+  - source_loc: "wwwroot/app.js:1577"
+    condition: "Selected image is not JPG, PNG, or WebP, or exceeds 10 MiB."
+    behavior: "Reject the file locally and show a Spanish validation message."
+    must_preserve: true
+  - source_loc: "wwwroot/app.js:1930"
+    condition: "No file is selected or the request is in progress."
+    behavior: "Do not submit without an image; disable the analysis button while waiting."
+    must_preserve: true
+  - source_loc: "wwwroot/app.js:1949"
+    condition: "Response is unsuccessful or contains incomplete/non-finite/negative nutrient values."
+    behavior: "Do not add a diary entry; display an error for explicit retry."
+    must_preserve: true
+error_paths:
+  - source_loc: "wwwroot/app.js:1955"
+    trigger: "Network, provider, rate-limit, server validation, or timeout error."
+    outcome: "Show a Spanish connection or server-provided error; no meal is committed."
+    contract: "Uses existing POST /api/analyze-meal ProblemDetails/status behavior."
+    must_preserve: true
+concurrency:
+  model: event-loop
+  tx_boundary: null

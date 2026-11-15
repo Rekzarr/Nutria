@@ -1,0 +1,107 @@
+batch_id: "t11"
+completed_tasks:
+  - "T002"
+blocked_tasks: []
+files_changed:
+  T002:
+    - file: ".gitignore"
+      change_type: "created"
+      description: "Ignore .NET/Android generated output, local SDK state, IDE state, and local signing material."
+    - file: "android/settings.gradle.kts"
+      change_type: "created"
+      description: "Configure plugin/dependency repositories and include the single app module."
+    - file: "android/build.gradle.kts"
+      change_type: "created"
+      description: "Declare the pinned Android application and Compose compiler plugins."
+    - file: "android/gradle/libs.versions.toml"
+      change_type: "created"
+      description: "Centralize Android, Kotlin, Compose, activity, and test dependency versions."
+    - file: "android/gradle.properties"
+      change_type: "created"
+      description: "Set AndroidX, Kotlin style, and Gradle runtime properties."
+    - file: "android/gradle/wrapper/gradle-wrapper.jar"
+      change_type: "created"
+      description: "Add official Gradle 9.6.0 wrapper JAR; SHA-256 verified against Gradle's release checksum."
+    - file: "android/gradle/wrapper/gradle-wrapper.properties"
+      change_type: "created"
+      description: "Pin Gradle 9.6.0 and its official distribution SHA-256."
+    - file: "android/gradlew"
+      change_type: "created"
+      description: "Add POSIX Gradle wrapper launcher."
+    - file: "android/gradlew.bat"
+      change_type: "created"
+      description: "Add Windows Gradle wrapper launcher."
+    - file: "android/app/build.gradle.kts"
+      change_type: "created"
+      description: "Configure a native Compose app with minSdk 28, compileSdk/targetSdk 36, and Java 17."
+    - file: "android/app/src/main/AndroidManifest.xml"
+      change_type: "created"
+      description: "Declare the app and launcher activity with backup disabled."
+    - file: "android/app/src/main/java/com/nutria/app/app/MainActivity.kt"
+      change_type: "created"
+      description: "Add a native Compose starter activity; navigation remains T003 scope."
+    - file: "android/app/src/main/res/values/strings.xml"
+      change_type: "created"
+      description: "Add Spanish-default application label."
+    - file: "android/app/src/main/res/values/styles.xml"
+      change_type: "created"
+      description: "Add a minimal native Android no-action-bar theme."
+    - file: "android/app/src/test/java/com/nutria/app/app/ScaffoldTest.kt"
+      change_type: "created"
+      description: "Add a deterministic JVM test for the scaffold's native package identity."
+    - file: "android/app/src/androidTest/java/com/nutria/app/app/MainActivityLaunchTest.kt"
+      change_type: "created"
+      description: "Add an ActivityScenario instrumentation smoke test; compile/package only on this host."
+upstream_artifacts_consumed:
+  T002:
+    - artifact: ".github/modernize/rearchitecture/artifacts/t10-devops.md"
+      used_for: "Android toolchain readiness and JDK/SDK activation."
+    - artifact: ".github/modernize/rearchitecture/artifacts/checkpoints/t8-environment.md"
+      used_for: "Installed SDK/Build Tools versions, wrapper expectation, and emulator blocker."
+    - artifact: ".github/modernize/rearchitecture/artifacts/t8-teamlead-plan.md"
+      used_for: "T002 scope and full build validation command."
+    - artifact: ".github/modernize/rearchitecture/artifacts/t4-architect.md"
+      used_for: "Native Compose structure and Android target levels."
+    - artifact: ".github/modernize/rearchitecture/artifacts/constitution.md"
+      used_for: "Native-only target, preservation boundary, and honest verification rules."
+evidence_mapping:
+  T002:
+    - upstream: "t8-teamlead-plan.md#T002"
+      output: "android/ settings, app module, manifest, resources, tests, and wrapper"
+      evidence: "Gradle clean build and assembleDebugAndroidTest succeeded."
+    - upstream: "t4-architect.md#Target structure and boundaries"
+      output: "android/app/build.gradle.kts"
+      evidence: "Configured namespace com.nutria.app, minSdk 28, compileSdk/targetSdk 36, Java 17."
+    - upstream: "t10-devops.md#Target Environment Preparation"
+      output: "Gradle build execution environment"
+      evidence: "Build ran under the explicitly activated JDK 17 and prepared Android SDK."
+    - upstream: "constitution.md#Principles I–V"
+      output: "Native Compose scaffold and preserved workspace"
+      evidence: "No WebView, backend changes, PWA deletion, OpenAI key, or sensor-data claim was introduced."
+traceability:
+  - requirement: "REQ-001"
+    plan_item: "1.2"
+    task: "T002"
+    files:
+      - "android/app/build.gradle.kts"
+      - "android/app/src/main/AndroidManifest.xml"
+      - "android/app/src/main/java/com/nutria/app/app/MainActivity.kt"
+      - "android/gradle/wrapper/gradle-wrapper.properties"
+    status: "T002 complete; overall REQ-001 remains partial pending T003 navigation."
+protocol_violation: false
+errors: []
+warnings:
+  - "Starter activity is not a feature-complete user interface; T003 and feature tasks remain pending."
+  - "Instrumentation was compiled and packaged, not executed; no emulator/device is available."
+test_results:
+  T002:
+    command: "cd android; .\\gradlew.bat clean build assembleDebugAndroidTest"
+    passed: 1
+    failed: 0
+    skipped: 0
+    failures: []
+    additional_evidence:
+      - "Full debug/release Gradle build: BUILD SUCCESSFUL."
+      - "Android instrumentation source compiled and test APK assembled."
+      - "emulator -accel-check: exit 6; hypervisor driver unavailable."
+      - "adb devices -l: no connected devices."

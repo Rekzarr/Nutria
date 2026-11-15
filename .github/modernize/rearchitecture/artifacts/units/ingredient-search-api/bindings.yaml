@@ -1,0 +1,21 @@
+unit: ingredient-search-api
+bindings:
+  - type: route-declaration
+    name: "GET /api/ingredients/search"
+    source_loc: "Endpoints/OpenFoodFactsEndpoints.cs:27"
+    target: "frozen existing search endpoint"
+    must_appear_in_target: true
+    notes: "Accepts query parameter and returns products with per-100-g nutrients."
+  - type: di-registration
+    name: "IOpenFoodFactsService -> OpenFoodFactsService"
+    source_loc: "Program.cs:18"
+    target: "server-side Open Food Facts client"
+    must_appear_in_target: true
+    notes: "Typed HttpClient timeout is 12 seconds."
+  - type: filter
+    name: "ingredient-search fixed-window rate limit"
+    source_loc: "Program.cs:22"
+    target: "server API rate limit"
+    must_appear_in_target: true
+    notes: "20 requests/minute per remote IP, no queue."
+runtime_config: []

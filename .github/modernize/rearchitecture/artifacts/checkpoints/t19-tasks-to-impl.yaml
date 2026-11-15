@@ -1,0 +1,106 @@
+metadata:
+  generated: "2026-11-14T21:30:25Z"
+  source_tasks: ".github/modernize/rearchitecture/artifacts/t8-teamlead-plan.md"
+  last_updated: "2026-11-14T21:30:25Z"
+
+summary:
+  total_tasks: 1
+  completed_tasks: 1
+  in_progress_tasks: 0
+  pending_tasks: 0
+  completion_percentage: 100.0
+
+upstream_artifacts_consumed:
+  - path: ".github/modernize/rearchitecture/artifacts/t1-pm-spec.md"
+    purpose: "REQ-023–REQ-026 user-visible BLE, workout, lifecycle, and local-privacy acceptance."
+  - path: ".github/modernize/rearchitecture/artifacts/t4-architect.md"
+    purpose: "Standard Heart Rate GATT, Android permissions, foreground service, stale/gap rules."
+  - path: ".github/modernize/rearchitecture/artifacts/t5-ux.md"
+    purpose: "Spanish states, explicit user actions, recovery controls, and disclosures."
+  - path: ".github/modernize/rearchitecture/artifacts/t6-dba.md"
+    purpose: "Encrypted local session/sample/event persistence boundary."
+  - path: ".github/modernize/rearchitecture/artifacts/t7-teamlead.md"
+    purpose: "Host/device verification expectations and truthful evidence requirements."
+  - path: ".github/modernize/rearchitecture/artifacts/t8-teamlead-plan.md"
+    purpose: "Step 3.5 / T012 scope and traceability."
+  - path: ".github/modernize/rearchitecture/artifacts/t10-devops.md"
+    purpose: "JDK 17/Android SDK 36 activation and device/emulator limitation."
+  - path: ".github/modernize/rearchitecture/artifacts/t19.1-frontend.md"
+    purpose: "Shared lint remediation and serialized build procedure."
+
+evidence_mapping:
+  - upstream: "t1-pm-spec.md#REQ-023"
+    evidence: "WorkoutBleService checks BLE hardware/permissions and exposes explicit scan/select/connect/disconnect plus recoverable errors."
+  - upstream: "t1-pm-spec.md#REQ-024"
+    evidence: "WorkoutFeatureScreen separates connection from explicit start/stop; HeartRateRules parses actual values and stale states."
+  - upstream: "t1-pm-spec.md#REQ-025"
+    evidence: "Observed interruption/recovery events and connection setup timeout preserve gaps without fabricated continuity."
+  - upstream: "t1-pm-spec.md#REQ-026"
+    evidence: "WorkoutRoomRepository persists local records; Spanish app/README disclose no API or Health Connect transfer."
+
+tasks:
+  - task_id: "T012"
+    execution_task_id: "t19"
+    description: "Implement explicit BLE band connection and user-controlled workouts."
+    status: "completed"
+    implementation:
+      files_changed:
+        - file: "android/app/src/main/java/com/nutria/app/feature/activity/WorkoutBleService.kt"
+          changes:
+            - change_type: "modified"
+              description: "Bound GATT service/notification setup, interrupt and close transport on permission/Bluetooth loss, and retain foreground-session behavior."
+        - file: "android/app/src/test/java/com/nutria/app/feature/activity/WorkoutRulesTest.kt"
+          changes:
+            - change_type: "modified"
+              description: "Added meaningful assertions for distinct states, 8-/16-bit HR parsing, invalid values, no-reading, and stale/future readings."
+        - file: "README.md"
+          changes:
+            - change_type: "modified"
+              description: "Documented Spanish BLE behavior, permission boundaries, private local records, and unverified device validation."
+      commit_hash: ""
+      pr_link: ""
+    verification:
+      build_passed: true
+      test_results:
+        command: "From android/: .\\gradlew.bat clean test build assembleDebugAndroidTest --no-daemon --no-parallel --max-workers=1 (OpenJDK 17.0.16, Android SDK 36)"
+        passed: 61
+        failed: 0
+        skipped: 0
+        failures: []
+      notes: "BUILD SUCCESSFUL; debug/release builds, lint/check, and AndroidTest APK packaging passed. Instrumentation and Bluetooth behavior were not executed because adb lists no device and emulator -accel-check exits 6 (missing emulator hypervisor driver). 22 lint warnings and 1 hint remain, with zero errors."
+    upstream_trace:
+      plan_item: "3.5"
+      requirements:
+        - "REQ-023"
+        - "REQ-024"
+        - "REQ-025"
+        - "REQ-026"
+      full_trace: "REQ-023–REQ-026 → Phase 3.5 / T012 → WorkoutBleService, Compose Activity screens, encrypted Room workout records, Android permissions/foreground service, Spanish disclosures, domain tests, and device-validation handoff."
+
+pending_tasks: []
+untracked_changes: []
+traceability_chain:
+  - chain_id: "TRACE-T19-BLE"
+    requirement: "REQ-023–REQ-026"
+    plan_phase: "Phase 3.5"
+    plan_item: "3.5"
+    tasks:
+      - "T012"
+    files:
+      - "android/app/src/main/java/com/nutria/app/feature/activity/WorkoutBleService.kt"
+      - "android/app/src/main/java/com/nutria/app/feature/activity/WorkoutFeatureScreen.kt"
+      - "android/app/src/main/java/com/nutria/app/feature/activity/WorkoutEntities.kt"
+      - "android/app/src/main/java/com/nutria/app/feature/activity/WorkoutRoomRepository.kt"
+      - "android/app/src/main/res/values/strings.xml"
+      - "android/app/src/main/AndroidManifest.xml"
+      - "android/app/src/test/java/com/nutria/app/feature/activity/WorkoutRulesTest.kt"
+      - "android/app/src/androidTest/java/com/nutria/app/feature/activity/WorkoutPersistenceInstrumentedTest.kt"
+      - "README.md"
+    status: "partial"
+
+validation:
+  passed: true
+  errors: []
+  warnings:
+    - "BLE platform behavior, permission UI, foreground notification, and interruption recovery require device validation in t31."
+  blocking_issues: []

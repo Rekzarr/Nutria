@@ -1,0 +1,21 @@
+{
+  "id": "/",
+  "name": "nutria — tu bienestar, a tu ritmo",
+  "short_name": "nutria",
+  "description": "Tu espacio sencillo para cuidar tu alimentación y mantener tus hábitos.",
+  "lang": "es",
+  "start_url": "/",
+  "scope": "/",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#f5f6ef",
+  "theme_color": "#f5f6ef",
+  "icons": [
+    {
+      "src": "icon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ]
+}

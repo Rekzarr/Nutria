@@ -1,0 +1,43 @@
+project:
+  scope_path: "."
+  loc: 2453
+  languages: [C#, JavaScript]
+  git: false
+  structure:
+    Endpoints: "ASP.NET Core API endpoints"
+    Services: "Application services"
+    wwwroot: "PWA and static web assets"
+  notes: "Nutria is an ASP.NET Core 10 PWA. The requested deliverable is a native Android app preserving all existing capabilities and retaining existing backend contracts. No Android project exists yet."
+
+assessment:
+  change_type: rewrite
+  rationale: |
+    The user requested replacing the PWA experience with a native Android application,
+    a paradigm/platform rewrite. Existing backend photo-analysis and food-lookup
+    contracts must be retained unless evidence demonstrates a necessary change.
+  transformations:
+    - fromStack: "ASP.NET Core PWA (C# and JavaScript)"
+      toStack: "Native Android application (Kotlin + Jetpack Compose)"
+      toStackVersion: "compileSdk/targetSdk 36; minSdk 28"
+  grouping_needed: false
+  deep_planning: true
+
+progress_sync:
+  run_id: b6b73c8c-c0d0-48d5-b5aa-272c796edecd
+  grouping_mode: none
+  execution_mode: phase-by-phase
+  plan_start_time: "2026-11-14T17:35:54Z"
+  plan_completed_time: "2026-11-14T18:26:28Z"
+  execution_start_time: "2026-11-14T18:34:27Z"
+  execution_completed_time: null
+  validation_start_time: null
+  validation_completed_time: null
+  total_phases: 19
+  completed_phases: 9
+  total_modules: 3
+  completed_modules: 0
+  total_tasks: 39
+  completed_tasks: 22
+  total_commits: 0
+  build_verified: false
+  test_verified: false

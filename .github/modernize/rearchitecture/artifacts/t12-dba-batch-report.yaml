@@ -1,0 +1,132 @@
+batch_id: "t12"
+completed_tasks:
+  - "t12"
+blocked_tasks: []
+files_changed:
+  t12:
+    - file: "android/gradle/libs.versions.toml"
+      change_type: "modified"
+      description: "Pinned Room, SQLCipher Android, AndroidX SQLite, DataStore, and KSP versions."
+    - file: "android/build.gradle.kts"
+      change_type: "modified"
+      description: "Registered the KSP plugin for the existing built-in Kotlin build."
+    - file: "android/app/build.gradle.kts"
+      change_type: "modified"
+      description: "Added Room/SQLCipher/DataStore runtime and Room KSP compiler dependencies plus schema export."
+    - file: "android/gradle.properties"
+      change_type: "modified"
+      description: "Documented AGP 9.5 KSP source-set compatibility opt-out."
+    - file: "android/app/src/main/AndroidManifest.xml"
+      change_type: "modified"
+      description: "Attached legacy and API 31+ backup exclusion resources while preserving allowBackup=false."
+    - file: "android/app/src/main/res/xml/backup_rules.xml"
+      change_type: "created"
+      description: "Excludes all private application data from legacy backup."
+    - file: "android/app/src/main/res/xml/data_extraction_rules.xml"
+      change_type: "created"
+      description: "Excludes private app files from cloud backup and device transfer."
+    - file: "android/app/src/main/java/com/nutria/app/data/local/NutriaDatabase.kt"
+      change_type: "created"
+      description: "Defines the version-1 bootstrap schema and empty explicit migration registry."
+    - file: "android/app/src/main/java/com/nutria/app/data/local/DatabaseKeyVault.kt"
+      change_type: "created"
+      description: "Creates and wraps random per-install DB key material with Android Keystore AES-GCM."
+    - file: "android/app/src/main/java/com/nutria/app/data/local/EncryptedDatabaseProvider.kt"
+      change_type: "created"
+      description: "Opens SQLCipher Room on IO, initializes metadata, and fails closed without destructive fallback."
+    - file: "android/app/src/main/java/com/nutria/app/data/local/PreferencesStore.kt"
+      change_type: "created"
+      description: "Limits DataStore to non-health display and connection preferences."
+    - file: "android/app/schemas/com.nutria.app.data.local.NutriaDatabase/1.json"
+      change_type: "created"
+      description: "Exports the initial Room schema for future migration review."
+    - file: "android/app/src/test/java/com/nutria/app/data/local/DatabaseMigrationRegistryTest.kt"
+      change_type: "created"
+      description: "Checks initial schema version and explicit empty migration baseline."
+    - file: "android/app/src/androidTest/java/com/nutria/app/data/local/EncryptedDatabaseInstrumentedTest.kt"
+      change_type: "created"
+      description: "Covers encrypted header/reopen, stable key envelope, and missing-key fail-closed behavior."
+    - file: "android/app/src/androidTest/java/com/nutria/app/data/local/BackupExclusionInstrumentedTest.kt"
+      change_type: "created"
+      description: "Checks manifest backup disablement and both backup exclusion configurations."
+    - file: "android/app/src/androidTest/java/com/nutria/app/data/local/PreferencesStoreInstrumentedTest.kt"
+      change_type: "created"
+      description: "Checks DataStore preference defaults and round-trip for non-health settings."
+    - file: ".github/modernize/rearchitecture/learnings/dba/android-private-health-persistence.md"
+      change_type: "modified"
+      description: "Appends SQLCipher/Room implementation and KSP compatibility learning."
+    - file: ".github/modernize/rearchitecture/team/dba/log.md"
+      change_type: "modified"
+      description: "Records t12 discoveries, failed full-suite gate, and consumed learning."
+upstream_artifacts_consumed:
+  t12:
+    - artifact: ".github/modernize/rearchitecture/artifacts/t4-architect.md"
+      used_for: "Native storage boundaries, package structure, and Room/DataStore ownership."
+    - artifact: ".github/modernize/rearchitecture/artifacts/t6-dba.md"
+      used_for: "Encryption, key lifecycle, migration, local data boundary, and backup rules."
+    - artifact: ".github/modernize/rearchitecture/artifacts/t10-devops.md"
+      used_for: "JDK 17 / Android SDK readiness and build activation."
+    - artifact: ".github/modernize/rearchitecture/artifacts/checkpoints/t8-environment.md"
+      used_for: "Emulator/device runtime blocker evidence."
+    - artifact: ".github/modernize/rearchitecture/artifacts/t11-frontend.md"
+      used_for: "Existing Android scaffold and pinned Kotlin/AGP/SDK versions."
+    - artifact: ".github/modernize/rearchitecture/artifacts/t12.1-frontend.md"
+      used_for: "Shared-test fixture remediation and successful Gradle suite evidence."
+    - artifact: ".github/modernize/rearchitecture/artifacts/t14-frontend.md"
+      used_for: "API-client loopback/HTTPS policy; production HTTP policy remains unchanged."
+    - artifact: ".github/modernize/rearchitecture/artifacts/t8-teamlead-plan.md#T004"
+      used_for: "Task scope and required shared persistence tests."
+evidence_mapping:
+  t12:
+    - upstream: ".github/modernize/rearchitecture/artifacts/t8-teamlead-plan.md#T004"
+      output: "android/app/src/main/java/com/nutria/app/data/local/"
+      evidence: "full clean build and 20 JVM tests pass; AndroidTest APK compiles and packages"
+    - upstream: ".github/modernize/rearchitecture/artifacts/t6-dba.md#Encryption,-key-lifecycle,-and-recovery"
+      output: "DatabaseKeyVault.kt and EncryptedDatabaseProvider.kt"
+      evidence: "Keystore AES-GCM, atomically stored envelope, fail-closed path, zeroized passphrase, AndroidTest coverage compiled"
+    - upstream: ".github/modernize/rearchitecture/artifacts/t6-dba.md#Backup,-retention,-and-deletion"
+      output: "AndroidManifest.xml and res/xml/ backup rules"
+      evidence: "lint passes; instrumentation test compiled and packaged"
+    - upstream: ".github/modernize/rearchitecture/artifacts/t6-dba.md#Proposed-local-model"
+      output: "NutriaDatabase.kt and exported Room schema 1.json"
+      evidence: "Initial schema contains only storage_metadata; no health records or feature tables"
+    - upstream: ".github/modernize/rearchitecture/artifacts/t10-devops.md#Target-Environment-Preparation"
+      output: "Gradle validation"
+      evidence: "JDK 17.0.16 activation; no runtime claim for blocked emulator/device tier"
+traceability:
+  - requirement: "REQ-002, REQ-003, REQ-004, REQ-005, REQ-006, REQ-007, REQ-009, REQ-011, REQ-013, REQ-014, REQ-015, REQ-020, REQ-024, REQ-025, REQ-026"
+    plan_item: "2.1"
+    task: "T004"
+    files:
+      - "android/app/src/main/java/com/nutria/app/data/local/NutriaDatabase.kt"
+      - "android/app/src/main/java/com/nutria/app/data/local/DatabaseKeyVault.kt"
+      - "android/app/src/main/java/com/nutria/app/data/local/EncryptedDatabaseProvider.kt"
+      - "android/app/src/main/java/com/nutria/app/data/local/PreferencesStore.kt"
+      - "android/app/src/main/res/xml/backup_rules.xml"
+      - "android/app/src/main/res/xml/data_extraction_rules.xml"
+    status: "partial"
+protocol_violation: false
+errors: []
+warnings:
+  - "Android Keystore/SQLCipher instrumentation tests were packaged but not run because no emulator/device is available."
+  - "AGP 9.5/KSP 2.2.10 requires an experimental source-set compatibility opt-out."
+test_results:
+  t12:
+    command: "Set-Location android; .\\gradlew.bat clean build assembleDebugAndroidTest --no-daemon"
+    passed: 20
+    failed: 0
+    skipped: 0
+    failures: []
+    result: "BUILD SUCCESSFUL; 131 actionable tasks; debug/release builds, lint/check, and instrumentation APK packaging passed"
+focused_test_results:
+  - command: "cd android; .\\gradlew.bat :app:testDebugUnitTest --tests com.nutria.app.data.local.DatabaseMigrationRegistryTest :app:assembleDebugAndroidTest :app:lintDebug"
+    passed: 1
+    failed: 0
+    skipped: 0
+    additional_tasks:
+      - "debug instrumentation APK packaged"
+      - "debug lint passed"
+    runtime_tests_executed: false
+  - command: "cd android; .\\gradlew.bat :app:assembleRelease"
+    result: "passed"
+    runtime_tests_executed: false

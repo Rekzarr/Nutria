@@ -1,0 +1,99 @@
+task_id: t18
+role: frontend
+title: Implement Health Connect steps
+status: implemented
+requirements:
+  - id: REQ-021
+    status: implemented
+    evidence:
+      - android/app/src/main/java/com/nutria/app/data/health/HealthConnectStepsDataSource.kt
+      - android/app/src/test/java/com/nutria/app/data/health/HealthConnectStepsRepositoryTest.kt
+  - id: REQ-022
+    status: implemented
+    evidence:
+      - android/app/src/main/java/com/nutria/app/feature/activity/HealthConnectPermissionState.kt
+      - android/app/src/test/java/com/nutria/app/feature/activity/HealthConnectPermissionStateTest.kt
+      - android/app/src/androidTest/java/com/nutria/app/feature/activity/HealthConnectStepsContentTest.kt
+upstream_artifacts_consumed:
+  - .github/modernize/rearchitecture/artifacts/t1-pm.md
+  - .github/modernize/rearchitecture/artifacts/t1-pm-spec.md
+  - .github/modernize/rearchitecture/artifacts/t4-architect.md
+  - .github/modernize/rearchitecture/artifacts/t5-ux.md
+  - .github/modernize/rearchitecture/artifacts/t6-dba.md
+  - .github/modernize/rearchitecture/artifacts/t7-teamlead.md
+  - .github/modernize/rearchitecture/artifacts/t10-devops.md
+  - .github/modernize/rearchitecture/artifacts/checkpoints/t8-environment.md
+  - .github/modernize/rearchitecture/artifacts/t11-frontend.md
+  - .github/modernize/rearchitecture/artifacts/t13-frontend.md
+  - .github/modernize/rearchitecture/artifacts/t15-frontend.md
+  - .github/modernize/rearchitecture/artifacts/t16-frontend.md
+  - .github/modernize/rearchitecture/artifacts/t19.1-frontend.md
+  - .github/modernize/rearchitecture/artifacts/t8-teamlead-plan.md
+evidence_mapping:
+  - upstream: t1-pm-spec.md#REQ-021
+    evidence: Read-only provider/permission-aware daily aggregation and Home/Activity presentation.
+  - upstream: t1-pm-spec.md#REQ-022
+    evidence: Typed permission/provider/no-data/error states, Spanish disclosure, and explicit runtime permission action.
+  - upstream: t4-architect.md#Daily steps — Android Health Connect
+    evidence: Health Connect access stays behind the Android data source and repository; no write, storage, or upload path.
+  - upstream: t5-ux.md#Actividad — Health Connect and BLE / Steps
+    evidence: Shared accessible Spanish status card and recovery controls.
+  - upstream: t6-dba.md#Health Connect and BLE boundary / Steps
+    evidence: Totals are transient Compose state and absent from Room, DataStore, and API models.
+  - upstream: t7-teamlead.md#Primary Validation Stack
+    evidence: JVM test suite and instrumentation APK packaging results below.
+  - upstream: checkpoints/t8-environment.md#Emulator and device validation
+    evidence: Device validation remains pending; no device execution is claimed.
+  - upstream: t15-frontend.md#Evidence Mapping (REQ-021–REQ-022)
+    evidence: Typed states and DST-aware local-day aggregation, including 23-hour and 25-hour calendar days.
+  - upstream: t19.1-frontend.md#Test Results
+    evidence: Retried the full serialized Gradle gate after shared lint remediation; debug/release, lint, check, JVM tests, and AndroidTest packaging passed.
+  - upstream: t16-frontend.md#Test Results
+    evidence: Reused the shared project baseline and serialized Gradle verification command.
+  - upstream: t8-teamlead-plan.md#Step 3.4 / T011
+    evidence: Health Connect priority feature slice implemented.
+files_modified:
+  - README.md
+  - android/gradle/libs.versions.toml
+  - android/app/build.gradle.kts
+  - android/app/src/main/AndroidManifest.xml
+  - android/app/src/main/res/values/strings.xml
+  - android/app/src/main/java/com/nutria/app/app/MainActivity.kt
+  - android/app/src/main/java/com/nutria/app/app/SpanishFormats.kt
+  - android/app/src/main/java/com/nutria/app/data/health/HealthConnectStepsDataSource.kt
+  - android/app/src/main/java/com/nutria/app/feature/activity/HealthConnectPermissionState.kt
+  - android/app/src/main/java/com/nutria/app/feature/activity/HealthConnectStepsFeature.kt
+  - android/app/src/main/java/com/nutria/app/app/HealthConnectRationaleActivity.kt
+  - android/app/src/test/java/com/nutria/app/app/SpanishFormatsTest.kt
+  - android/app/src/test/java/com/nutria/app/data/health/HealthConnectStepsRepositoryTest.kt
+  - android/app/src/test/java/com/nutria/app/feature/activity/HealthConnectPermissionStateTest.kt
+  - android/app/src/androidTest/java/com/nutria/app/feature/activity/HealthConnectStepsContentTest.kt
+test_results:
+  unit:
+    command: .\gradlew.bat clean test build assembleDebugAndroidTest --no-daemon --no-parallel --max-workers=1
+    passed: 59
+    failed: 0
+    skipped: 0
+    status: passed
+    health_connect_test_count: 11
+  full_build:
+    command: .\gradlew.bat clean test build assembleDebugAndroidTest --no-daemon --no-parallel --max-workers=1
+    status: passed
+    returncode: 0
+    lint_errors: 0
+    lint_warnings: 22
+    lint_hints: 1
+    instrumentation_apk: assembled
+  device_runtime:
+    status: unverified
+    adb_devices: none
+    emulator_accel_check_exit_code: 6
+    reason: Android Emulator hypervisor driver is unavailable and no physical device is connected.
+warnings:
+  - severity: INFO
+    message: Health Connect permission/provider behavior was not verified on a physical device or emulator; APK packaging and JVM fake tests are not device evidence.
+  - severity: INFO
+    message: Android lint passed with 22 non-blocking warnings and 1 hint.
+references:
+  - https://developer.android.com/health-and-fitness/health-connect/features/steps
+  - https://developer.android.com/health-and-fitness/health-connect/get-started

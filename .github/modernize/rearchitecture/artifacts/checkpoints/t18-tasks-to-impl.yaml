@@ -1,0 +1,56 @@
+task_id: t18
+role: frontend
+plan_task: T011
+status: implemented
+requirements:
+  - REQ-021
+  - REQ-022
+implementation_evidence:
+  - android/app/src/main/java/com/nutria/app/data/health/HealthConnectStepsDataSource.kt
+  - android/app/src/main/java/com/nutria/app/feature/activity/HealthConnectPermissionState.kt
+  - android/app/src/main/java/com/nutria/app/feature/activity/HealthConnectStepsFeature.kt
+  - android/app/src/main/AndroidManifest.xml
+  - android/app/src/main/res/values/strings.xml
+  - README.md
+verification:
+  unit_tests:
+    passed: 59
+    failed: 0
+    skipped: 0
+    command: .\gradlew.bat clean test build assembleDebugAndroidTest --no-daemon --no-parallel --max-workers=1
+  full_build:
+    status: passed
+    returncode: 0
+    lint_errors: 0
+    lint_warnings: 22
+    lint_hints: 1
+  instrumentation_apk:
+    status: assembled
+    command: .\gradlew.bat clean test build assembleDebugAndroidTest --no-daemon --no-parallel --max-workers=1
+    device_execution: not_run
+  device_readiness:
+    adb_devices: none
+    emulator_accel_check_exit_code: 6
+    device_validation_status: unverified
+    blocker: Android Emulator hypervisor driver is unavailable and no physical device is connected.
+upstream_artifacts_consumed:
+  - .github/modernize/rearchitecture/artifacts/t1-pm-spec.md
+  - .github/modernize/rearchitecture/artifacts/t4-architect.md
+  - .github/modernize/rearchitecture/artifacts/t5-ux.md
+  - .github/modernize/rearchitecture/artifacts/t6-dba.md
+  - .github/modernize/rearchitecture/artifacts/t7-teamlead.md
+  - .github/modernize/rearchitecture/artifacts/checkpoints/t8-environment.md
+  - .github/modernize/rearchitecture/artifacts/t15-frontend.md
+  - .github/modernize/rearchitecture/artifacts/t16-frontend.md
+  - .github/modernize/rearchitecture/artifacts/t19.1-frontend.md
+evidence_mapping:
+  - t1-pm-spec.md#REQ-021 -> HealthConnectStepsDataSource.kt and HealthConnectStepsRepositoryTest.kt
+  - t1-pm-spec.md#REQ-022 -> HealthConnectPermissionState.kt and HealthConnectStepsContentTest.kt
+  - t4-architect.md#Daily steps — Android Health Connect -> provider/permission checks and local-day aggregate boundary
+  - t5-ux.md#Actividad — Health Connect and BLE / Steps -> Spanish HealthConnectStepsFeature.kt UI and README disclosure
+  - t6-dba.md#Health Connect and BLE boundary / Steps -> no step-total persistence or upload path
+  - t7-teamlead.md#Primary Validation Stack -> 59 passing JVM tests, full build/lint, and instrumentation APK packaging evidence
+  - checkpoints/t8-environment.md#Emulator and device validation -> device provider behavior remains unverified
+  - t15-frontend.md#Evidence Mapping (REQ-021–REQ-022) -> typed result state and DST-aware 23-/25-hour local day ranges
+  - t19.1-frontend.md#Test Results -> shared lint remediation validated by the successful serial full Gradle gate
+  - t8-teamlead-plan.md#Step 3.4 / T011 -> implementation scope and requirement traceability

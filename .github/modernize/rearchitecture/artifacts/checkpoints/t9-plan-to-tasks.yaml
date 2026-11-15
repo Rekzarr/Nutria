@@ -1,0 +1,41 @@
+metadata:
+  generated: "2026-11-14"
+  task_id: "t9"
+  source_plan: ".github/modernize/rearchitecture/artifacts/t8-teamlead-plan.md"
+  source_checkpoints:
+    - ".github/modernize/rearchitecture/artifacts/checkpoints/t8-plan-to-tasks.yaml"
+    - ".github/modernize/rearchitecture/artifacts/checkpoints/t8-spec-to-plan.yaml"
+  review: ".github/modernize/rearchitecture/artifacts/t9-teamlead-validation.md"
+  remediation: ".github/modernize/rearchitecture/artifacts/t9.1-teamlead.md"
+
+summary:
+  total_plan_items: 18
+  covered_plan_items: 18
+  coverage_percentage: 100.0
+  total_tasks: 19
+  task_ids_unique_sequential: true
+  plan_items_without_tasks: []
+  findings:
+    critical: 0
+    high: 0
+    medium: 0
+
+validation:
+  passed: true
+  plan_items_total: 18
+  plan_items_covered: 18
+  coverage_percentage: 100.0
+  checks_passed: 13
+  checks_failed: 0
+  errors: []
+  warnings:
+    - "The Android application is not implemented; this is a plan coverage/feasibility verdict, not a feature-parity verdict."
+    - "Native build/runtime remains blocked by the recorded absence of a compatible JDK 17/Android SDK/Gradle toolchain."
+    - "Health Connect and BLE evidence remains blocked until compatible Android devices and a physical standard HR GATT band are available."
+  coverage_assertions:
+    - "18 of 18 plan items have at least one task reference."
+    - "19 task IDs are unique and sequential from T001 through T019; every task has a valid Plan reference."
+    - "All 26 requirement rows have valid REQ→plan→task links."
+    - "REQ-021 through REQ-026 map to the corrected Health Connect/BLE steps and evidence gates."
+    - "Legacy conversion tasks have Source annotations; newly introduced Health Connect/BLE tasks do not require legacy Source paths."
+    - "T001 readiness is informational for source work; T004 is bounded to shared secure-storage plumbing."

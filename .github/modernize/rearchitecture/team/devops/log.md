@@ -1,0 +1,6 @@
+## [t10] Prepared the Android build SDK and JDK
+- Codebase/domain discoveries: The approved target is Kotlin/Compose with JDK 17, compile/target API 36; t11 is responsible for adding the project and pinned Gradle wrapper. The legacy PWA/server were not modified.
+- Wrong assumptions and corrections: Java 25 was the machine PATH default, not the selected build JDK. Installing JDK 17 alone did not change command resolution; the verified activation block prepends JDK 17 and sets Android SDK variables.
+- Debugging dead-ends and what actually worked: `sdkmanager` was absent. Google's Android CLI from winget successfully installed API 36/build-tools/platform tools/emulator and verified packages. The AVD could be created, but emulator acceleration is unavailable (`-accel-check` exit 6); a headless launch did not reach readiness after ~360 seconds.
+- Techniques/patterns worth reusing: Use explicit per-shell `JAVA_HOME` + prepend `JAVA_HOME\bin`; use the Gradle wrapper after scaffold, not a global Gradle install. Treat build readiness separately from emulator/physical-device validation.
+- Learnings consumed: [teamlead/android-rewrite-guardrails, teamlead/native-android-plan-order, teamlead/native-android-validation-strategy, architect/native-android-api-seam]

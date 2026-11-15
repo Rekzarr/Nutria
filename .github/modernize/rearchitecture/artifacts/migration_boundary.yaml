@@ -1,0 +1,40 @@
+user_intent:
+  raw_request: "Replace the PWA experience with a native Android app and preserve every existing Nutria capability; keep existing photo-analysis and ingredient-lookup server contracts; do not delete the old implementation before parity."
+  inferred_acceptance:
+    - "The delivered user-facing target is a native Android application, not a WebView or browser-only shell."
+    - "All existing diary, hydration, recipes/recommendations, meal-calendar, menstrual-tracking/private-notes, photo-analysis, ingredient-lookup, goals, and theme behaviors remain available."
+    - "Health Connect supplies step/exercise data with honest availability and permission states; a standard BLE Heart Rate service supplies real readings during explicit workouts."
+    - "Personal records are stored locally/private on Android; the OpenAI key remains server-side."
+    - "Existing ASP.NET Core API request/response contracts remain the mobile integration seam."
+  cleanup_required: false
+strategy: phased
+runtime_reachable:
+  - "android/ (new native application root; no Android project currently exists)"
+  - "Existing ASP.NET Core host and its two API routes remain reachable to the installed app through a configured server URL."
+must_rewrite:
+  - path: "android/"
+    reason: "A native Android runtime does not exist; acceptance requires native implementations of all user-visible feature surfaces plus Health Connect and BLE integrations."
+copy_as_is:
+  - path: "Program.cs"
+    reason: "Existing backend hosting, DI, API registration, and rate-limit setup can remain behind the Android client."
+  - path: "Endpoints/MealAnalysisEndpoints.cs"
+    reason: "User-preserved photo-analysis HTTP contract; no source evidence requires changing it."
+  - path: "Endpoints/OpenFoodFactsEndpoints.cs"
+    reason: "User-preserved ingredient-search HTTP contract; no source evidence requires changing it."
+  - path: "Services/"
+    reason: "Current server-side integrations preserve the OpenAI key boundary and provide food-search translation."
+  - path: "Nutria.csproj"
+    reason: "No backend framework/package change is needed to introduce a separate Android client."
+legacy_allowed_to_remain:
+  - path: "wwwroot/"
+    reason: "Existing PWA stays intact until native behavior parity is demonstrated; it is not the Android runtime."
+defer_cleanup:
+  - "Do not remove or replace the PWA assets during native implementation; consider any later cleanup only after parity and local-data transfer implications are reviewed."
+  - "The current localStorage state has no discovered export/import path, so existing browser records will not automatically appear in Android storage."
+full_rewrite_reason: null
+implementation_rule: >
+  Native implementation scope is the new Android application root. The current backend is a frozen API/provider seam and existing PWA files remain legacy-allowed-to-remain. Do not infer additional backend rewrites from source_anchors or from the fact that the Android client needs network access. The exact Android directory layout is left to the design phase.
+notes:
+  - "The supplied project profile and current source show no Android project or Android toolchain on this host."
+  - "Health Connect permissions/data types, BLE service lifecycle, device data disclosure, and private Android persistence are new target concerns; they are not current behavior."
+  - "The existing APIs have no user authentication/authorization. Production exposure policy and server URL configuration require explicit design/security review; no unrelated server change is inferred here."

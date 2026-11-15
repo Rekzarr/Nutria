@@ -1,0 +1,112 @@
+# T006 implementation traceability checkpoint (task-scoped; aggregate with concurrent phase tasks)
+metadata:
+  generated: "2026-11-14T19:26:37Z"
+  source_tasks: ".github/modernize/rearchitecture/artifacts/t8-teamlead-plan.md#T006"
+  last_updated: "2026-11-14T19:26:37Z"
+
+summary:
+  total_tasks: 1
+  completed_tasks: 1
+  in_progress_tasks: 0
+  pending_tasks: 0
+  completion_percentage: 100.0
+
+tasks:
+  - task_id: "T006"
+    description: "Implement typed Nutria API repositories and local HTTP contract tests for the frozen photo and ingredient endpoints."
+    status: "completed"
+    implementation:
+      files_changed:
+        - file: "android/gradle/libs.versions.toml"
+          changes:
+            - change_type: "modified"
+              description: "Pinned OkHttp, Gson, coroutines, and MockWebServer dependencies."
+        - file: "android/app/build.gradle.kts"
+          changes:
+            - change_type: "modified"
+              description: "Added the native HTTP/JSON/coroutine implementation and local contract-test dependencies."
+        - file: "android/app/src/main/AndroidManifest.xml"
+          changes:
+            - change_type: "modified"
+              description: "Declared INTERNET permission."
+        - file: "android/app/src/main/java/com/nutria/app/data/remote/NutriaApiModels.kt"
+          changes:
+            - change_type: "added"
+              description: "Added typed Nutria request-result, product, meal-photo, analysis, and error models."
+        - file: "android/app/src/main/java/com/nutria/app/data/remote/NutriaApiClient.kt"
+          changes:
+            - change_type: "added"
+              description: "Added frozen route handling, validation, timeout/error mapping, secure base URL checks, cancellation, and no retry."
+        - file: "android/app/src/test/java/com/nutria/app/data/remote/NutriaApiClientTest.kt"
+          changes:
+            - change_type: "added"
+              description: "Added local HTTP contract tests for both routes and failure conditions."
+      commit_hash: ""
+      pr_link: ""
+    verification:
+      build_passed: true
+      test_results:
+        command: "cd android; .\\gradlew.bat test build assembleDebugAndroidTest --no-daemon"
+        passed: 19
+        failed: 0
+        skipped: 0
+        failures: []
+      notes: "Standard Gradle project configuration passed; the 10 API client tests used local MockWebServer. Instrumentation compiled and packaged but was not run without an Android device/emulator."
+    upstream_trace:
+      plan_item: "2.3"
+      requirements:
+        - "REQ-008"
+        - "REQ-017"
+        - "REQ-018"
+        - "REQ-019"
+      full_trace: "REQ-008, REQ-017–REQ-019 → Phase 2.3 → T006 → data/remote typed client and contract tests."
+
+pending_tasks: []
+untracked_changes: []
+
+traceability_chain:
+  - chain_id: "TRACE-NUTRIA-API-T006"
+    requirement: "REQ-008, REQ-017–REQ-019"
+    plan_phase: "Phase 2 — Foundational capabilities"
+    plan_item: "2.3"
+    tasks:
+      - "T006"
+    files:
+      - "android/gradle/libs.versions.toml"
+      - "android/app/build.gradle.kts"
+      - "android/app/src/main/AndroidManifest.xml"
+      - "android/app/src/main/java/com/nutria/app/data/remote/NutriaApiModels.kt"
+      - "android/app/src/main/java/com/nutria/app/data/remote/NutriaApiClient.kt"
+      - "android/app/src/test/java/com/nutria/app/data/remote/NutriaApiClientTest.kt"
+    status: "complete"
+
+upstream_artifacts_consumed:
+  - ".github/modernize/rearchitecture/artifacts/t2-architect.md"
+  - ".github/modernize/rearchitecture/artifacts/t4-architect.md"
+  - ".github/modernize/rearchitecture/artifacts/wire_contracts.yaml"
+  - ".github/modernize/rearchitecture/artifacts/t8-teamlead-plan.md#Step-2.3"
+  - ".github/modernize/rearchitecture/artifacts/t8-teamlead-plan.md#T006"
+  - ".github/modernize/rearchitecture/artifacts/t1-pm-spec.md#REQ-008"
+  - ".github/modernize/rearchitecture/artifacts/t1-pm-spec.md#REQ-017–REQ-019"
+  - ".github/modernize/rearchitecture/artifacts/t10-devops.md"
+  - ".github/modernize/rearchitecture/artifacts/checkpoints/t8-environment.md"
+  - ".github/modernize/rearchitecture/artifacts/t11-frontend.md"
+
+evidence_mapping:
+  - upstream: "wire_contracts.yaml#native-client-ingredient-search"
+    output: "NutriaApiClient.searchIngredients"
+    evidence: "GET path/query, UTF-8 trim, empty result, nutrient mapping, and HTTP error contract tests."
+  - upstream: "wire_contracts.yaml#native-client-photo-analysis"
+    output: "NutriaApiClient.analyzeMeal"
+    evidence: "Multipart name/media/size, DTO validation, ProblemDetails mapping, and no-retry tests."
+  - upstream: "t1-pm-spec.md#REQ-019"
+    output: "NutriaApiClient source and request assertions"
+    evidence: "No provider key or provider URL; no auth header or unrelated personal fields are sent."
+
+validation:
+  passed: true
+  errors: []
+  warnings:
+    - "Instrumentation runtime validation remains unavailable because the host has no connected device and emulator acceleration is blocked."
+    - "The aggregate tasks-to-impl.yaml includes an earlier T004 failure snapshot; T004 owner/coordinator was notified with the later 19/19 passing evidence."
+  blocking_issues: []

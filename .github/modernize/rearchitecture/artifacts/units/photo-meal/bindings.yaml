@@ -1,0 +1,21 @@
+unit: photo-meal
+bindings:
+  - type: route-declaration
+    name: "PWA hash tab #foto and photo-form"
+    source_loc: "wwwroot/index.html:281"
+    target: "photo meal analysis panel"
+    must_appear_in_target: true
+    notes: "Current browser selection supports camera capture where available or an existing image."
+  - type: convention
+    name: "photo selection, preview, remove, and submit event handlers"
+    source_loc: "wwwroot/app.js:1930"
+    target: "native image picker/camera and explicit analysis action"
+    must_appear_in_target: true
+    notes: "The user explicitly submits the image; retain image type/size validation and preview/removal behavior."
+  - type: di-registration
+    name: "IMealAnalysisService -> OpenAiMealAnalysisService"
+    source_loc: "Program.cs:14"
+    target: "server-side analysis provider"
+    must_appear_in_target: true
+    notes: "This stays on the server. Never place OPENAI_API_KEY or direct OpenAI credentials in the Android application."
+runtime_config: []

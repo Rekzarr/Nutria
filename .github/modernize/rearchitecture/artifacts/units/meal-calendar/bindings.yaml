@@ -1,0 +1,15 @@
+unit: meal-calendar
+bindings:
+  - type: route-declaration
+    name: "PWA hash tab #agua; visible heading Tu calendario de comidas"
+    source_loc: "wwwroot/index.html:305"
+    target: "meal planning calendar"
+    must_appear_in_target: true
+    notes: "The legacy hash is #agua despite the visible calendar label."
+  - type: convention
+    name: "calendar grid change, month navigation, optional breakfast, menu generator dialog"
+    source_loc: "wwwroot/app.js:994"
+    target: "calendar view and editing controls"
+    must_appear_in_target: true
+    notes: "Uses recipes persisted by the recipe-library feature; assignment is permitted from any saved recipe in day editor."
+runtime_config: []

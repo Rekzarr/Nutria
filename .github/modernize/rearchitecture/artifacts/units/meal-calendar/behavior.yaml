@@ -1,0 +1,29 @@
+unit: meal-calendar
+side_effects:
+  - source_loc: "wwwroot/app.js:1822"
+    effect: "Persists manual recipe assignments by month, date, and meal slot."
+    must_preserve: true
+  - source_loc: "wwwroot/app.js:1121"
+    effect: "Generates and persists random menus for the open month or the Monday-to-Sunday week containing a selected date."
+    must_preserve: true
+branches:
+  - source_loc: "wwwroot/app.js:975"
+    condition: "Breakfast option is enabled."
+    behavior: "Expose a third meal slot; otherwise show only lunch and dinner."
+    must_preserve: true
+  -     source_loc: "wwwroot/app.js:1164"
+    condition: "Any requested slot lacks recipes of its required category."
+    behavior: "Do not create a menu; explain which slot needs a classified recipe."
+    must_preserve: true
+  -   source_loc: "wwwroot/app.js:1176"
+    condition: "Target week/month already contains assignments."
+    behavior: "Ask before replacing the period's assignments."
+    must_preserve: true
+  - source_loc: "wwwroot/app.js:1092"
+    condition: "Calendar is viewed on a narrow/mobile viewport."
+    behavior: "Open a day editor to inspect/change that day's meal slots."
+    must_preserve: true
+error_paths: []
+concurrency:
+  model: event-loop
+  tx_boundary: null

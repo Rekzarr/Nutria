@@ -1,0 +1,121 @@
+batch_id: "t13"
+completed_tasks:
+  - "T003"
+blocked_tasks: []
+files_changed:
+  T003:
+    - file: "android/app/src/main/java/com/nutria/app/app/MainActivity.kt"
+      change_type: "modified"
+      description: "Implements the native Compose navigation shell, drawer, app bar, settings action, back behavior, and truthful staged-screen message."
+    - file: "android/app/src/main/java/com/nutria/app/app/AppDestination.kt"
+      change_type: "created"
+      description: "Defines ordered Spanish destinations, the registrar alias, unknown-route fallback, and de-duplicating route history."
+    - file: "android/app/src/main/java/com/nutria/app/app/SpanishFormats.kt"
+      change_type: "created"
+      description: "Formats app-bar dates as dd/MM/yyyy and numbers with es-ES."
+    - file: "android/app/src/main/res/values/strings.xml"
+      change_type: "modified"
+      description: "Adds Spanish navigation, accessibility, and truthful shell-state resources."
+    - file: "android/app/src/test/java/com/nutria/app/app/NavigationAndLocaleTest.kt"
+      change_type: "created"
+      description: "Covers route history/alias/fallback and Spanish date/number formatting."
+    - file: "android/app/src/androidTest/java/com/nutria/app/app/NavigationShellTest.kt"
+      change_type: "created"
+      description: "Covers visible drawer labels, settings access, and duplicate-free navigation on device."
+    - file: ".github/modernize/rearchitecture/artifacts/t13-frontend.md"
+      change_type: "modified"
+      description: "Records shell scope, evidence, test results, and remaining device/feature boundaries."
+    - file: ".github/modernize/rearchitecture/artifacts/checkpoints/t13-implementation.yaml"
+      change_type: "modified"
+      description: "Records T003 completion and current verification evidence."
+    - file: ".github/modernize/rearchitecture/artifacts/t13-frontend-batch-report.yaml"
+      change_type: "modified"
+      description: "Records successful host verification and unexecuted device tests."
+    - file: ".github/modernize/rearchitecture/artifacts/checkpoints/tasks-to-impl.yaml"
+      change_type: "modified"
+      description: "Adds T003 to the shared task traceability checkpoint."
+upstream_artifacts_consumed:
+  T003:
+    - artifact: ".github/modernize/rearchitecture/artifacts/t4-architect.md"
+      used_for: "Native Compose boundary and application/navigation structure."
+    - artifact: ".github/modernize/rearchitecture/artifacts/t5-ux.md"
+      used_for: "Seven ordered destinations, app-bar settings, drawer/back/accessibility behavior, and numeric Spanish date format."
+    - artifact: ".github/modernize/rearchitecture/artifacts/t10-devops.md"
+      used_for: "JDK 17/Android SDK build activation."
+    - artifact: ".github/modernize/rearchitecture/artifacts/checkpoints/t8-environment.md"
+      used_for: "Exact toolchain activation and emulator/device blocker."
+    - artifact: ".github/modernize/rearchitecture/artifacts/t11-frontend.md"
+      used_for: "Existing app module, namespace, Compose and test configuration."
+    - artifact: ".github/modernize/rearchitecture/artifacts/t12-dba.md"
+      used_for: "Current shared persistence/build baseline."
+    - artifact: ".github/modernize/rearchitecture/artifacts/t12.1-frontend.md"
+      used_for: "Current state of the shared API test fixture and previously verified full suite."
+    - artifact: ".github/modernize/rearchitecture/artifacts/t14-frontend.md"
+      used_for: "Preserved API boundary; no shell API changes."
+    - artifact: ".github/modernize/rearchitecture/artifacts/t1-pm-spec.md"
+      used_for: "REQ-001 labels and localization requirements."
+    - artifact: ".github/modernize/rearchitecture/artifacts/t8-teamlead-plan.md"
+      used_for: "T003 implementation scope and requirement trace."
+evidence_mapping:
+  T003:
+    - upstream: "t8-teamlead-plan.md#T003"
+      output: "android/app/src/main/java/com/nutria/app/app/MainActivity.kt and AppDestination.kt"
+      evidence: "Native Compose drawer provides the approved seven destinations, app-bar Ajustes, back-stack de-duplication, and alias handling."
+    - upstream: "t5-ux.md#Information architecture"
+      output: "AppDestination.kt and strings.xml"
+      evidence: "Destination order and Spanish labels match the UX contract."
+    - upstream: "t5-ux.md#Shared layout, content, and interaction rules"
+      output: "SpanishFormats.kt and NavigationAndLocaleTest.kt"
+      evidence: "The date format is dd/MM/yyyy and numeric display uses es-ES; fixed-value assertions pass."
+    - upstream: "t1-pm-spec.md#REQ-001"
+      output: "AppDestination.kt, MainActivity.kt, SpanishFormats.kt, and navigation tests"
+      evidence: "REQ-001 route/localization behavior is implemented and host tests pass."
+    - upstream: "checkpoints/t8-environment.md#Exact activation instructions"
+      output: "Android Gradle verification"
+      evidence: "JDK 17.0.16 and prepared SDK 36 were activated in the build shell."
+source_references:
+  T003:
+    source_files:
+      - file: "wwwroot/index.html"
+        methods_read: ["navigation links", "mobile navigation links", "settings action"]
+      - file: "wwwroot/app.js"
+        methods_read: ["tab identifiers", "route activation", "history restoration"]
+      - file: "wwwroot/styles.css"
+        methods_read: ["sidebar", "mobile navigation", "narrow-screen layout"]
+    branches_preserved: 4
+    validations_preserved: 0
+    error_paths_preserved: 1
+    side_effects_preserved: 2
+    notes: "The existing task evidence records preservation of the registrar alias, unknown-route fallback, de-duplicated route history, and back behavior; the PWA remains intact."
+traceability:
+  - requirement: "REQ-001"
+    plan_item: "1.2"
+    task: "T003"
+    files:
+      - "android/app/src/main/java/com/nutria/app/app/MainActivity.kt"
+      - "android/app/src/main/java/com/nutria/app/app/AppDestination.kt"
+      - "android/app/src/main/java/com/nutria/app/app/SpanishFormats.kt"
+      - "android/app/src/main/res/values/strings.xml"
+      - "android/app/src/test/java/com/nutria/app/app/NavigationAndLocaleTest.kt"
+      - "android/app/src/androidTest/java/com/nutria/app/app/NavigationShellTest.kt"
+    source_files:
+      - "wwwroot/index.html"
+      - "wwwroot/app.js"
+      - "wwwroot/styles.css"
+    status: "completed"
+protocol_violation: false
+errors: []
+warnings:
+  - severity: "WARNING"
+    message: "The two Compose navigation instrumentation methods are packaged but not executed because adb reports no connected device and t10 records emulator acceleration as unavailable."
+  - severity: "WARNING"
+    message: "Destination feature workflows remain outside T003 and are not represented as delivered parity."
+test_results:
+  T003:
+    command: "From android/: .\\gradlew.bat test build assembleDebugAndroidTest --no-daemon (JDK 17.0.16 and Android SDK 36 activated per t10)"
+    passed: 20
+    failed: 0
+    skipped: 0
+    failures: []
+    build: "BUILD SUCCESSFUL; debug/release build, lint/check, and debug instrumentation APK compilation/package passed."
+    instrumentation: "2 methods present; 0 executed because no emulator/device is connected."

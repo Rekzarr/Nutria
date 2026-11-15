@@ -1,0 +1,128 @@
+batch_id: "T005"
+completed_tasks: ["T005"]
+blocked_tasks: []
+files_changed:
+  T005:
+    - file: "android/app/src/main/java/com/nutria/app/core/model/SharedModels.kt"
+      change_type: "created"
+      description: "Shared typed nutrition, diary, recipe, calendar and cycle models with domain validation."
+    - file: "android/app/src/main/java/com/nutria/app/core/model/DateAndNutritionRules.kt"
+      change_type: "created"
+      description: "Local-date/DST, food conversion, recipe-total and streak rules."
+    - file: "android/app/src/main/java/com/nutria/app/core/model/RecipeAndCalendarRules.kt"
+      change_type: "created"
+      description: "Recommendation filtering and deterministic menu-generation rules."
+    - file: "android/app/src/main/java/com/nutria/app/core/model/CycleRules.kt"
+      change_type: "created"
+      description: "Cycle settings/date/overlap validation and approximate phase estimates."
+    - file: "android/app/src/main/java/com/nutria/app/core/model/ActivityRules.kt"
+      change_type: "created"
+      description: "Health Connect result states, standard BLE measurement parsing, freshness and workout gaps."
+    - file: "android/app/src/main/java/com/nutria/app/core/data/RepositoryContracts.kt"
+      change_type: "created"
+      description: "Domain-facing repository interfaces for local records and platform boundaries."
+    - file: "android/app/src/test/java/com/nutria/app/core/model/SharedDomainRulesTest.kt"
+      change_type: "created"
+      description: "Nutrition, locale-day, streak, recommendation and calendar unit tests."
+    - file: "android/app/src/test/java/com/nutria/app/core/model/CycleRulesTest.kt"
+      change_type: "created"
+      description: "Cycle validation, estimates and private-note length tests."
+    - file: "android/app/src/test/java/com/nutria/app/core/model/ActivityRulesTest.kt"
+      change_type: "created"
+      description: "Steps states, BLE parsing/freshness and workout-gap unit tests."
+upstream_artifacts_consumed:
+  T005:
+    - artifact: ".github/modernize/rearchitecture/artifacts/t1-pm-spec.md"
+      used_for: "Observable domain behavior, numeric/date constraints and REQ-002–REQ-026 acceptance."
+    - artifact: ".github/modernize/rearchitecture/artifacts/t4-architect.md"
+      used_for: "Core model/data boundaries, local dates, recipe/calendar rules and Health Connect/BLE lifecycle."
+    - artifact: ".github/modernize/rearchitecture/artifacts/t6-dba.md"
+      used_for: "Repository ownership, transactional constraints, privacy, no-data and sensor persistence boundaries."
+    - artifact: ".github/modernize/rearchitecture/artifacts/t7-teamlead.md"
+      used_for: "Deterministic test strategy and no mock-as-device-evidence requirement."
+    - artifact: ".github/modernize/rearchitecture/artifacts/t8-teamlead-plan.md"
+      used_for: "Plan 2.2 / T005 task scope and requirement mapping."
+    - artifact: ".github/modernize/rearchitecture/artifacts/checkpoints/t8-environment.md"
+      used_for: "Exact JDK/SDK build activation and emulator/device limitation."
+    - artifact: ".github/modernize/rearchitecture/artifacts/t10-devops.md"
+      used_for: "Prepared Android toolchain status."
+    - artifact: ".github/modernize/rearchitecture/artifacts/t11-frontend.md"
+      used_for: "Existing Android module and Gradle wrapper baseline."
+    - artifact: ".github/modernize/rearchitecture/artifacts/t12-dba.md"
+      used_for: "Encrypted Room/DataStore ownership boundary."
+    - artifact: ".github/modernize/rearchitecture/artifacts/t14-frontend.md"
+      used_for: "Frozen API seam and separation from local-domain records."
+evidence_mapping:
+  T005:
+    - upstream: "t8-teamlead-plan.md#Step 2.2 / T005"
+      output: "android/app/src/main/java/com/nutria/app/core/"
+      evidence: "All shared rules/interfaces compile; tests/build pass."
+    - upstream: "t1-pm-spec.md#REQ-003"
+      output: "core/model/DateAndNutritionRules.kt"
+      evidence: "Unit tests verify 28.3495 g/oz, portion scaling and PWA rounding."
+    - upstream: "t1-pm-spec.md#REQ-010–REQ-012"
+      output: "core/model/RecipeAndCalendarRules.kt"
+      evidence: "Filter, recommendation limit, Monday-first week, replacement and duplicate-avoidance tests."
+    - upstream: "t1-pm-spec.md#REQ-013–REQ-016"
+      output: "core/model/CycleRules.kt"
+      evidence: "Range/overlap/estimate/unknown/note-limit tests pass."
+    - upstream: "t1-pm-spec.md#REQ-021–REQ-026"
+      output: "core/model/ActivityRules.kt"
+      evidence: "State, parser, stale-reading and interruption-gap tests pass; no device claim."
+traceability:
+  - requirement: "REQ-002–REQ-007"
+    plan_item: "2.2"
+    task: "T005"
+    files:
+      - "android/app/src/main/java/com/nutria/app/core/model/SharedModels.kt"
+      - "android/app/src/main/java/com/nutria/app/core/model/DateAndNutritionRules.kt"
+      - "android/app/src/main/java/com/nutria/app/core/data/RepositoryContracts.kt"
+    source_files: ["wwwroot/app.js"]
+    status: "completed"
+  - requirement: "REQ-009–REQ-016"
+    plan_item: "2.2"
+    task: "T005"
+    files:
+      - "android/app/src/main/java/com/nutria/app/core/model/RecipeAndCalendarRules.kt"
+      - "android/app/src/main/java/com/nutria/app/core/model/CycleRules.kt"
+      - "android/app/src/main/java/com/nutria/app/core/data/RepositoryContracts.kt"
+    source_files: ["wwwroot/app.js"]
+    status: "completed"
+  - requirement: "REQ-020–REQ-025"
+    plan_item: "2.2"
+    task: "T005"
+    files:
+      - "android/app/src/main/java/com/nutria/app/core/model/ActivityRules.kt"
+      - "android/app/src/main/java/com/nutria/app/core/data/RepositoryContracts.kt"
+    source_files: ["wwwroot/app.js"]
+    status: "completed"
+source_references:
+  T005:
+    source_files:
+      - file: "wwwroot/app.js"
+        methods_read:
+          - "calculateStreak"
+          - "getFoodGrams"
+          - "calculateFood"
+          - "updateRecipeNutrition"
+          - "getEligibleRecommendedRecipes"
+          - "getCycleStatus"
+          - "period-form submit handler"
+          - "generateMenu"
+    branches_preserved: 25
+    validations_preserved: 14
+    error_paths_preserved: 9
+    side_effects_preserved: 0
+    notes: "The counts describe the source behavior decision/validation groups represented by the T005 pure rules and typed state results. Persistence side effects remain behind repository contracts for vertical feature tasks; this task intentionally performs no writes."
+protocol_violation: false
+errors: []
+warnings:
+  - "Health Connect and BLE runtime/device behavior is not verified by host-side fakes or unit tests; later device-validation tasks remain required."
+  - "The emulator is unavailable per t10 environment evidence; Android instrumentation was packaged but not run."
+test_results:
+  T005:
+    command: ".\\gradlew.bat test build assembleDebugAndroidTest --no-daemon"
+    passed: 35
+    failed: 0
+    skipped: 0
+    failures: []

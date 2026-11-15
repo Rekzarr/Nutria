@@ -1,0 +1,30 @@
+unit: ingredient-search-api
+side_effects:
+  - source_loc: "Services/OpenFoodFactsService.cs:18"
+    effect: "Queries Open Food Facts with Spanish locale, an eight-result cap, and requested product/nutrient fields."
+    must_preserve: true
+  - source_loc: "Services/OpenFoodFactsService.cs:74"
+    effect: "Maps only products with complete usable calorie/protein/carbohydrate/fat values per 100 g."
+    must_preserve: true
+branches:
+  - source_loc: "Endpoints/OpenFoodFactsEndpoints.cs:36"
+    condition: "query is empty/whitespace or longer than 80 characters after trimming."
+    behavior: "Return 400 ProblemDetails with Spanish query guidance."
+    must_preserve: true
+  - source_loc: "Services/OpenFoodFactsService.cs:90"
+    condition: "Provider reports kcal directly or only energy in kJ."
+    behavior: "Use kcal value or convert kJ using 4.184; preserve per-100-g basis."
+    must_preserve: true
+  - source_loc: "Services/OpenFoodFactsService.cs:44"
+    condition: "Provider returns request timeout, 429, or 5xx and retries remain."
+    behavior: "Retry up to three attempts with 350 ms multiplied by attempt number."
+    must_preserve: true
+error_paths:
+  - source_loc: "Endpoints/OpenFoodFactsEndpoints.cs:51"
+    trigger: "Provider network/status failure, invalid provider JSON, or the 12-second service timeout."
+    outcome: "Return Spanish ProblemDetails with 502 or 504 and a warning log."
+    contract: "Rate limit 20/minute/IP; response wrapper is { products: [...] }."
+    must_preserve: true
+concurrency:
+  model: async
+  tx_boundary: null

@@ -1,0 +1,75 @@
+flows:
+  - name: manual-meals-to-daily-summary
+    medium: database
+    key: "localStorage:nutria.v1.days[localDate].meals"
+    writer:
+      unit: food-diary
+      source_loc: "wwwroot/app.js:1698"
+    reader:
+      unit: daily-overview
+      source_loc: "wwwroot/app.js:333"
+    pairing: matched
+    must_preserve: true
+    must_confirm: null
+    verification_hint: "Add a food entry, navigate to the daily overview, and verify matching calories/macros and meal removal."
+    notes: "This is browser-local JSON state, not an actual database or server account."
+
+  - name: photo-estimates-to-daily-summary
+    medium: database
+    key: "localStorage:nutria.v1.days[localDate].meals"
+    writer:
+      unit: photo-meal
+      source_loc: "wwwroot/app.js:1953"
+    reader:
+      unit: daily-overview
+      source_loc: "wwwroot/app.js:333"
+    pairing: matched
+    must_preserve: true
+    must_confirm: null
+    verification_hint: "Complete a successful photo analysis and verify the resulting entry appears in the daily list and totals."
+    notes: "Only the returned estimate is stored; the selected photo is not saved in local state."
+
+  - name: recipe-records-to-calendar
+    medium: database
+    key: "localStorage:nutria.v1.recipes and calendar.months[month][date][slot]"
+    writer:
+      unit: recipe-library
+      source_loc: "wwwroot/app.js:1735"
+    reader:
+      unit: meal-calendar
+      source_loc: "wwwroot/app.js:994"
+    pairing: matched
+    must_preserve: true
+    must_confirm: null
+    verification_hint: "Save a recipe, assign it to a calendar slot, restart the PWA, and verify the recipe/assignment remains."
+    notes: "Calendar selections persist recipe IDs; deleting a recipe removes assignments across stored months."
+
+  - name: daily-goals-to-overview
+    medium: database
+    key: "localStorage:nutria.v1.goals"
+    writer:
+      unit: app-settings
+      source_loc: "wwwroot/app.js:1889"
+    reader:
+      unit: daily-overview
+      source_loc: "wwwroot/app.js:333"
+    pairing: matched
+    must_preserve: true
+    must_confirm: null
+    verification_hint: "Change each goal, save settings, and verify labels/progress update on the overview."
+    notes: "Goals are global local preferences, not user-profile data on the server."
+
+  - name: theme-preference-to-ui
+    medium: static
+    key: "localStorage:nutria.v1.theme -> documentElement[data-theme]"
+    writer:
+      unit: app-settings
+      source_loc: "wwwroot/app.js:1889"
+    reader:
+      unit: daily-overview
+      source_loc: "wwwroot/app.js:304"
+    pairing: matched
+    must_preserve: true
+    must_confirm: null
+    verification_hint: "Select each palette, close/reopen the app, and verify the chosen theme remains across tabs."
+    notes: "A shared CSS variable set applies the theme to all views; settings preview is reverted on dialog close unless saved."

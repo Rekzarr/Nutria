@@ -1,0 +1,21 @@
+unit: recipe-library
+bindings:
+  - type: route-declaration
+    name: "PWA hash tab #recetas and recipe-form"
+    source_loc: "wwwroot/index.html:199"
+    target: "recipe library panel"
+    must_appear_in_target: true
+    notes: "The native target may select its own navigation pattern; keep recipe authoring, saved list, and recommendations user-accessible."
+  - type: convention
+    name: "ingredient search/list event delegation and recipe form submit"
+    source_loc: "wwwroot/app.js:1707"
+    target: "recipe editor and ingredient search interaction"
+    must_appear_in_target: true
+    notes: "Ingredient lookup calls Nutria's existing HTTP contract; manual nutrient entry remains available."
+  - type: convention
+    name: "recommendation filter and save actions"
+    source_loc: "wwwroot/app.js:814"
+    target: "curated recommendation catalog"
+    must_appear_in_target: true
+    notes: "Static catalog, maximum 550 kcal per serving, time choices 15/30/45/60 minutes, category and complexity filters."
+runtime_config: []

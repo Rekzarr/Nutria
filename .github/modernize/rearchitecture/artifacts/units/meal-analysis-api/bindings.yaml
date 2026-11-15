@@ -1,0 +1,33 @@
+unit: meal-analysis-api
+bindings:
+  - type: route-declaration
+    name: "POST /api/analyze-meal"
+    source_loc: "Endpoints/MealAnalysisEndpoints.cs:28"
+    target: "frozen existing analysis endpoint"
+    must_appear_in_target: true
+    notes: "Accepts multipart fields photo/name and returns MealAnalysisResponse."
+  - type: di-registration
+    name: "IMealAnalysisService -> OpenAiMealAnalysisService"
+    source_loc: "Program.cs:14"
+    target: "server-side Responses API client"
+    must_appear_in_target: true
+    notes: "Typed HttpClient timeout is 90 seconds."
+  - type: filter
+    name: "meal-analysis fixed-window rate limit"
+    source_loc: "Program.cs:22"
+    target: "server API rate limit"
+    must_appear_in_target: true
+    notes: "10 requests/minute per remote IP, no queue."
+runtime_config:
+  - key: "OPENAI_API_KEY"
+    source_loc: "Services/OpenAiMealAnalysisService.cs:22"
+    source: env
+    default_value: "none; request returns 503 when absent"
+    must_appear_in_target: true
+    notes: "Server secret only; never embed in Android client."
+  - key: "OPENAI_MODEL"
+    source_loc: "Services/OpenAiMealAnalysisService.cs:37"
+    source: env
+    default_value: "gpt-4.1-mini"
+    must_appear_in_target: true
+    notes: "Optional server-side model override."

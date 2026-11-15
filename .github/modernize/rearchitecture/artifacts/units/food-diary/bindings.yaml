@@ -1,0 +1,15 @@
+unit: food-diary
+bindings:
+  - type: route-declaration
+    name: "PWA hash tab #comida and food-form"
+    source_loc: "wwwroot/index.html:148"
+    target: "food diary panel"
+    must_appear_in_target: true
+    notes: "Preserve the food entry calculator and 30-day history as native behavior."
+  - type: convention
+    name: "food-form input/change and submit listeners"
+    source_loc: "wwwroot/app.js:1687"
+    target: "food amount/nutrition calculator and add action"
+    must_appear_in_target: true
+    notes: "Nutrition inputs are per 100 g; amount supports grams, ounces, and servings."
+runtime_config: []

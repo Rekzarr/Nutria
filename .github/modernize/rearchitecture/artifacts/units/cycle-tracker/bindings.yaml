@@ -1,0 +1,15 @@
+unit: cycle-tracker
+bindings:
+  - type: route-declaration
+    name: "PWA hash tab #ciclo and cycle panel"
+    source_loc: "wwwroot/index.html:340"
+    target: "cycle tracker panel"
+    must_appear_in_target: true
+    notes: "Keep private menstrual data and health disclaimers in the Spanish UI."
+  - type: convention
+    name: "period, average-settings, and daily log forms"
+    source_loc: "wwwroot/app.js:1615"
+    target: "period history and daily symptom/note forms"
+    must_appear_in_target: true
+    notes: "Period and note data are currently stored only in local browser storage."
+runtime_config: []

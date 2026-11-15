@@ -1,0 +1,104 @@
+metadata:
+  generated: "2026-11-14T20:08:04Z"
+  source_tasks: ".github/modernize/rearchitecture/artifacts/t8-teamlead-plan.md"
+  last_updated: "2026-11-14T20:08:04Z"
+summary:
+  total_tasks: 1
+  completed_tasks: 1
+  in_progress_tasks: 0
+  pending_tasks: 0
+  completion_percentage: 100.0
+tasks:
+  - task_id: "T005"
+    description: "Implement shared domain rules and repository contracts"
+    status: "completed"
+    implementation:
+      files_changed:
+        - file: "android/app/src/main/java/com/nutria/app/core/model/SharedModels.kt"
+          changes:
+            - change_type: "added"
+              description: "Shared, validated domain types."
+        - file: "android/app/src/main/java/com/nutria/app/core/model/DateAndNutritionRules.kt"
+          changes:
+            - change_type: "added"
+              description: "Local-day, nutrition conversion, recipe totals and streak rules."
+        - file: "android/app/src/main/java/com/nutria/app/core/model/RecipeAndCalendarRules.kt"
+          changes:
+            - change_type: "added"
+              description: "Recommendation filtering and deterministic calendar/menu rules."
+        - file: "android/app/src/main/java/com/nutria/app/core/model/CycleRules.kt"
+          changes:
+            - change_type: "added"
+              description: "Cycle validation and non-diagnostic calendar estimates."
+        - file: "android/app/src/main/java/com/nutria/app/core/model/ActivityRules.kt"
+          changes:
+            - change_type: "added"
+              description: "Steps states, BLE heart-rate readings and workout-gap rules."
+        - file: "android/app/src/main/java/com/nutria/app/core/data/RepositoryContracts.kt"
+          changes:
+            - change_type: "added"
+              description: "Repository interfaces with privacy and transaction boundaries."
+        - file: "android/app/src/test/java/com/nutria/app/core/model/SharedDomainRulesTest.kt"
+          changes:
+            - change_type: "added"
+              description: "Nutrition/date/streak/recommendation/calendar tests."
+        - file: "android/app/src/test/java/com/nutria/app/core/model/CycleRulesTest.kt"
+          changes:
+            - change_type: "added"
+              description: "Cycle behavior tests."
+        - file: "android/app/src/test/java/com/nutria/app/core/model/ActivityRulesTest.kt"
+          changes:
+            - change_type: "added"
+              description: "Health Connect/BLE/workout state tests."
+    verification:
+      build_passed: true
+      test_results:
+        command: ".\\gradlew.bat test build assembleDebugAndroidTest --no-daemon"
+        passed: 35
+        failed: 0
+        skipped: 0
+        failures: []
+      notes: "Debug/release builds, lint/check and instrumentation APK packaging passed. Instrumentation and real Health Connect/BLE checks were not run on a device."
+    upstream_trace:
+      plan_item: "2.2"
+      requirements:
+        - "REQ-002"
+        - "REQ-003"
+        - "REQ-004"
+        - "REQ-005"
+        - "REQ-006"
+        - "REQ-007"
+        - "REQ-009"
+        - "REQ-010"
+        - "REQ-011"
+        - "REQ-012"
+        - "REQ-013"
+        - "REQ-014"
+        - "REQ-015"
+        - "REQ-016"
+        - "REQ-020"
+        - "REQ-021"
+        - "REQ-022"
+        - "REQ-023"
+        - "REQ-024"
+        - "REQ-025"
+      full_trace: "t1 REQ-002–007, REQ-009–016, REQ-020–025 → plan 2.2 → T005 → shared core rules/contracts and JVM tests"
+pending_tasks: []
+untracked_changes: []
+traceability_chain:
+  - chain_id: "TRACE-T005-CORE-DOMAIN"
+    requirement: "REQ-002–REQ-007, REQ-009–REQ-016, REQ-020–REQ-025"
+    plan_phase: "Phase 2"
+    plan_item: "2.2"
+    tasks: ["T005"]
+    files:
+      - "android/app/src/main/java/com/nutria/app/core/model/"
+      - "android/app/src/main/java/com/nutria/app/core/data/RepositoryContracts.kt"
+      - "android/app/src/test/java/com/nutria/app/core/model/"
+    status: "complete"
+validation:
+  passed: true
+  errors: []
+  warnings:
+    - "Device-backed Health Connect, BLE, and instrumentation validation remains pending."
+  blocking_issues: []

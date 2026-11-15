@@ -1,0 +1,156 @@
+batch_id: "t16"
+completed_tasks:
+  - "T007"
+blocked_tasks: []
+required_endpoints: []
+files_changed:
+  T007:
+    - file: "android/app/src/main/java/com/nutria/app/feature/diary/DiaryScreen.kt"
+      change_type: "modified"
+      description: "Entrega el formulario español, vista previa nutricional, historial editable solo hoy y controles +150/+250 ml con undo."
+    - file: "android/app/src/main/java/com/nutria/app/feature/diary/DiaryViewModel.kt"
+      change_type: "modified"
+      description: "Coordina lecturas locales, registro/borrado de comidas, eventos de agua y estado de error/confirmación."
+    - file: "android/app/src/main/java/com/nutria/app/feature/diary/FoodEntryValidation.kt"
+      change_type: "modified"
+      description: "Valida cantidad/alimento/nutrientes y calcula conversión proporcional para gramos, onzas y porciones."
+    - file: "android/app/src/main/java/com/nutria/app/data/local/DiaryLocalStore.kt"
+      change_type: "modified"
+      description: "Mantiene persistencia local y undo transaccional; convierte nutrientes a unidades enteras escaladas."
+    - file: "android/app/src/main/java/com/nutria/app/data/local/NutriaDatabase.kt"
+      change_type: "modified"
+      description: "Añade la migración Room 5→6 que conserva comidas existentes y las convierte a milli-kcal/milli-gramos."
+    - file: "android/app/src/test/java/com/nutria/app/data/local/MealRecordEntityTest.kt"
+      change_type: "created"
+      description: "Prueba el redondeo a milésimas y el recorrido entidad-dominio."
+    - file: "android/app/src/test/java/com/nutria/app/data/local/DatabaseMigrationRegistryTest.kt"
+      change_type: "modified"
+      description: "Comprueba la continuidad de la migración 5→6."
+    - file: "android/app/src/androidTest/java/com/nutria/app/data/local/DiaryLocalStoreInstrumentedTest.kt"
+      change_type: "modified"
+      description: "Añade una prueba de migración de filas v5 y conserva pruebas instrumentadas de persistencia/undo."
+    - file: "android/app/schemas/com.nutria.app.data.local.NutriaDatabase/6.json"
+      change_type: "created"
+      description: "Esquema Room exportado con columnas enteras escaladas."
+    - file: "README.md"
+      change_type: "modified"
+      description: "Actualiza en español la evidencia de build y explica que la validación en dispositivo sigue pendiente."
+upstream_artifacts_consumed:
+  T007:
+    - artifact: ".github/modernize/rearchitecture/artifacts/t1-pm-spec.md"
+      used_for: "Requisitos REQ-003, REQ-004 y REQ-005."
+    - artifact: ".github/modernize/rearchitecture/artifacts/t4-architect.md"
+      used_for: "Separación UI/ViewModel/Room, uso de día local y límites de datos."
+    - artifact: ".github/modernize/rearchitecture/artifacts/t5-ux.md"
+      used_for: "Flujos de Comida, historial de solo lectura y agua."
+    - artifact: ".github/modernize/rearchitecture/artifacts/t6-dba.md"
+      used_for: "Contrato de persistencia de nutrientes en unidades escaladas enteras."
+    - artifact: ".github/modernize/rearchitecture/artifacts/t7-teamlead.md"
+      used_for: "Capas de prueba JVM, Room y Compose y verificación honesta de dispositivo."
+    - artifact: ".github/modernize/rearchitecture/artifacts/t8-teamlead-plan.md"
+      used_for: "Alcance T007 y límites frente a Inicio/T008."
+    - artifact: ".github/modernize/rearchitecture/artifacts/t10-devops.md"
+      used_for: "Activación exacta de JDK 17 y SDK Android 36."
+    - artifact: ".github/modernize/rearchitecture/artifacts/checkpoints/t8-environment.md"
+      used_for: "Disponibilidad del emulador y límite de ejecución instrumentada."
+    - artifact: ".github/modernize/rearchitecture/artifacts/t11-frontend.md"
+      used_for: "Scaffold y comandos Gradle del proyecto."
+    - artifact: ".github/modernize/rearchitecture/artifacts/t12-dba.md"
+      used_for: "Proveedor cifrado Room y requisito de migraciones explícitas."
+    - artifact: ".github/modernize/rearchitecture/artifacts/t13-frontend.md"
+      used_for: "Integración con shell Compose y navegación española."
+    - artifact: ".github/modernize/rearchitecture/artifacts/t15-frontend.md"
+      used_for: "Modelos de comidas/agua y contrato DiaryRepository."
+    - artifact: ".github/modernize/rearchitecture/artifacts/t19.1-frontend.md"
+      used_for: "Verificación serializada después de remediar los bloqueos lint compartidos."
+evidence_mapping:
+  T007:
+    - upstream: ".github/modernize/rearchitecture/artifacts/t1-pm-spec.md#REQ-003"
+      output: "feature/diary/FoodEntryValidation.kt y DiaryScreen.kt"
+      evidence: "Conversión oz=28.3495 g, porciones por peso y validación probadas; 59 pruebas JVM pasan."
+    - upstream: ".github/modernize/rearchitecture/artifacts/t1-pm-spec.md#REQ-004"
+      output: "data/local/DiaryLocalStore.kt, feature/diary/DiaryViewModel.kt y DiaryScreen.kt"
+      evidence: "History query cubre las 30 fechas inclusivas; solo hoy permite borrar. AndroidTest se compiló/empaquetó pero no ejecutó."
+    - upstream: ".github/modernize/rearchitecture/artifacts/t1-pm-spec.md#REQ-005"
+      output: "data/local/DiaryLocalStore.kt y feature/diary/DiaryScreen.kt"
+      evidence: "Incrementos de 150/250 ml y eliminación transaccional del evento de secuencia máxima; prueba instrumentada empaquetada, runtime pendiente."
+    - upstream: ".github/modernize/rearchitecture/artifacts/t6-dba.md#Proposed local model"
+      output: "MealRecordEntity, MIGRATION_5_6 y esquema Room v6"
+      evidence: "Columnas entero escaladas y conversión a milésimas; el mapeo pasa prueba JVM y el test SQL se incluye en AndroidTest."
+    - upstream: ".github/modernize/rearchitecture/artifacts/t7-teamlead.md#Local persistence/repository integration"
+      output: "test_results y APK AndroidTest"
+      evidence: "59 pruebas JVM, build/lint serializados pasan; instrumentación no ejecutada por falta de dispositivo."
+source_references:
+  T007:
+    source_files:
+      - file: "wwwroot/app.js"
+        methods_read:
+          - "getDay"
+          - "createMealEntry"
+          - "renderMealHistory"
+          - "addMeal"
+          - "addWater"
+          - "undoLastWater"
+          - "getFoodGrams"
+          - "calculateFood"
+      - file: "wwwroot/index.html"
+        methods_read:
+          - "food-form"
+          - "meal-history"
+    branches_preserved: 20
+    validations_preserved: 4
+    error_paths_preserved: 2
+    side_effects_preserved: 4
+    notes: "El comportamiento aprobado conserva conversión y cálculo, fechas locales e incrementos de agua. La UX aprobada deja días anteriores como solo lectura, aunque la PWA permite borrar comidas pasadas."
+traceability:
+  - requirement: "REQ-003"
+    plan_item: "3.1"
+    task: "T007"
+    files:
+      - "android/app/src/main/java/com/nutria/app/feature/diary/FoodEntryValidation.kt"
+      - "android/app/src/main/java/com/nutria/app/feature/diary/DiaryScreen.kt"
+      - "android/app/src/test/java/com/nutria/app/feature/diary/FoodEntryValidatorTest.kt"
+    source_files:
+      - "wwwroot/app.js"
+      - "wwwroot/index.html"
+    status: "completed"
+  - requirement: "REQ-004"
+    plan_item: "3.1"
+    task: "T007"
+    files:
+      - "android/app/src/main/java/com/nutria/app/data/local/DiaryLocalStore.kt"
+      - "android/app/src/main/java/com/nutria/app/feature/diary/DiaryViewModel.kt"
+      - "android/app/src/main/java/com/nutria/app/feature/diary/DiaryScreen.kt"
+    source_files:
+      - "wwwroot/app.js"
+      - "wwwroot/index.html"
+    status: "completed"
+  - requirement: "REQ-005"
+    plan_item: "3.1"
+    task: "T007"
+    files:
+      - "android/app/src/main/java/com/nutria/app/data/local/DiaryLocalStore.kt"
+      - "android/app/src/main/java/com/nutria/app/feature/diary/DiaryScreen.kt"
+      - "android/app/src/androidTest/java/com/nutria/app/data/local/DiaryLocalStoreInstrumentedTest.kt"
+    source_files:
+      - "wwwroot/app.js"
+    status: "completed"
+protocol_violation: false
+errors: []
+warnings:
+  - severity: "WARNING"
+    message: "Las pruebas de Room/Compose AndroidTest se compilaron y empaquetaron, pero no se ejecutaron: adb no muestra dispositivos y emulator -accel-check devuelve 6 por falta del controlador de hipervisor."
+  - severity: "INFO"
+    message: "Lint pasa con 0 errores, 22 avisos y 1 sugerencia informativa; se conservan los avisos no bloqueantes."
+test_results:
+  T007:
+    command: "Desde android/: .\\gradlew.bat clean test build assembleDebugAndroidTest --no-daemon --no-parallel --max-workers=1 (JDK 17.0.16, Android SDK 36)"
+    passed: 59
+    failed: 0
+    skipped: 0
+    failures: []
+    build_passed: true
+    build_failure: null
+    lint: "0 errores, 22 avisos, 1 sugerencia"
+    android_instrumentation: "AndroidTest compilado y empaquetado; 0 métodos ejecutados."
+    api_endpoint_verification: "No aplica: T007 no implementa ni modifica endpoints."

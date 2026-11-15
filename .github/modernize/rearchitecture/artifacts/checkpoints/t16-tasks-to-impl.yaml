@@ -1,0 +1,86 @@
+# T007 implementation traceability checkpoint
+metadata:
+  generated: "2026-11-14"
+  source_tasks: ".github/modernize/rearchitecture/artifacts/t8-teamlead-plan.md"
+  last_updated: "2026-11-14"
+
+summary:
+  total_tasks: 1
+  completed_tasks: 1
+  in_progress_tasks: 0
+  pending_tasks: 0
+  completion_percentage: 100.0
+
+tasks:
+  - task_id: "T007"
+    description: "Implement food entry/conversions, nutrient preview, today diary add/remove, read-only 30-day history, water +150/+250 ml and last-event undo."
+    status: "completed"
+    implementation:
+      files_changed:
+        - file: "android/app/src/main/java/com/nutria/app/data/local/DiaryLocalStore.kt"
+          changes:
+            - change_type: "added"
+              description: "Room entities/DAO and local meal/water repository with transactional undo."
+        - file: "android/app/src/main/java/com/nutria/app/feature/diary/FoodEntryValidation.kt"
+          changes:
+            - change_type: "added"
+              description: "Food form validation and proportional nutrient calculation."
+        - file: "android/app/src/main/java/com/nutria/app/feature/diary/DiaryViewModel.kt"
+          changes:
+            - change_type: "added"
+              description: "Diary state and local persistence operations."
+        - file: "android/app/src/main/java/com/nutria/app/feature/diary/DiaryScreen.kt"
+          changes:
+            - change_type: "added"
+              description: "Spanish food, history and water UI."
+        - file: "android/app/src/main/java/com/nutria/app/data/local/NutriaDatabase.kt"
+          changes:
+            - change_type: "modified"
+              description: "Added the explicit diary v5→v6 migration to scaled integer nutrition columns."
+        - file: "android/app/src/test/java/com/nutria/app/data/local/MealRecordEntityTest.kt"
+          changes:
+            - change_type: "added"
+              description: "Tests milli-unit nutrition persistence conversion and round trip."
+        - file: "android/app/src/main/java/com/nutria/app/app/MainActivity.kt"
+          changes:
+            - change_type: "modified"
+              description: "Connected Comida and reusable Inicio water card."
+      commit_hash: ""
+      pr_link: ""
+    verification:
+      build_passed: true
+      test_results:
+        command: "Desde android/: .\\gradlew.bat clean test build assembleDebugAndroidTest --no-daemon --no-parallel --max-workers=1"
+        passed: 59
+        failed: 0
+        skipped: 0
+        failures: []
+      notes: "Clean serialized Gradle build, lint and AndroidTest APK packaging passed; 59 JVM tests passed. Android instrumentation is unexecuted because no connected device is available and emulator acceleration is blocked."
+    upstream_trace:
+      plan_item: "3.1"
+      requirements:
+        - "REQ-003"
+        - "REQ-004"
+        - "REQ-005"
+      full_trace: "REQ-003–REQ-005 → Phase 3.1 → T007 → DiaryLocalStore, FoodEntryValidation, DiaryViewModel, DiaryScreen and tests."
+
+traceability_chain:
+  - chain_id: "TRACE-REQ-003-005-T007"
+    requirement: "REQ-003–REQ-005"
+    plan_phase: "Phase 3 — Priority feature slices"
+    plan_item: "3.1"
+    tasks:
+      - "T007"
+    files:
+      - "android/app/src/main/java/com/nutria/app/data/local/DiaryLocalStore.kt"
+      - "android/app/src/main/java/com/nutria/app/feature/diary/FoodEntryValidation.kt"
+      - "android/app/src/main/java/com/nutria/app/feature/diary/DiaryViewModel.kt"
+      - "android/app/src/main/java/com/nutria/app/feature/diary/DiaryScreen.kt"
+    status: "complete"
+
+validation:
+  passed: true
+  errors: []
+  warnings:
+    - "La instrumentación Android está compilada/empaquetada pero no ejecutada en dispositivo."
+  blocking_issues: []

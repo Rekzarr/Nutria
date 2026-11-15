@@ -1,0 +1,37 @@
+unit: cycle-tracker
+side_effects:
+  - source_loc: "wwwroot/app.js:1679"
+    effect: "Stores period start/end dates after validation and overlap checks."
+    must_preserve: true
+  - source_loc: "wwwroot/app.js:1625"
+    effect: "Persists configured average cycle and period lengths."
+    must_preserve: true
+  - source_loc: "wwwroot/app.js:1637"
+    effect: "Persists daily flow, pain, mood, and optional private note by local date."
+    must_preserve: true
+branches:
+  - source_loc: "wwwroot/app.js:1659"
+    condition: "No valid period start date is on or before today."
+    behavior: "Show an empty/unknown phase state; do not fabricate an estimate."
+    must_preserve: true
+  - source_loc: "wwwroot/app.js:1675"
+    condition: "A period overlaps an existing period, starts in the future, or has invalid/reversed dates."
+    behavior: "Reject the record and explain the date problem."
+    must_preserve: true
+  - source_loc: "wwwroot/app.js:492"
+    condition: "Latest period and cycle averages permit a calendar phase estimate."
+    behavior: "Show approximate menstrual/follicular/ovulatory/luteal/late state and expected next start with a non-diagnostic disclaimer."
+    must_preserve: true
+  - source_loc: "wwwroot/app.js:649"
+    condition: "Daily log history is displayed."
+    behavior: "Show at most seven logged days through today, including notes where present."
+    must_preserve: true
+error_paths:
+  - source_loc: "wwwroot/app.js:1659"
+    trigger: "Period/cycle validation fails."
+    outcome: "Show a Spanish validation message and leave stored records unchanged."
+    contract: "Calendar estimates only; never claim confirmation of ovulation, fertility, pregnancy, or diagnosis."
+    must_preserve: true
+concurrency:
+  model: event-loop
+  tx_boundary: null

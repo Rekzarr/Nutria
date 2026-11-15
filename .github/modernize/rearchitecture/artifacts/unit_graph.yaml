@@ -1,0 +1,161 @@
+units:
+  - name: daily-overview
+    trigger: page
+    trigger_detail: "PWA tab/hash #inicio; summary of today's nutrients, water, streak, and logged meals"
+    source_anchors: []
+    exported_signature: []
+    dynamic_entrypoints: []
+    depends_on: []
+    shared_refs:
+      - module: browser-client-runtime
+        used_fields: [STORAGE_KEY, state, getDay(), mealTotals(), saveState(), render()]
+      - module: shared-pwa-shell
+        used_fields: [tab-panel-shell, primary-navigation, toast-region]
+      - module: shared-presentation
+        used_fields: [responsive-layout, theme-tokens]
+    notes: "The view markup and event handlers share wwwroot/index.html and wwwroot/app.js with other tabs; their files are registered once as shared modules to obey the unique-source-anchor rule."
+
+  - name: food-diary
+    trigger: page
+    trigger_detail: "PWA tab/hash #comida; manual food calculator and 30-day meal history"
+    source_anchors: []
+    exported_signature: []
+    dynamic_entrypoints: []
+    depends_on: []
+    shared_refs:
+      - module: browser-client-runtime
+        used_fields: [state, getDay(), saveState(), addMeal(), calculateFood()]
+      - module: shared-pwa-shell
+        used_fields: [tab-panel-shell, primary-navigation, toast-region]
+      - module: shared-presentation
+        used_fields: [responsive-layout, theme-tokens]
+    notes: "The view markup and event handlers share wwwroot/index.html and wwwroot/app.js with other tabs."
+
+  - name: recipe-library
+    trigger: page
+    trigger_detail: "PWA tab/hash #recetas; saved recipes, ingredient lookup, and recommendations"
+    source_anchors: []
+    exported_signature: []
+    dynamic_entrypoints: []
+    depends_on:
+      - unit: ingredient-search-api
+        via: "GET /api/ingredients/search?query=..."
+    shared_refs:
+      - module: browser-client-runtime
+        used_fields: [state, saveState(), addMeal(), renderRecipes()]
+      - module: shared-pwa-shell
+        used_fields: [tab-panel-shell, primary-navigation, toast-region]
+      - module: shared-presentation
+        used_fields: [responsive-layout, theme-tokens]
+    notes: "The view markup and event handlers share wwwroot/index.html and wwwroot/app.js with other tabs."
+
+  - name: photo-meal
+    trigger: page
+    trigger_detail: "PWA tab/hash #foto; select/capture image, request estimate, and save it as today's meal"
+    source_anchors: []
+    exported_signature: []
+    dynamic_entrypoints: []
+    depends_on:
+      - unit: meal-analysis-api
+        via: "POST /api/analyze-meal multipart/form-data"
+    shared_refs:
+      - module: browser-client-runtime
+        used_fields: [state, saveState(), addMeal()]
+      - module: shared-pwa-shell
+        used_fields: [tab-panel-shell, primary-navigation, toast-region]
+      - module: shared-presentation
+        used_fields: [responsive-layout, theme-tokens]
+    notes: "The view markup and event handlers share wwwroot/index.html and wwwroot/app.js with other tabs."
+
+  - name: meal-calendar
+    trigger: page
+    trigger_detail: "PWA tab/hash #agua (visible label: Calendario/Plan); monthly recipe plan and week/month menu generation"
+    source_anchors: []
+    exported_signature: []
+    dynamic_entrypoints: []
+    depends_on: []
+    shared_refs:
+      - module: browser-client-runtime
+        used_fields: [state, saveState(), renderCalendar(), generateMenu()]
+      - module: shared-pwa-shell
+        used_fields: [tab-panel-shell, primary-navigation, calendar-dialogs]
+      - module: shared-presentation
+        used_fields: [responsive-layout, theme-tokens]
+    notes: "Calendar plans reference recipe-library records in shared localStorage state."
+
+  - name: cycle-tracker
+    trigger: page
+    trigger_detail: "PWA tab/hash #ciclo; period dates, approximate phase, cycle settings, daily symptoms, and notes"
+    source_anchors: []
+    exported_signature: []
+    dynamic_entrypoints: []
+    depends_on: []
+    shared_refs:
+      - module: browser-client-runtime
+        used_fields: [state, saveState(), getCycleStatus(), renderCycle()]
+      - module: shared-pwa-shell
+        used_fields: [tab-panel-shell, primary-navigation, toast-region]
+      - module: shared-presentation
+        used_fields: [responsive-layout, theme-tokens]
+    notes: "Cycle data is local-only; estimates are calendar-derived and explicitly non-diagnostic."
+
+  - name: app-settings
+    trigger: page
+    trigger_detail: "Settings dialog opened from the Ajustes button in the global top bar"
+    source_anchors: []
+    exported_signature: []
+    dynamic_entrypoints: []
+    depends_on:
+      - unit: daily-overview
+        via: "Persisted daily goals consumed when the overview renders progress"
+    shared_refs:
+      - module: browser-client-runtime
+        used_fields: [state, saveState(), APP_THEMES, render()]
+      - module: shared-pwa-shell
+        used_fields: [global-settings-dialog, primary-navigation]
+      - module: shared-presentation
+        used_fields: [theme-tokens]
+    notes: "Settings is a global dialog, not a separate URL route; its source file is shared with the tab views."
+
+  - name: meal-analysis-api
+    trigger: route
+    trigger_detail: "POST /api/analyze-meal"
+    source_anchors:
+      - path: Endpoints/MealAnalysisEndpoints.cs
+        line: 26
+      - path: Services/IMealAnalysisService.cs
+      - path: Services/OpenAiMealAnalysisService.cs
+      - path: Services/AiProviderException.cs
+    exported_signature:
+      - method: "POST /api/analyze-meal; multipart photo + optional name -> MealAnalysisResponse"
+        source_loc: "Endpoints/MealAnalysisEndpoints.cs:28"
+        stability: frozen
+    dynamic_entrypoints:
+      - target: Nutria.Services.OpenAiMealAnalysisService
+        mechanism: di
+        source_loc: "Program.cs:14"
+    depends_on: []
+    shared_refs:
+      - module: aspnet-api-host
+        used_fields: [dependency-injection, exception-pipeline, rate-limits]
+
+  - name: ingredient-search-api
+    trigger: route
+    trigger_detail: "GET /api/ingredients/search?query={ingredient}"
+    source_anchors:
+      - path: Endpoints/OpenFoodFactsEndpoints.cs
+        line: 25
+      - path: Services/IOpenFoodFactsService.cs
+      - path: Services/OpenFoodFactsService.cs
+    exported_signature:
+      - method: "GET /api/ingredients/search?query=... -> IngredientSearchResponse"
+        source_loc: "Endpoints/OpenFoodFactsEndpoints.cs:27"
+        stability: frozen
+    dynamic_entrypoints:
+      - target: Nutria.Services.OpenFoodFactsService
+        mechanism: di
+        source_loc: "Program.cs:18"
+    depends_on: []
+    shared_refs:
+      - module: aspnet-api-host
+        used_fields: [dependency-injection, exception-pipeline, rate-limits]

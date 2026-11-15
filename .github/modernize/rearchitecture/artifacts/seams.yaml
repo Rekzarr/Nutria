@@ -1,0 +1,41 @@
+seams:
+  - id: "Endpoints/MealAnalysisEndpoints.cs:28"
+    description: "Declared client/server cut for native meal-photo analysis; the mobile client must use the existing server endpoint."
+    source: declared
+    cut_between:
+      migrated_side: photo-meal
+      frozen_side: meal-analysis-api
+    protocol_shift: null
+    frozen_side_rule: "meal-analysis-api MUST NOT be changed as part of the native client cutover unless a concrete incompatibility is evidenced and approved; preserve the existing route and request/response/error behavior."
+    bridge_points:
+      - at: "Native photo capture/selection to existing POST /api/analyze-meal"
+        from_form: "Browser FormData with photo file and optional name"
+        to_form: "Native HTTP multipart/form-data with parts photo (filename/media type) and name (text)"
+        mapping_rule: "Map the selected image bytes to the multipart part named photo; map optional user-entered dish label to name; parse JSON fields name, calories, protein, carbs, fat; retain ProblemDetails/status error semantics."
+        edge_cases:
+          - "Reject or explain files not JPG, PNG, or WebP and files over 10 MiB before request, matching current user-visible limits."
+          - "Do not add the meal if the response is invalid, non-finite, incomplete, or unsuccessful."
+          - "Show an honest unavailable/timeout/rate-limit message; do not call the provider directly."
+        idempotency_retry: "A photo-estimate POST can incur provider cost; do not silently retry a timed-out request or create duplicate diary entries."
+        fallback: "Keep the photo uncommitted in the diary on network/provider failure and allow the user to retry explicitly."
+        must_preserve: true
+
+  - id: "Endpoints/OpenFoodFactsEndpoints.cs:27"
+    description: "Declared client/server cut for ingredient search; the native recipe editor must call the existing Nutria search endpoint."
+    source: declared
+    cut_between:
+      migrated_side: recipe-library
+      frozen_side: ingredient-search-api
+    protocol_shift: null
+    frozen_side_rule: "ingredient-search-api MUST NOT be changed as part of the native client cutover unless a concrete incompatibility is evidenced and approved; preserve route, query, result, and error behavior."
+    bridge_points:
+      - at: "Native ingredient search to existing GET /api/ingredients/search"
+        from_form: "Browser GET with URL-encoded query parameter"
+        to_form: "Native HTTP GET with URL-encoded query parameter query"
+        mapping_rule: "Send the ingredient name as query; parse products[].code/name/brand and per-100-g calories/protein/carbs/fat; import a chosen result into its ingredient row without replacing its edible-weight amount."
+        edge_cases:
+          - "An empty/overlong query is rejected; an empty product list is distinct from a network or provider error."
+          - "Retain the per-100-g basis and surface the existing 502/504/429 conditions without treating them as zero-nutrient products."
+        idempotency_retry: "Search is read-only; an explicitly initiated repeat search is safe."
+        fallback: "Keep manual nutrient entry available when there are no complete provider results or the service is unreachable."
+        must_preserve: true

@@ -1,0 +1,15 @@
+unit: daily-overview
+bindings:
+  - type: route-declaration
+    name: "PWA hash tab #inicio and tab-panel id inicio"
+    source_loc: "wwwroot/index.html:66"
+    target: "daily overview panel"
+    must_appear_in_target: true
+    notes: "Android navigation is a target design decision; preserve this externally visible overview surface, not the browser hash mechanism."
+  - type: convention
+    name: "water amount and undo button actions"
+    source_loc: "wwwroot/app.js:1786"
+    target: "daily hydration controls"
+    must_appear_in_target: true
+    notes: "Quick-add amounts are 150 ml and 250 ml; undo applies to the most recent event."
+runtime_config: []

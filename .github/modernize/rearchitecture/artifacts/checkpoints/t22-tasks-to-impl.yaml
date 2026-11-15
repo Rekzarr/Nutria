@@ -1,0 +1,109 @@
+# Tasks-to-Implementation Traceability Checkpoint
+metadata:
+  generated: "2026-11-14T20:35:56Z"
+  source_tasks: ".github/modernize/rearchitecture/artifacts/t8-teamlead-plan.md#T016"
+  last_updated: "2026-11-14T20:35:56Z"
+
+summary:
+  total_tasks: 1
+  completed_tasks: 0
+  in_progress_tasks: 1
+  pending_tasks: 0
+  completion_percentage: 0.0
+
+tasks:
+  - task_id: "T016"
+    description: "Implement goals, four themes, service URL, and Spanish privacy/settings disclosures."
+    status: "blocked"
+    implementation:
+      files_changed:
+        - file: "android/app/src/main/java/com/nutria/app/feature/settings/SettingsScreen.kt"
+          change_type: "created"
+          description: "Settings UI, theme preview/save/cancel, and privacy disclosures."
+        - file: "android/app/src/main/java/com/nutria/app/feature/settings/SettingsValidation.kt"
+          change_type: "created"
+          description: "Goal and service URL validation."
+        - file: "android/app/src/main/java/com/nutria/app/data/local/NutritionGoalsRoom.kt"
+          change_type: "created"
+          description: "Encrypted Room goal schema and repository."
+        - file: "android/app/src/main/java/com/nutria/app/data/remote/ConfiguredNutriaApiClientFactory.kt"
+          change_type: "created"
+          description: "Configured API-client factory; preserves typed server contract."
+        - file: "android/app/src/main/java/com/nutria/app/app/NutriaMaterialTheme.kt"
+          change_type: "created"
+          description: "Existing four theme options mapped to Material schemes."
+        - file: "android/app/src/main/java/com/nutria/app/core/data/RepositoryContracts.kt"
+          change_type: "modified"
+          description: "Settings preferences contract."
+        - file: "android/app/src/main/java/com/nutria/app/data/local/PreferencesStore.kt"
+          change_type: "modified"
+          description: "Persists theme and service URL in DataStore."
+        - file: "android/app/src/main/java/com/nutria/app/data/local/NutriaDatabase.kt"
+          change_type: "modified"
+          description: "Registers goal entity and 4-to-5 migration."
+        - file: "android/app/src/main/java/com/nutria/app/app/MainActivity.kt"
+          change_type: "modified"
+          description: "Integrates settings and saved app theme."
+        - file: "android/app/src/main/java/com/nutria/app/app/NutriaApplication.kt"
+          change_type: "modified"
+          description: "Exposes app-scoped repositories."
+        - file: "android/app/src/main/res/values/strings.xml"
+          change_type: "modified"
+          description: "Spanish settings/privacy strings."
+        - file: "android/app/src/test/java/com/nutria/app/feature/settings/SettingsValidationTest.kt"
+          change_type: "created"
+          description: "Goal and URL validation unit tests."
+        - file: "android/app/src/test/java/com/nutria/app/data/remote/ConfiguredNutriaApiClientFactoryTest.kt"
+          change_type: "created"
+          description: "Configured client unit tests."
+        - file: "android/app/src/androidTest/java/com/nutria/app/data/local/GoalsRoomRepositoryInstrumentedTest.kt"
+          change_type: "created"
+          description: "Room goals persistence instrumentation test."
+        - file: "android/app/src/androidTest/java/com/nutria/app/feature/settings/SettingsScreenTest.kt"
+          change_type: "created"
+          description: "Theme and privacy Compose instrumentation tests."
+        - file: "android/app/build.gradle.kts"
+          change_type: "modified"
+          description: "Enables BuildConfig generation."
+        - file: "android/app/src/test/java/com/nutria/app/data/local/DatabaseMigrationRegistryTest.kt"
+          change_type: "modified"
+          description: "Checks migration continuity through version 5."
+        - file: "android/app/src/androidTest/java/com/nutria/app/data/local/PreferencesStoreInstrumentedTest.kt"
+          change_type: "modified"
+          description: "Checks settings preference persistence."
+    verification:
+      build_passed: false
+      test_results:
+        command: ".\\gradlew.bat :app:testDebugUnitTest --rerun-tasks --no-daemon --max-workers=1"
+        passed: 58
+        failed: 0
+        skipped: 0
+        failures: []
+      notes: "Android test sources compile, but instrumentation runtime is unavailable. The full command fails at :app:lintDebug on shared-project errors; no t22 settings source is listed in the lint report."
+    upstream_trace:
+      plan_item: "4.5"
+      requirements: ["REQ-020", "REQ-022", "REQ-026"]
+      full_trace: "REQ-020/022/026 → Phase 4.5 → T016 → settings UI, goal Room repository, preference store, and tests"
+
+pending_tasks: []
+untracked_changes: []
+traceability_chain:
+  - chain_id: "TRACE-T016"
+    requirement: "REQ-020"
+    plan_phase: "Phase 4"
+    plan_item: "4.5"
+    tasks: ["T016"]
+    files:
+      - "android/app/src/main/java/com/nutria/app/feature/settings/SettingsScreen.kt"
+      - "android/app/src/main/java/com/nutria/app/feature/settings/SettingsValidation.kt"
+      - "android/app/src/main/java/com/nutria/app/data/local/NutritionGoalsRoom.kt"
+      - "android/app/src/main/java/com/nutria/app/data/local/PreferencesStore.kt"
+    status: "partial"
+validation:
+  passed: false
+  errors: []
+  warnings:
+    - "Full Gradle build is blocked by shared lint errors outside t22 settings sources."
+    - "Instrumentation runtime is unverified because no Android device is connected."
+  blocking_issues:
+    - "Resolve the shared :app:lintDebug findings and rerun the full Gradle verification command before marking T016 complete."

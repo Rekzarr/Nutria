@@ -1,0 +1,28 @@
+unit: food-diary
+side_effects:
+  - source_loc: "wwwroot/app.js:1543"
+    effect: "Calculates a meal's nutrients by scaling per-100-g values to the entered amount and unit."
+    must_preserve: true
+  - source_loc: "wwwroot/app.js:1698"
+    effect: "Adds the calculated food entry to the current day's local diary and resets the form."
+    must_preserve: true
+  - source_loc: "wwwroot/app.js:422"
+    effect: "Displays meal history for the most recent 30 local calendar days."
+    must_preserve: true
+branches:
+  - source_loc: "wwwroot/app.js:1534"
+    condition: "Unit is ounces."
+    behavior: "Convert using 28.3495 grams per ounce."
+    must_preserve: true
+  - source_loc: "wwwroot/app.js:1534"
+    condition: "Unit is a serving."
+    behavior: "Multiply serving count by user-entered grams per serving."
+    must_preserve: true
+  - source_loc: "wwwroot/app.js:422"
+    condition: "No meals exist in the last 30 days."
+    behavior: "Show an empty-history message."
+    must_preserve: true
+error_paths: []
+concurrency:
+  model: event-loop
+  tx_boundary: null

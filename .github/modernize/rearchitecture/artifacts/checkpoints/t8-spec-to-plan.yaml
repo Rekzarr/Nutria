@@ -1,0 +1,332 @@
+# Spec-to-Plan Traceability Checkpoint
+metadata:
+  generated: "2026-11-14"
+  source_spec: ".github/modernize/rearchitecture/artifacts/t1-pm-spec.md"
+  target_plan: ".github/modernize/rearchitecture/artifacts/t8-teamlead-plan.md"
+
+summary:
+  total_requirements: 26
+  covered_requirements: 26
+  missing_requirements: 0
+  coverage_percentage: 100.0
+
+requirements:
+  - req_id: "REQ-001"
+    req_description: "Spanish navigation, localization and narrow-screen usability"
+    priority: "P1"
+    plan_mapping:
+      phase: "Phase-1 / Phase-3"
+      phase_name: "Setup / Priority 1 user stories"
+      items:
+        - item_id: "1.2"
+          description: "Native app structure and Spanish navigation shell"
+        - item_id: "3.2"
+          description: "Inicio summary and user-facing navigation integration"
+    notes: "End-to-end locale/navigation evidence is also required in 5.1."
+  - req_id: "REQ-002"
+    req_description: "Daily nutrition summary, goals and consecutive-day streak"
+    priority: "P1"
+    plan_mapping:
+      phase: "Phase-3"
+      phase_name: "Priority 1 user stories"
+      items:
+        - item_id: "3.1"
+          description: "Diary and water persistence"
+        - item_id: "3.2"
+          description: "Inicio totals and streak"
+    notes: ""
+  - req_id: "REQ-003"
+    req_description: "Food entry and gram/ounce/portion nutrient calculations"
+    priority: "P1"
+    plan_mapping:
+      phase: "Phase-3"
+      phase_name: "Priority 1 user stories"
+      items:
+        - item_id: "2.2"
+          description: "Shared nutrition domain rules"
+        - item_id: "3.1"
+          description: "Food entry and diary"
+    notes: ""
+  - req_id: "REQ-004"
+    req_description: "Thirty-day grouped history and today-only editability"
+    priority: "P1"
+    plan_mapping:
+      phase: "Phase-3"
+      phase_name: "Priority 1 user stories"
+      items:
+        - item_id: "2.1"
+          description: "Meal persistence"
+        - item_id: "3.1"
+          description: "Diary history and removal"
+    notes: ""
+  - req_id: "REQ-005"
+    req_description: "Water increments, progress and last-entry undo"
+    priority: "P1"
+    plan_mapping:
+      phase: "Phase-3"
+      phase_name: "Priority 1 user stories"
+      items:
+        - item_id: "2.1"
+          description: "Water-event persistence"
+        - item_id: "3.1"
+          description: "Water logging and undo"
+    notes: ""
+  - req_id: "REQ-006"
+    req_description: "Confirmed clear-today operation isolated to meals and water"
+    priority: "P1"
+    plan_mapping:
+      phase: "Phase-3"
+      phase_name: "Priority 1 user stories"
+      items:
+        - item_id: "2.1"
+          description: "Transactional clear-today persistence boundary"
+        - item_id: "3.2"
+          description: "Confirmed clear-today user flow"
+    notes: ""
+  - req_id: "REQ-007"
+    req_description: "Recipe authoring and calculated per-serving nutrition"
+    priority: "P1"
+    plan_mapping:
+      phase: "Phase-3"
+      phase_name: "Priority 1 user stories"
+      items:
+        - item_id: "2.1"
+          description: "Recipe and ingredient persistence"
+        - item_id: "2.2"
+          description: "Recipe calculation rules"
+        - item_id: "3.3"
+          description: "Recipe authoring flow"
+    notes: ""
+  - req_id: "REQ-008"
+    req_description: "Preserved Open Food Facts ingredient lookup contract"
+    priority: "P1"
+    plan_mapping:
+      phase: "Phase-2 / Phase-3"
+      phase_name: "Foundational capabilities / Priority 1 user stories"
+      items:
+        - item_id: "2.3"
+          description: "Typed Nutria API client"
+        - item_id: "3.3"
+          description: "Ingredient lookup/import/manual fallback"
+    notes: "GET route remains unchanged."
+  - req_id: "REQ-009"
+    req_description: "Recipe book, diary integration and assignment-safe deletion"
+    priority: "P1"
+    plan_mapping:
+      phase: "Phase-2 / Phase-3"
+      phase_name: "Foundational capabilities / Priority 1 user stories"
+      items:
+        - item_id: "2.1"
+          description: "Recipe and calendar persistence/transaction"
+        - item_id: "3.3"
+          description: "Recipe book and diary integration"
+    notes: ""
+  - req_id: "REQ-010"
+    req_description: "Eleven local recipe recommendations and filters"
+    priority: "P2"
+    plan_mapping:
+      phase: "Phase-4"
+      phase_name: "Priority 2 user stories"
+      items:
+        - item_id: "2.2"
+          description: "Recommendation domain rules"
+        - item_id: "4.1"
+          description: "Recommendations UI and save behavior"
+    notes: ""
+  - req_id: "REQ-011"
+    req_description: "Monday-first meal calendar with persistent manual assignments"
+    priority: "P2"
+    plan_mapping:
+      phase: "Phase-2 / Phase-4"
+      phase_name: "Foundational capabilities / Priority 2 user stories"
+      items:
+        - item_id: "2.1"
+          description: "Calendar assignment persistence"
+        - item_id: "4.2"
+          description: "Meal calendar flow"
+    notes: ""
+  - req_id: "REQ-012"
+    req_description: "Week/month random menu generation and replacement behavior"
+    priority: "P2"
+    plan_mapping:
+      phase: "Phase-2 / Phase-4"
+      phase_name: "Foundational capabilities / Priority 2 user stories"
+      items:
+        - item_id: "2.2"
+          description: "Calendar generation domain rules"
+        - item_id: "4.2"
+          description: "Week/month generation flow"
+    notes: ""
+  - req_id: "REQ-013"
+    req_description: "Period history, correction and validation"
+    priority: "P2"
+    plan_mapping:
+      phase: "Phase-2 / Phase-4"
+      phase_name: "Foundational capabilities / Priority 2 user stories"
+      items:
+        - item_id: "2.1"
+          description: "Encrypted period storage"
+        - item_id: "4.3"
+          description: "Cycle history actions"
+    notes: ""
+  - req_id: "REQ-014"
+    req_description: "Cycle settings and approximate date/phase estimates"
+    priority: "P2"
+    plan_mapping:
+      phase: "Phase-2 / Phase-4"
+      phase_name: "Foundational capabilities / Priority 2 user stories"
+      items:
+        - item_id: "2.2"
+          description: "Cycle domain and fixed-clock rules"
+        - item_id: "4.3"
+          description: "Cycle estimates and configuration"
+    notes: ""
+  - req_id: "REQ-015"
+    req_description: "Private local flow/pain/mood/note journal"
+    priority: "P2"
+    plan_mapping:
+      phase: "Phase-2 / Phase-4"
+      phase_name: "Foundational capabilities / Priority 2 user stories"
+      items:
+        - item_id: "2.1"
+          description: "Encrypted cycle journal persistence"
+        - item_id: "4.3"
+          description: "Private daily journal flow"
+    notes: ""
+  - req_id: "REQ-016"
+    req_description: "Cycle-estimate and non-medical safety language"
+    priority: "P2"
+    plan_mapping:
+      phase: "Phase-4"
+      phase_name: "Priority 2 user stories"
+      items:
+        - item_id: "4.3"
+          description: "Spanish safety language adjacent to estimates"
+    notes: ""
+  - req_id: "REQ-017"
+    req_description: "Photo selection, explicit analysis and approximate meal entry"
+    priority: "P2"
+    plan_mapping:
+      phase: "Phase-2 / Phase-4"
+      phase_name: "Foundational capabilities / Priority 2 user stories"
+      items:
+        - item_id: "2.3"
+          description: "Photo endpoint client"
+        - item_id: "4.4"
+          description: "Explicit photo-analysis flow"
+    notes: ""
+  - req_id: "REQ-018"
+    req_description: "Existing photo API contract and actionable failure states"
+    priority: "P2"
+    plan_mapping:
+      phase: "Phase-2 / Phase-4"
+      phase_name: "Foundational capabilities / Priority 2 user stories"
+      items:
+        - item_id: "2.3"
+          description: "Typed multipart client and error contract tests"
+        - item_id: "4.4"
+          description: "Photo result validation and no-write failures"
+    notes: "POST route remains unchanged and is not automatically retried."
+  - req_id: "REQ-019"
+    req_description: "OpenAI credential remains server-side; photo consent is explicit"
+    priority: "P2"
+    plan_mapping:
+      phase: "Phase-2 / Phase-4"
+      phase_name: "Foundational capabilities / Priority 2 user stories"
+      items:
+        - item_id: "2.3"
+          description: "No-secret/no-provider-call HTTP boundary"
+        - item_id: "4.4"
+          description: "Photo disclosure and user-triggered request"
+    notes: ""
+  - req_id: "REQ-020"
+    req_description: "Goals and four persistent/reversible themes"
+    priority: "P2"
+    plan_mapping:
+      phase: "Phase-2 / Phase-4"
+      phase_name: "Foundational capabilities / Priority 2 user stories"
+      items:
+        - item_id: "2.1"
+          description: "Non-health preference persistence boundary"
+        - item_id: "4.5"
+          description: "Goals, themes and settings"
+    notes: ""
+  - req_id: "REQ-021"
+    req_description: "Runtime Health Connect permission and actual daily steps"
+    priority: "P1"
+    plan_mapping:
+      phase: "Phase-3"
+      phase_name: "Priority 1 user stories"
+      items:
+        - item_id: "3.4"
+          description: "Health Connect read flow"
+    notes: "Requires actual compatible-device evidence in 5.2."
+  - req_id: "REQ-022"
+    req_description: "Honest Health Connect unavailable/denied/empty/error states and disclosure"
+    priority: "P1"
+    plan_mapping:
+      phase: "Phase-3 / Phase-4"
+      phase_name: "Priority 1 user stories / Priority 2 user stories"
+      items:
+        - item_id: "3.4"
+          description: "Permission/provider/no-data/error states"
+        - item_id: "4.5"
+          description: "Data-flow privacy disclosure"
+    notes: ""
+  - req_id: "REQ-023"
+    req_description: "Explicit generic BLE Heart Rate GATT connect/disconnect and failure states"
+    priority: "P1"
+    plan_mapping:
+      phase: "Phase-3"
+      phase_name: "Priority 1 user stories"
+      items:
+        - item_id: "3.5"
+          description: "BLE connection and state handling"
+    notes: "Requires compatible physical-band validation in 5.2."
+  - req_id: "REQ-024"
+    req_description: "Explicit workouts and actual received HR readings only"
+    priority: "P1"
+    plan_mapping:
+      phase: "Phase-2 / Phase-3"
+      phase_name: "Foundational capabilities / Priority 1 user stories"
+      items:
+        - item_id: "2.1"
+          description: "Workout/session/sample persistence"
+        - item_id: "3.5"
+          description: "Explicit workout and live sample flow"
+    notes: ""
+  - req_id: "REQ-025"
+    req_description: "BLE stale/lost/background lifecycle gaps and truthful persistence"
+    priority: "P1"
+    plan_mapping:
+      phase: "Phase-2 / Phase-3"
+      phase_name: "Foundational capabilities / Priority 1 user stories"
+      items:
+        - item_id: "2.2"
+          description: "BLE freshness and gap state rules"
+        - item_id: "3.5"
+          description: "Workout lifecycle integration"
+    notes: ""
+  - req_id: "REQ-026"
+    req_description: "BLE and local-record disclosure/privacy boundary"
+    priority: "P1"
+    plan_mapping:
+      phase: "Phase-2 / Phase-3 / Phase-4"
+      phase_name: "Foundational capabilities / Priority 1 user stories / Priority 2 user stories"
+      items:
+        - item_id: "2.1"
+          description: "Private local workout persistence"
+        - item_id: "3.5"
+          description: "BLE data-flow disclosure"
+        - item_id: "4.5"
+          description: "Privacy and data-flow settings"
+    notes: ""
+
+missing_requirements: []
+orphan_plan_items: []
+
+validation:
+  passed: true
+  errors: []
+  warnings:
+    - "Constitution formal ratification date remains pending; see plan Open Items."

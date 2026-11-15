@@ -1,0 +1,15 @@
+unit: app-settings
+bindings:
+  - type: convention
+    name: "Ajustes button opens goals-dialog; form submits daily goals and theme"
+    source_loc: "wwwroot/index.html:63"
+    target: "native settings surface"
+    must_appear_in_target: true
+    notes: "Includes five daily goals and four themes; target should preserve preview/save/cancel semantics."
+  - type: convention
+    name: "theme preference applied to the document root"
+    source_loc: "wwwroot/app.js:304"
+    target: "application theme preference"
+    must_appear_in_target: true
+    notes: "Theme is persisted in the same local state object."
+runtime_config: []

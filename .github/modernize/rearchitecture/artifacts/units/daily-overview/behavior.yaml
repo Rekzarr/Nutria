@@ -1,0 +1,36 @@
+unit: daily-overview
+side_effects:
+  - source_loc: "wwwroot/app.js:333"
+    effect: "Reads current local-date meals and water, computes calorie/macronutrient totals and progress against saved goals, and renders the daily summary."
+    must_preserve: true
+  - source_loc: "wwwroot/app.js:1510"
+    effect: "Adds a selected water amount to the current day and appends the amount to waterEntries for undo."
+    must_preserve: true
+  - source_loc: "wwwroot/app.js:1519"
+    effect: "Undo removes only the latest water event and updates the daily total."
+    must_preserve: true
+  - source_loc: "wwwroot/app.js:380"
+    effect: "Removes an individually selected meal from its recorded day, including history rows."
+    must_preserve: true
+branches:
+  - source_loc: "wwwroot/app.js:380"
+    condition: "Current day has no meals."
+    behavior: "Render an empty state and a link to food entry."
+    must_preserve: true
+  - source_loc: "wwwroot/app.js:1510"
+    condition: "Water amount action is 150 ml or 250 ml."
+    behavior: "Add that exact amount; maintain a per-event undo stack and disable undo when no water remains."
+    must_preserve: true
+  - source_loc: "wwwroot/app.js:362"
+    condition: "A previous local day contains neither water nor meals."
+    behavior: "Stop counting the consecutive-day streak."
+    must_preserve: true
+error_paths:
+  - source_loc: "wwwroot/app.js:295"
+    trigger: "Browser storage write fails or quota is exceeded."
+    outcome: "Log the failure and show a toast that changes could not be saved on this device."
+    contract: "User-visible local persistence warning; data is not synchronized to a server."
+    must_preserve: true
+concurrency:
+  model: event-loop
+  tx_boundary: null

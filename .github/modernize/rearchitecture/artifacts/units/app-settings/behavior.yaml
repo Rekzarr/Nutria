@@ -1,0 +1,26 @@
+unit: app-settings
+side_effects:
+  - source_loc: "wwwroot/app.js:1889"
+    effect: "Persists calorie, water, protein, carbohydrate, and fat targets and selected color theme."
+    must_preserve: true
+  - source_loc: "wwwroot/app.js:1877"
+    effect: "Previews a selected theme while the settings dialog is open, then reverts it if the dialog closes without saving."
+    must_preserve: true
+branches:
+  - source_loc: "wwwroot/app.js:1878"
+    condition: "Selected theme is one of sage, ocean, lavender, coral."
+    behavior: "Apply the theme palette; reject unsupported theme values."
+    must_preserve: true
+  - source_loc: "wwwroot/app.js:1889"
+    condition: "Settings are submitted with validated positive goal values."
+    behavior: "Persist preferences, refresh overview, close dialog, and confirm the update."
+    must_preserve: true
+error_paths:
+  - source_loc: "wwwroot/app.js:1889"
+    trigger: "Browser storage write fails."
+    outcome: "Show the shared local-storage save warning."
+    contract: "Preferences remain local; no account or server synchronization exists."
+    must_preserve: true
+concurrency:
+  model: event-loop
+  tx_boundary: null

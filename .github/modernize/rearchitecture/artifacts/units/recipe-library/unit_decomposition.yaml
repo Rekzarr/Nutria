@@ -1,0 +1,12 @@
+unit: recipe-library
+commit: false
+candidate_splits:
+  - id: "wwwroot/app.js:676-964"
+    drivers: [concern_split]
+    rationale: >
+      Recipe authoring and saved-recipe management share a tab with a separate curated
+      recommendation catalog, its filtering state, refresh behavior, and save conversion.
+      Design may consider separate native surfaces without changing the present behavior.
+    source_slice:
+      file: "wwwroot/app.js"
+      lines: [676, 964]

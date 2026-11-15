@@ -1,0 +1,146 @@
+batch_id: "t20"
+completed_tasks: ["T014"]
+blocked_tasks: []
+files_changed:
+  T014:
+    - file: "android/app/src/main/java/com/nutria/app/feature/cycle/CycleScreen.kt"
+      change_type: "modified"
+      description: "Completed Spanish cycle flows and reloads today's saved journal entry before enabling edits."
+    - file: "android/app/src/main/java/com/nutria/app/data/local/CycleRoomRepository.kt"
+      change_type: "created"
+      description: "Added encrypted Room entities, DAO, and CycleRepository implementation."
+    - file: "android/app/src/main/java/com/nutria/app/data/local/NutriaDatabase.kt"
+      change_type: "modified"
+      description: "Added cycle Room entities/DAO and the v2-to-v3 migration in the shared v1-to-v6 migration chain."
+    - file: "android/app/src/main/java/com/nutria/app/app/MainActivity.kt"
+      change_type: "modified"
+      description: "Connected the Ciclo destination to the shared repository."
+    - file: "android/app/src/main/java/com/nutria/app/app/NutriaApplication.kt"
+      change_type: "modified"
+      description: "Added a cached cycle repository sharing the encrypted database provider."
+    - file: "android/app/src/main/java/com/nutria/app/core/data/RepositoryContracts.kt"
+      change_type: "modified"
+      description: "Added bounded recent-cycle-entry observation for the seven most recent journal days."
+    - file: "android/app/src/main/java/com/nutria/app/core/model/CycleDateInput.kt"
+      change_type: "created"
+      description: "Added strict Spanish dd/MM/yyyy date parsing."
+    - file: "android/app/src/main/res/values/strings.xml"
+      change_type: "modified"
+      description: "Added Spanish cycle controls, validation, estimate caveats, and local-privacy disclosure."
+    - file: "android/app/src/test/java/com/nutria/app/core/model/CycleRulesTest.kt"
+      change_type: "modified"
+      description: "Added strict Spanish date parser assertions."
+    - file: "android/app/src/androidTest/java/com/nutria/app/data/local/CycleRepositoryInstrumentedTest.kt"
+      change_type: "created"
+      description: "Added encrypted Room cycle data persistence/reopen instrumentation coverage."
+    - file: "android/app/src/androidTest/java/com/nutria/app/feature/cycle/CycleScreenTest.kt"
+      change_type: "modified"
+      description: "Covers unknown estimate/caveat, period creation, and preservation of existing journal values while editing."
+    - file: "README.md"
+      change_type: "modified"
+      description: "Documented the native cycle slice, encrypted local records, journal restoration, and estimate limitations in Spanish."
+upstream_artifacts_consumed:
+  T014:
+    - artifact: ".github/modernize/rearchitecture/artifacts/t1-pm-spec.md"
+      used_for: "REQ-013–REQ-016 date validation, estimates, journal fields, privacy, and safety requirements."
+    - artifact: ".github/modernize/rearchitecture/artifacts/t4-architect.md"
+      used_for: "Native feature boundary, LocalDate semantics, and data/repository separation."
+    - artifact: ".github/modernize/rearchitecture/artifacts/t5-ux.md"
+      used_for: "Spanish Ciclo form/history flow, private-data disclosure, and estimate caveats."
+    - artifact: ".github/modernize/rearchitecture/artifacts/t6-dba.md"
+      used_for: "Encrypted Room cycle schema, local-only storage, note constraints, and migration policy."
+    - artifact: ".github/modernize/rearchitecture/artifacts/t7-teamlead.md"
+      used_for: "Cycle UI, invalid-input, persistence, caveat, and privacy evidence expectations."
+    - artifact: ".github/modernize/rearchitecture/artifacts/t8-teamlead-plan.md"
+      used_for: "Plan 4.3 / T014 scope and REQ traceability."
+    - artifact: ".github/modernize/rearchitecture/artifacts/t10-devops.md"
+      used_for: "JDK 17 / Android SDK activation and host device/emulator limits."
+    - artifact: ".github/modernize/rearchitecture/artifacts/t11-frontend.md"
+      used_for: "Existing native Compose app and test source-set structure."
+    - artifact: ".github/modernize/rearchitecture/artifacts/t12-dba.md"
+      used_for: "Existing encrypted Room/SQLCipher database provider and fail-closed storage."
+    - artifact: ".github/modernize/rearchitecture/artifacts/t13-frontend.md"
+      used_for: "Existing Spanish navigation route and app shell."
+    - artifact: ".github/modernize/rearchitecture/artifacts/t15-frontend.md"
+      used_for: "Existing pure cycle-domain rules and CycleRepository interface."
+    - artifact: ".github/modernize/rearchitecture/artifacts/t19-frontend.md"
+      used_for: "Prior shared feature compilation/build blockage and the need for a serialized verification rerun."
+    - artifact: ".github/modernize/rearchitecture/artifacts/t19.1-frontend.md"
+      used_for: "Successful lint remediation and serialized Gradle command."
+    - artifact: ".github/modernize/rearchitecture/artifacts/constitution.md"
+      used_for: "Privacy, non-diagnosis, and verification requirements."
+    - artifact: ".github/modernize/rearchitecture/learnings/frontend/private-cycle-feature-storage.md"
+      used_for: "Keep journal values out of saved-instance-state and store cycle data only in encrypted Room."
+    - artifact: ".github/modernize/rearchitecture/learnings/frontend/compose-resource-lookups.md"
+      used_for: "Use Compose-aware string resources and capture callback messages before event handlers."
+    - artifact: "wwwroot/app.js, wwwroot/index.html, wwwroot/styles.css"
+      used_for: "Source-anchored cycle behavior, forms, and responsive source presentation."
+evidence_mapping:
+  T014:
+    - upstream: ".github/modernize/rearchitecture/artifacts/t1-pm-spec.md#REQ-013"
+      output: "android/app/src/main/java/com/nutria/app/feature/cycle/CycleScreen.kt"
+      evidence: "Create/correct/finalize/delete controls, strict date parsing, inclusive overlap validation, and Compose test source."
+    - upstream: ".github/modernize/rearchitecture/artifacts/t1-pm-spec.md#REQ-014"
+      output: "CycleScreen.kt and CycleRules"
+      evidence: "Unknown/known/late estimate states and validated cycle/period averages."
+    - upstream: ".github/modernize/rearchitecture/artifacts/t1-pm-spec.md#REQ-015"
+      output: "CycleRoomRepository.kt and CycleDayEntity"
+      evidence: "Local flow, pain, mood, and bounded note storage; encrypted database persistence/reopen test source."
+    - upstream: ".github/modernize/rearchitecture/artifacts/t1-pm-spec.md#REQ-016"
+      output: "android/app/src/main/res/values/strings.xml"
+      evidence: "Adjacent estimate/non-diagnosis/fertility/pregnancy/professional-guidance caveat; Compose assertion source."
+    - upstream: ".github/modernize/rearchitecture/artifacts/t6-dba.md#Proposed-local-model"
+      output: "NutriaDatabase.kt and CycleRoomRepository.kt"
+      evidence: "Cycle tables, explicit versioned migration, local-only repository, no network client."
+    - upstream: "wwwroot/app.js#getCycleStatus/renderCycle/cycle event handlers"
+      output: "CycleScreen.kt and CycleRules"
+      evidence: "Unknown/estimate/phase branches, date/settings/overlap validation, current-day journal restore, bounded history, and local save behavior."
+    - upstream: ".github/modernize/rearchitecture/artifacts/t19.1-frontend.md#Test-Results"
+      output: "Serialized Gradle gate recorded below"
+      evidence: "Clean host run passes after shared lint remediation; device-dependent Compose/Room runtime remains explicitly unverified."
+source_references:
+  T014:
+    source_files:
+      - file: "wwwroot/app.js"
+        methods_read:
+          - "getCycleStatus"
+          - "renderCycle"
+          - "cycle settings submit handler"
+          - "cycle journal submit handler"
+          - "period shortcut and submit handler"
+      - file: "wwwroot/index.html"
+        methods_read: ["#ciclo feature markup"]
+      - file: "wwwroot/styles.css"
+        methods_read: ["cycle layout, forms/history, and narrow-screen selectors"]
+    branches_preserved: 20
+    validations_preserved: 8
+    error_paths_preserved: 5
+    side_effects_preserved: 4
+    notes: "Cycle calendar math and source branches were translated to native Kotlin/Compose; native-only correction/finalization, strict Spanish input, and encrypted local storage follow explicit REQ/UX/DBA contracts."
+test_results:
+  T014:
+    command: "From android/: .\\gradlew.bat clean test build assembleDebugAndroidTest --no-daemon --no-parallel --max-workers=1 (OpenJDK 17.0.16 and Android SDK 36 activated)."
+    passed: 61
+    failed: 0
+    skipped: 0
+    failures: []
+    notes: "BUILD SUCCESSFUL; 61 JVM tests in 14 XML reports, 0 failures/skips; debug/release, lint, check, and AndroidTest APK packaging passed. Lint reported 0 errors, 22 warnings, 1 hint. All three CycleScreenTest methods compiled but were not executed because no device is connected and emulator acceleration is unavailable (exit 6)."
+traceability:
+  - requirement: "REQ-013–REQ-016"
+    plan_item: "4.3"
+    task: "T014"
+    files:
+      - "android/app/src/main/java/com/nutria/app/feature/cycle/CycleScreen.kt"
+      - "android/app/src/main/java/com/nutria/app/data/local/CycleRoomRepository.kt"
+      - "android/app/src/main/java/com/nutria/app/data/local/NutriaDatabase.kt"
+      - "android/app/src/main/java/com/nutria/app/core/model/CycleDateInput.kt"
+      - "android/app/src/main/res/values/strings.xml"
+      - "android/app/src/androidTest/java/com/nutria/app/data/local/CycleRepositoryInstrumentedTest.kt"
+      - "android/app/src/androidTest/java/com/nutria/app/feature/cycle/CycleScreenTest.kt"
+    status: "completed"
+protocol_violation: false
+errors: []
+warnings:
+  - "Instrumented Room/Compose tests require emulator/device execution, which remains unverified on this host."
+  - "Final accessibility review remains assigned to t29; this task does not establish feature parity."
+  - "context.md, decisions.md, and a fanout topology file were absent during preflight."

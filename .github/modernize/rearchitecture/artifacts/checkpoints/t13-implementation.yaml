@@ -1,0 +1,60 @@
+task_id: "t13"
+plan_task_id: "T003"
+plan_item: "1.2"
+requirements:
+  - "REQ-001"
+status: "completed"
+implementation:
+  status: "present"
+  source_files:
+    - "wwwroot/index.html"
+    - "wwwroot/app.js"
+    - "wwwroot/styles.css"
+  target_files:
+    - "android/app/src/main/java/com/nutria/app/app/MainActivity.kt"
+    - "android/app/src/main/java/com/nutria/app/app/AppDestination.kt"
+    - "android/app/src/main/java/com/nutria/app/app/SpanishFormats.kt"
+    - "android/app/src/main/res/values/strings.xml"
+    - "android/app/src/test/java/com/nutria/app/app/NavigationAndLocaleTest.kt"
+    - "android/app/src/androidTest/java/com/nutria/app/app/NavigationShellTest.kt"
+verification:
+  full_build_command: "From android/: .\\gradlew.bat test build assembleDebugAndroidTest --no-daemon"
+  full_build_status: "passed"
+  debug_release_apk_assembly: "passed"
+  instrumentation_apk_assembly: "passed"
+  unit_tests:
+    total: 20
+    passed: 20
+    failed: 0
+    skipped: 0
+    failures: []
+  instrumentation_tests:
+    packaged_methods: 2
+    executed: 0
+    reason: "adb devices -l returned no connected device; emulator acceleration is unavailable according to the t10 environment checkpoint."
+upstream_artifacts_consumed:
+  - ".github/modernize/rearchitecture/artifacts/t4-architect.md"
+  - ".github/modernize/rearchitecture/artifacts/t5-ux.md"
+  - ".github/modernize/rearchitecture/artifacts/t10-devops.md"
+  - ".github/modernize/rearchitecture/artifacts/checkpoints/t8-environment.md"
+  - ".github/modernize/rearchitecture/artifacts/t11-frontend.md"
+  - ".github/modernize/rearchitecture/artifacts/t12-dba.md"
+  - ".github/modernize/rearchitecture/artifacts/t12.1-frontend.md"
+  - ".github/modernize/rearchitecture/artifacts/t14-frontend.md"
+  - ".github/modernize/rearchitecture/artifacts/t1-pm-spec.md"
+  - ".github/modernize/rearchitecture/artifacts/t8-teamlead-plan.md"
+evidence_mapping:
+  - upstream: "t5-ux.md#Information architecture"
+    evidence: "AppDestination.primary defines the seven ordered Spanish destinations; Ajustes remains a separate app-bar action."
+  - upstream: "t5-ux.md#Shared layout, content, and interaction rules"
+    evidence: "The native shell provides labeled navigation, selection state, back-stack de-duplication, and dd/MM/yyyy date presentation; JVM tests pass."
+  - upstream: "t1-pm-spec.md#REQ-001"
+    evidence: "Spanish labels, registrar alias, unknown-route fallback, locale number formatting, and navigation tests are covered."
+  - upstream: "t10-devops.md#Target-Environment-Preparation"
+    evidence: "Gradle build/test passed using JDK 17.0.16 and the prepared Android SDK 36."
+  - upstream: "checkpoints/t8-environment.md#Emulator-and-device-validation"
+    evidence: "Device UI execution remains unverified because no device is connected and emulator acceleration is unavailable."
+scope_note: "This completes the navigation-shell task only. Destination feature workflows and overall Android parity remain pending."
+blocking_findings: []
+warnings:
+  - "The two navigation Compose instrumentation methods were packaged but not run without an Android device/emulator."

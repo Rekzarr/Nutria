@@ -1,0 +1,162 @@
+batch_id: "t22"
+completed_tasks: []
+blocked_tasks:
+  - task_id: "T016"
+    reason: "Implementation and host tests are present, but the required full Gradle build fails at :app:lintDebug on shared-project findings; final task completion is blocked pending a clean full verification run."
+    required_task_ids: []
+files_changed:
+  T016:
+    - file: "android/app/src/main/java/com/nutria/app/data/local/NutritionGoalsRoom.kt"
+      change_type: "created"
+      description: "Encrypted Room goal entity, DAO, and repository."
+    - file: "android/app/src/main/java/com/nutria/app/feature/settings/SettingsValidation.kt"
+      change_type: "created"
+      description: "Goal and service URL validation."
+    - file: "android/app/src/main/java/com/nutria/app/feature/settings/SettingsScreen.kt"
+      change_type: "created"
+      description: "Spanish settings, theme preview/save/cancel, and privacy disclosures."
+    - file: "android/app/src/main/java/com/nutria/app/app/NutriaMaterialTheme.kt"
+      change_type: "created"
+      description: "Four theme-specific Material color schemes."
+    - file: "android/app/src/main/java/com/nutria/app/data/remote/ConfiguredNutriaApiClientFactory.kt"
+      change_type: "created"
+      description: "Builds the typed API client from the saved service base URL."
+    - file: "android/app/src/test/java/com/nutria/app/feature/settings/SettingsValidationTest.kt"
+      change_type: "created"
+      description: "Goal range and service URL policy tests."
+    - file: "android/app/src/test/java/com/nutria/app/data/remote/ConfiguredNutriaApiClientFactoryTest.kt"
+      change_type: "created"
+      description: "Configured service URL/API-client tests."
+    - file: "android/app/src/androidTest/java/com/nutria/app/data/local/GoalsRoomRepositoryInstrumentedTest.kt"
+      change_type: "created"
+      description: "Room goal persistence instrumentation test."
+    - file: "android/app/src/androidTest/java/com/nutria/app/feature/settings/SettingsScreenTest.kt"
+      change_type: "created"
+      description: "Theme, save/cancel, and Spanish disclosure Compose tests."
+    - file: "android/app/src/main/java/com/nutria/app/core/data/RepositoryContracts.kt"
+      change_type: "modified"
+      description: "Settings preferences model and repository contract."
+    - file: "android/app/src/main/java/com/nutria/app/data/local/PreferencesStore.kt"
+      change_type: "modified"
+      description: "DataStore theme and service URL persistence."
+    - file: "android/app/src/main/java/com/nutria/app/data/local/NutriaDatabase.kt"
+      change_type: "modified"
+      description: "Registers goal entity/DAO and appends migration 4-to-5."
+    - file: "android/app/src/main/java/com/nutria/app/app/MainActivity.kt"
+      change_type: "modified"
+      description: "Applies persisted theme and integrates the Ajustes screen."
+    - file: "android/app/src/main/java/com/nutria/app/app/NutriaApplication.kt"
+      change_type: "modified"
+      description: "Exposes app-scoped settings and goal repositories."
+    - file: "android/app/src/main/res/values/strings.xml"
+      change_type: "modified"
+      description: "Adds Spanish settings and privacy disclosure strings."
+    - file: "android/app/build.gradle.kts"
+      change_type: "modified"
+      description: "Enables BuildConfig generation."
+    - file: "android/app/src/test/java/com/nutria/app/data/local/DatabaseMigrationRegistryTest.kt"
+      change_type: "modified"
+      description: "Checks migration continuity through version 5."
+    - file: "android/app/src/androidTest/java/com/nutria/app/data/local/PreferencesStoreInstrumentedTest.kt"
+      change_type: "modified"
+      description: "Checks settings preference persistence."
+upstream_artifacts_consumed:
+  T016:
+    - artifact: "artifacts/t1-pm-spec.md"
+      used_for: "REQ-020 settings acceptance criteria and privacy/API-secret boundaries."
+    - artifact: "artifacts/t4-architect.md"
+      used_for: "Native package and local/network boundaries."
+    - artifact: "artifacts/t5-ux.md"
+      used_for: "Ajustes interaction, theme choices, privacy copy, and accessibility."
+    - artifact: "artifacts/t6-dba.md"
+      used_for: "Encrypted Room goals, DataStore scope, backup and privacy boundaries."
+    - artifact: "artifacts/t7-teamlead.md"
+      used_for: "Runtime validation and honest device/build reporting."
+    - artifact: "artifacts/t8-teamlead-plan.md"
+      used_for: "Step 4.5 and T016 implementation scope."
+    - artifact: "artifacts/checkpoints/t8-environment.md"
+      used_for: "JDK 17/Android SDK activation and emulator limitation."
+    - artifact: "artifacts/t10-devops.md"
+      used_for: "Android target environment preparation."
+    - artifact: "artifacts/t11-frontend.md"
+      used_for: "Existing Compose scaffold and build configuration."
+    - artifact: "artifacts/t12-dba.md"
+      used_for: "Encrypted persistence foundation and DataStore integration."
+    - artifact: "artifacts/t13-frontend.md"
+      used_for: "App shell and settings entry integration."
+    - artifact: "artifacts/t15-frontend.md"
+      used_for: "Shared domain/repository contract patterns."
+evidence_mapping:
+  T016:
+    - upstream: "artifacts/t1-pm-spec.md#REQ-020"
+      output: "SettingsValidation.kt; SettingsScreen.kt; NutritionGoalsRoom.kt"
+      evidence: "SettingsValidationTest and the 58-test JVM suite pass."
+    - upstream: "artifacts/t5-ux.md#Ajustes-—-goals,-theme-and-privacy"
+      output: "SettingsScreen.kt and SettingsScreenTest.kt"
+      evidence: "Compose instrumentation sources compile; runtime is not executed."
+    - upstream: "artifacts/t6-dba.md#Persistence-ownership"
+      output: "NutritionGoalsRoom.kt; PreferencesStore.kt; NutriaDatabase.kt"
+      evidence: "Repository and preference persistence tests are present; unit suite passes."
+    - upstream: "artifacts/t8-teamlead-plan.md#T016"
+      output: "Settings feature files and this checkpoint"
+      evidence: "Implementation is present; full build is blocked by shared lint errors."
+    - upstream: "artifacts/t1-pm-spec.md#REQ-019"
+      output: "ConfiguredNutriaApiClientFactory.kt and SettingsScreen.kt"
+      evidence: "Existing typed client is configured from the service URL; no API-key field is added."
+source_references:
+  T016:
+    source_files:
+      - file: "wwwroot/app.js"
+        methods_read: ["settings/theme/goal behavior"]
+      - file: "wwwroot/index.html"
+        methods_read: ["settings labels and controls"]
+      - file: "wwwroot/styles.css"
+        methods_read: ["existing theme palette"]
+    branches_preserved: 4
+    validations_preserved: 1
+    error_paths_preserved: 0
+    side_effects_preserved: 2
+    notes: "Preserved the four existing Spanish theme choices and goal defaults while implementing native validation, persistence, and reversible preview."
+traceability:
+  - requirement: "REQ-020"
+    plan_item: "4.5"
+    task: "T016"
+    files:
+      - "android/app/src/main/java/com/nutria/app/feature/settings/SettingsValidation.kt"
+      - "android/app/src/main/java/com/nutria/app/feature/settings/SettingsScreen.kt"
+      - "android/app/src/main/java/com/nutria/app/data/local/NutritionGoalsRoom.kt"
+    status: "blocked"
+  - requirement: "REQ-022"
+    plan_item: "4.5"
+    task: "T016"
+    files:
+      - "android/app/src/main/java/com/nutria/app/feature/settings/SettingsScreen.kt"
+    status: "blocked"
+  - requirement: "REQ-026"
+    plan_item: "4.5"
+    task: "T016"
+    files:
+      - "android/app/src/main/java/com/nutria/app/feature/settings/SettingsScreen.kt"
+    status: "blocked"
+protocol_violation: false
+errors:
+  - "Full verification command failed at :app:lintDebug with 68 errors, 24 warnings, and 1 hint in shared-project sources; no t22 settings source appears in the lint report."
+warnings:
+  - severity: HIGH
+    message: "Do not mark T016 complete until shared lint failures are resolved and the full Gradle command passes."
+  - severity: INFO
+    message: "Compose and Room instrumentation tests compile but are not executed because adb reports no connected device and the emulator is unavailable."
+test_results:
+  T016:
+    command: ".\\gradlew.bat :app:testDebugUnitTest --rerun-tasks --no-daemon --max-workers=1"
+    passed: 58
+    failed: 0
+    skipped: 0
+    failures: []
+    additional_validation:
+      - command: ".\\gradlew.bat :app:compileDebugAndroidTestKotlin --rerun-tasks --no-daemon --max-workers=1"
+        result: "passed"
+      - command: ".\\gradlew.bat test build assembleDebugAndroidTest --no-daemon --max-workers=1"
+        result: "failed at :app:lintDebug (68 errors, 24 warnings, 1 hint)"
+      - command: "adb devices -l"
+        result: "no connected devices; instrumentation runtime skipped"

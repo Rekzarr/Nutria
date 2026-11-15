@@ -1,0 +1,94 @@
+modules:
+  - name: browser-client-runtime
+    kind: god-class
+    source_loc: "wwwroot/app.js:1"
+    used_by_units: [daily-overview, food-diary, recipe-library, photo-meal, meal-calendar, cycle-tracker, app-settings]
+    fields:
+      - name: STORAGE_KEY
+        type: "string; browser key nutria.v1"
+      - name: state
+        type: "shared in-memory client state"
+      - name: loadState()
+        type: "localStorage JSON load and defaults"
+      - name: saveState()
+        type: "localStorage JSON persistence"
+      - name: getDay()
+        type: "current local-date diary record"
+      - name: mealTotals()
+        type: "current-day nutrient totals"
+      - name: addMeal()
+        type: "append meal to current day"
+      - name: calculateFood()
+        type: "nutrition conversion calculator"
+      - name: renderRecipes()
+        type: "recipe library renderer"
+      - name: renderCalendar()
+        type: "monthly plan renderer"
+      - name: generateMenu()
+        type: "random week/month planner"
+      - name: getCycleStatus()
+        type: "calendar-derived cycle calculation"
+      - name: renderCycle()
+        type: "cycle and symptom log renderer"
+      - name: APP_THEMES
+        type: "supported theme names"
+      - name: render()
+        type: "shared screen render coordinator"
+      - name: attachEvents()
+        type: "shared UI event wiring"
+    god_class: true
+    split_candidate: true
+    migration_strategy: split
+    notes: "A single 1,969-line script owns navigation, all feature state and computations, UI construction, local persistence, and both API calls. The Android target must preserve outcomes, not copy this browser runtime."
+
+  - name: shared-pwa-shell
+    kind: config
+    source_loc: "wwwroot/index.html:1"
+    used_by_units: [daily-overview, food-diary, recipe-library, photo-meal, meal-calendar, cycle-tracker, app-settings]
+    fields:
+      - name: tab-panel-shell
+        type: "six hash-addressed HTML tab panels"
+      - name: primary-navigation
+        type: "desktop navigation and six-item mobile tab bar"
+      - name: global-settings-dialog
+        type: "goals and theme dialog"
+      - name: calendar-dialogs
+        type: "menu-generator and day-editor dialogs"
+      - name: toast-region
+        type: "shared status/toast region"
+    god_class: false
+    split_candidate: false
+    migration_strategy: split
+    notes: "One HTML document contains all panels/dialogs; it is not a native Android navigation implementation."
+
+  - name: shared-presentation
+    kind: utility
+    source_loc: "wwwroot/styles.css:1"
+    used_by_units: [daily-overview, food-diary, recipe-library, photo-meal, meal-calendar, cycle-tracker, app-settings]
+    fields:
+      - name: responsive-layout
+        type: "CSS responsive layouts and mobile tab bar"
+      - name: theme-tokens
+        type: "sage/ocean/lavender/coral CSS custom properties"
+    god_class: false
+    split_candidate: false
+    migration_strategy: split
+    notes: "Responsive browser styling and palette definitions inform visible behavior; they cannot be imported as native views directly."
+
+  - name: aspnet-api-host
+    kind: config
+    source_loc: "Program.cs:7"
+    used_by_units: [meal-analysis-api, ingredient-search-api]
+    fields:
+      - name: dependency-injection
+        type: "typed HttpClient service registrations"
+      - name: exception-pipeline
+        type: "ProblemDetails exception/status middleware"
+      - name: rate-limits
+        type: "per-IP fixed-window API policies"
+      - name: static-file-serving
+        type: "default/static file middleware for current PWA"
+    god_class: false
+    split_candidate: false
+    migration_strategy: copy
+    notes: "Shared hosting setup for the frozen backend routes; the PWA static serving can remain during phased cutover."

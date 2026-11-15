@@ -1,0 +1,43 @@
+unit: recipe-library
+side_effects:
+  - source_loc: "wwwroot/app.js:1707"
+    effect: "Stores a user-created recipe with ingredient amounts, edible grams, per-100-g nutrients, servings, and calculated recipe totals."
+    must_preserve: true
+  - source_loc: "wwwroot/app.js:1354"
+    effect: "Requests ingredient matches from Nutria and imports selected product nutrient values per 100 g."
+    must_preserve: true
+  - source_loc: "wwwroot/app.js:934"
+    effect: "Stores a selected recommendation as a saved recipe with preparation steps and ingredient data."
+    must_preserve: true
+  - source_loc: "wwwroot/app.js:707"
+    effect: "Adds one serving of a saved recipe to today's diary."
+    must_preserve: true
+  - source_loc: "wwwroot/app.js:707"
+    effect: "Deletes a selected recipe and removes its references from saved calendar slots."
+    must_preserve: true
+branches:
+  - source_loc: "wwwroot/app.js:1341"
+    condition: "Ingredient unit is grams."
+    behavior: "Edible grams follow the entered amount; other units require an explicitly supplied gram equivalent."
+    must_preserve: true
+  - source_loc: "wwwroot/app.js:814"
+    condition: "Recommendation is saved already, exceeds 550 kcal, or fails time/category/complexity filters."
+    behavior: "Do not offer it as an eligible recommendation; saved recommendations retain their instructions and ingredients."
+    must_preserve: true
+  - source_loc: "wwwroot/app.js:1454"
+    condition: "Any ingredient name, amount, edible grams, or nutrient value is incomplete."
+    behavior: "Do not calculate/enable recipe save until the ingredient data and serving count are valid."
+    must_preserve: true
+  - source_loc: "wwwroot/app.js:1354"
+    condition: "Ingredient lookup returns no complete matches or the backend is unavailable."
+    behavior: "Distinguish empty results from connection/provider errors and allow manually entered nutrition values."
+    must_preserve: true
+error_paths:
+  - source_loc: "wwwroot/app.js:1354"
+    trigger: "Ingredient search API returns an error or cannot be reached."
+    outcome: "Show an error status in the ingredient row; leave manual nutrient entry available."
+    contract: "API error title/status is shown where available; do not silently substitute zero values."
+    must_preserve: true
+concurrency:
+  model: event-loop
+  tx_boundary: null
