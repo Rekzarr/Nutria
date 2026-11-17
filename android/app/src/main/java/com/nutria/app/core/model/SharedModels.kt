@@ -132,7 +132,7 @@ data class WaterEvent(
 
 data class DailyIntakeActivity(
     val mealCount: Int,
-    val waterMillilitres: Int,
+    val waterMillilitres: Long,
 ) {
     init {
         require(mealCount >= 0 && waterMillilitres >= 0)
@@ -159,9 +159,16 @@ data class SavedRecipe(
     val name: String,
     val category: RecipeCategory,
     val recommendationId: String? = null,
+    val ingredients: List<RecipeIngredient> = emptyList(),
+    val servings: Int = 1,
+    val prepMinutes: Int? = null,
+    val complexity: RecipeComplexity? = null,
+    val instructions: List<String> = emptyList(),
 ) {
     init {
         require(id.isNotBlank() && name.isNotBlank())
+        require(servings > 0)
+        require(prepMinutes == null || prepMinutes > 0)
     }
 }
 
@@ -192,6 +199,7 @@ data class RecipeRecommendation(
     val prepMinutes: Int,
     val complexity: RecipeComplexity,
     val ingredients: List<RecipeIngredient>,
+    val instructions: List<String> = emptyList(),
 ) {
     init {
         require(id.isNotBlank() && name.isNotBlank())

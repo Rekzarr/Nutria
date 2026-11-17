@@ -1,14 +1,18 @@
 # Existing project structure
 
+> **Snapshot note:** the inventory and file counts below originated in the initial
+> architecture assessment. ADR-0009 and the current project files supersede its
+> ingredient-search backend references; the repository now also contains `android/`.
+
 ## Classification
 
-Full-stack ASP.NET Core web application: one server process hosts the REST API and static Spanish PWA from the same origin. It is not a monorepo and has no separate Android application or database.
+Full-stack ASP.NET Core web application: one server process hosts the photo-analysis REST API and static Spanish PWA from the same origin. The PWA and Android client query Open Food Facts directly for ingredient search. The repository also contains the native Android app.
 
 ## Runtime and layers
 
 - **Web host:** `Program.cs` configures Kestrel/form limits, dependency injection, OpenAPI in Development, rate limiting, error handling, and static-file fallback.
-- **HTTP API:** two ASP.NET Core minimal-API route groups under `Endpoints/`.
-- **External-service layer:** typed `HttpClient` services under `Services/`; the photo endpoint calls OpenAI and the ingredient endpoint calls Open Food Facts.
+- **HTTP API:** ASP.NET Core minimal API under `Endpoints/`; only the photo-analysis route remains.
+- **External-service layer:** typed `HttpClient` service under `Services/` for the photo endpoint's OpenAI call. Ingredient search is performed by Android and PWA clients directly against Open Food Facts.
 - **Client:** `wwwroot/index.html` contains the six hash-addressed tab panels and dialogs; `app.js` owns state, calculations, rendering, event handlers, and API calls; `styles.css` provides responsive presentation and four themes.
 - **Persistence:** browser `localStorage` only. No server database, account system, repository layer, or cross-device synchronization was found.
 
@@ -22,9 +26,9 @@ Full-stack ASP.NET Core web application: one server process hosts the REST API a
 | `wwwroot/styles.css` | Responsive visual system, theme variables, and page/component styles |
 | `wwwroot/manifest.webmanifest` | Standalone-installable web app metadata and Spanish locale |
 | `Endpoints/MealAnalysisEndpoints.cs` | `POST /api/analyze-meal` contract and request validation |
-| `Endpoints/OpenFoodFactsEndpoints.cs` | `GET /api/ingredients/search` contract and query validation |
 | `Services/OpenAiMealAnalysisService.cs` | Server-side OpenAI Responses API integration |
-| `Services/OpenFoodFactsService.cs` | Open Food Facts query, retry, and product mapping |
+| `android/app/src/main/java/com/nutria/app/data/remote/OpenFoodFactsClient.kt` | Android's direct Open Food Facts query, filtering, and nutrient mapping |
+| `Dockerfile` | .NET 10 multi-stage image prepared for local/container deployment; not deployed |
 | `Nutria.csproj` | `net10.0`, nullable/implicit usings, warnings-as-errors, and OpenAPI package references |
 
 No service-worker registration or service-worker file was found; the manifest establishes install metadata but does not itself establish offline caching.

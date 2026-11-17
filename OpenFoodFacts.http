@@ -1,9 +1,0 @@
-@baseUrl = http://localhost:5000
-
-### Find nutrition facts for an ingredient
-GET {{baseUrl}}/api/ingredients/search?query=tomate
-Accept: application/json
-
-### Reject an empty ingredient search
-GET {{baseUrl}}/api/ingredients/search?query=
-Accept: application/json

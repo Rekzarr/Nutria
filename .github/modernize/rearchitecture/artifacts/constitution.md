@@ -1,9 +1,9 @@
 <!--
 Sync Impact Report
-- Version change: no prior constitution → 1.0.0 (initial project constitution).
-- Modified principles: none; this is the first constitution.
-- Added sections: five core principles, target-stack guardrails, additional constraints,
-  delivery and verification, and governance.
+- Version change: 1.0.0 → 1.1.0.
+- Modified principles: Principle II now reflects the approved direct Open Food Facts
+  client integration in ADR-0009; photo analysis remains behind the Nutria API.
+- Added sections: none.
 - Removed sections: none.
 - Templates requiring updates:
   - creating-implementation-plan/templates/plan-template.md — ✅ reviewed; its Constitution
@@ -42,16 +42,15 @@ analysis, ingredient lookup, settings, and themes. It MUST also implement the ne
 Android capabilities in REQ-021–REQ-026. The existing PWA MUST remain intact until
 parity is demonstrated and any local-data transfer implications are addressed.
 
-### II. Frozen Backend Contracts and Server-Side Secrets
+### II. Photo Analysis Boundary and External Ingredient Search
 
-The Android client MUST use the existing `POST /api/analyze-meal` and
-`GET /api/ingredients/search` contracts documented in `wire_contracts.yaml`.
-Implementations MUST preserve request/response semantics, supported inputs, and
-user-visible validation/error behavior. Backend changes are out of scope unless the
-architect records concrete evidence that a narrow change is necessary and the
-coordinator approves it. The OpenAI API key MUST remain in backend configuration and
-MUST NOT be bundled, stored, or sent by the mobile app; meal photos go to the server
-only after an explicit user action.
+The Android client MUST use the existing `POST /api/analyze-meal` contract documented
+in `wire_contracts.yaml`. The PWA and Android clients MUST query Open Food Facts
+directly for ingredient searches as approved in ADR-0009; no Nutria ingredient-search
+route is part of the current backend. Preserve supported photo inputs and
+user-visible validation/error behavior. The OpenAI API key MUST remain in backend
+configuration and MUST NOT be bundled, stored, or sent by the mobile app; meal photos
+go to the server only after an explicit user action.
 
 ### III. Private Local Records and Disclosed Data Flows
 
@@ -143,7 +142,7 @@ clarifications that do not change obligations. The coordinator MUST communicate
 approved changes to affected roles. Explicit user acceptance requirements remain the
 product scope authority; technical decisions may refine but MUST NOT weaken them.
 
-**Version**: 1.0.0 | **Ratified**: TODO(RATIFICATION_DATE): not supplied | **Last Amended**: 2026-11-14
+**Version**: 1.1.0 | **Ratified**: TODO(RATIFICATION_DATE): not supplied | **Last Amended**: 2026-11-17
 
 ## Upstream Artifacts Consumed
 
@@ -157,8 +156,9 @@ product scope authority; technical decisions may refine but MUST NOT weaken them
   inventory index and Android migration constraints.
 - `.github/modernize/rearchitecture/artifacts/migration_boundary.yaml` — new Android
   client scope, preserved backend/PWA, and phased migration rules.
-- `.github/modernize/rearchitecture/artifacts/wire_contracts.yaml` — frozen photo and
-  ingredient lookup routes and server-side provider/secret boundaries.
+- `.github/modernize/rearchitecture/artifacts/wire_contracts.yaml` — photo API and
+  direct ingredient-provider contracts; the direct lookup supersedes ADR-0009's
+  former backend proxy contract.
 - `.github/modernize/rearchitecture/artifacts/tech-stack.md` — observed stack and
   verified host toolchain limitations.
 - `.github/modernize/rearchitecture/artifacts/data-model.md` — current browser-local
@@ -174,8 +174,10 @@ product scope authority; technical decisions may refine but MUST NOT weaken them
   lifecycle, permission, and disclosure requirements.
 - `t2 migration_boundary.yaml#implementation_rule` → Principles I and V; create a
   native Android target while preserving the existing backend and PWA during parity.
-- `t2 wire_contracts.yaml#native-client-photo-analysis` and
-  `#native-client-ingredient-search` → Principle II; preserve both client API seams.
+- `t2 wire_contracts.yaml#native-client-photo-analysis` → Principle II; preserve the
+  photo API seam.
+- `ADR-0009` and `wire_contracts.yaml#native-client-ingredient-search` → Principle II;
+  query Open Food Facts directly from the clients.
 - `t2 wire_contracts.yaml#server-to-openai-responses` → Principle II; keep the API
   key and provider call server-side.
 - `t2 tech-stack.md#Runtime configuration and limits` → Target Technology Stack and

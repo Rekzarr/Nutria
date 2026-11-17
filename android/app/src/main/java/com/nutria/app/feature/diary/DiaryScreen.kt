@@ -30,11 +30,13 @@ import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.res.stringResource
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleEventObserver
 import androidx.lifecycle.compose.LocalLifecycleOwner
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.nutria.app.app.SpanishFormats
+import com.nutria.app.R
 import com.nutria.app.core.model.FoodUnit
 import com.nutria.app.core.model.MealEntry
 import kotlinx.coroutines.launch
@@ -43,7 +45,9 @@ import java.time.format.DateTimeFormatter
 import java.util.Locale
 
 @Composable
-fun DiaryScreen(viewModel: DiaryViewModel) {
+fun DiaryScreen(
+    viewModel: DiaryViewModel,
+) {
     val state by viewModel.state.collectAsStateWithLifecycle()
     val lifecycleOwner = LocalLifecycleOwner.current
     DisposableEffect(lifecycleOwner, viewModel) {
@@ -94,6 +98,16 @@ fun DiaryScreen(viewModel: DiaryViewModel) {
                 verticalArrangement = Arrangement.spacedBy(12.dp),
             ) {
                 Text("Añadir comida", style = MaterialTheme.typography.titleLarge)
+                IngredientSearchCard(
+                    onProductSelected = { product ->
+                        val selectedDraft = draft.withIngredientProduct(product)
+                        name = selectedDraft.name
+                        calories = selectedDraft.caloriesPer100Grams
+                        protein = selectedDraft.proteinPer100Grams
+                        carbohydrates = selectedDraft.carbohydratesPer100Grams
+                        fat = selectedDraft.fatPer100Grams
+                    },
+                )
                 OutlinedTextField(
                     value = name,
                     onValueChange = { name = it.take(60) },
@@ -314,6 +328,7 @@ fun DiaryScreen(viewModel: DiaryViewModel) {
 fun WaterLogCard(viewModel: DiaryViewModel) {
     val state by viewModel.state.collectAsStateWithLifecycle()
     val scope = rememberCoroutineScope()
+    var confirmClearToday by rememberSaveable { mutableStateOf(false) }
     val lifecycleOwner = LocalLifecycleOwner.current
     DisposableEffect(lifecycleOwner, viewModel) {
         val observer = LifecycleEventObserver { _, event ->
@@ -377,8 +392,38 @@ fun WaterLogCard(viewModel: DiaryViewModel) {
             ) {
                 Text("Deshacer última toma")
             }
+            TextButton(
+                enabled = state.canClearToday && !state.isLoading && storageError == null,
+                onClick = { confirmClearToday = true },
+                modifier = Modifier.height(48.dp),
+            ) {
+                Text(stringResource(R.string.diary_clear_today))
+            }
             StatusMessage(error = state.storageError, success = state.successMessage)
         }
+    }
+
+    if (confirmClearToday) {
+        AlertDialog(
+            onDismissRequest = { confirmClearToday = false },
+            title = { Text(stringResource(R.string.diary_clear_today_title)) },
+            text = { Text(stringResource(R.string.diary_clear_today_confirmation)) },
+            confirmButton = {
+                TextButton(
+                    onClick = {
+                        confirmClearToday = false
+                        scope.launch { viewModel.clearTodayIntake() }
+                    },
+                ) {
+                    Text(stringResource(R.string.diary_clear_today_confirm))
+                }
+            },
+            dismissButton = {
+                TextButton(onClick = { confirmClearToday = false }) {
+                    Text(stringResource(R.string.action_cancel))
+                }
+            },
+        )
     }
 }
 

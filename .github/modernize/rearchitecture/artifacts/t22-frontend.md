@@ -2,7 +2,7 @@
 
 ## Status
 
-**Implementation is in place; final build gate is blocked by shared-project lint failures.** The settings sources compile and 58 JVM unit tests pass. The combined full build fails in `:app:lintDebug` on 68 findings in shared files; none are reported against the t22 settings sources. Android instrumentation tests compile/package, but were not run because no device is connected and the prepared emulator is unavailable.
+**Implementation and verification are complete.** The settings sources compile and their host tests pass. A later clean full build passed, including lint, JVM tests, debug/release builds, and Android test APK packaging. The OPPO CPH2197 / Android 13 connected instrumentation run also passed (28 tests, 0 failures). Real Health Connect provider data and a compatible BLE band were not exercised.
 
 ## Summary
 
@@ -50,4 +50,4 @@
 
 ## Remaining Validation
 
-The t22 implementation and host-side tests are present, but do not mark the task complete until the shared lint errors are resolved and the full command passes. Then rerun the complete Gradle command. Compose and Room instrumentation runtime checks still require an available emulator or physical device.
+The earlier shared-project lint failure was cleared by a subsequent clean verification run. The physical-device run provides Android runtime evidence for the instrumented flows; Health Connect provider access and physical BLE band lifecycle evidence remain pending.

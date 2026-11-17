@@ -3,6 +3,7 @@ package com.nutria.app.core.data
 import com.nutria.app.core.model.CalendarAssignment
 import com.nutria.app.core.model.CycleDayEntry
 import com.nutria.app.core.model.CycleSettings
+import com.nutria.app.core.model.DailyIntakeActivity
 import com.nutria.app.core.model.HeartRateBandState
 import com.nutria.app.core.model.HeartRateReading
 import com.nutria.app.core.model.HealthConnectStepsState
@@ -28,6 +29,7 @@ import java.time.ZoneId
 interface DiaryRepository {
     fun observeMeals(date: LocalDate): Flow<List<MealEntry>>
     fun observeMealHistory(fromInclusive: LocalDate, throughInclusive: LocalDate): Flow<List<MealEntry>>
+    fun observeIntakeActivity(): Flow<Map<LocalDate, DailyIntakeActivity>>
     suspend fun addMeal(entry: MealEntry)
     suspend fun removeMeal(date: LocalDate, mealId: String)
 
@@ -65,6 +67,16 @@ interface CalendarRepository {
     )
 }
 
+interface CalendarPreferencesRepository {
+    fun observeBreakfastEnabled(): Flow<Boolean>
+    suspend fun setBreakfastEnabled(enabled: Boolean)
+}
+
+interface RecommendationPreferencesRepository {
+    fun observeRecommendationFilter(): Flow<RecommendationFilter>
+    suspend fun saveRecommendationFilter(filter: RecommendationFilter)
+}
+
 interface CycleRepository {
     fun observeSettings(): Flow<CycleSettings>
     fun observePeriods(): Flow<List<PeriodRecord>>
@@ -95,6 +107,7 @@ interface HeartRateBandRepository {
 interface WorkoutRepository {
     fun observeSessions(localDate: LocalDate): Flow<List<WorkoutSession>>
     fun observeRecentSessions(limit: Int = 20): Flow<List<WorkoutSessionSummary>>
+    fun observeSessionSummaries(localDate: LocalDate): Flow<List<WorkoutSessionSummary>>
     fun observeEvents(sessionId: String): Flow<List<WorkoutEvent>>
     fun observeReadings(sessionId: String): Flow<List<HeartRateReading>>
 

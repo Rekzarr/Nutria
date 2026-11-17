@@ -4,6 +4,11 @@
 
 This index is not the full contract. Do not implement from this file alone; follow the listed artifact paths and the source locations in the contracts.
 
+**Current approved divergence:** ADR-0009 retires the Nutria ingredient-search route.
+The historical `ingredient-search-api` unit and its prior frozen contract are no longer
+current; Android and the PWA call Open Food Facts directly. ADR-0010 prepares a
+container image but does not authorize or perform an Azure deployment.
+
 ### Global artifacts
 
 - `unit_graph.yaml` — all implementation agents; identifies user-triggered pages and API routes, current anchors, API dependencies, shared references, and frozen signatures. Filter to the assigned unit.
@@ -24,13 +29,13 @@ For each assignment, read the matching behavior, bindings, and decomposition fil
 |---|---|---|
 | `daily-overview` — PWA `#inicio` | `units/daily-overview/behavior.yaml`; `units/daily-overview/bindings.yaml`; `units/daily-overview/unit_decomposition.yaml` | Read shared client modules, meal/goals state flows, and migration boundary. Report the consumed files, daily totals/progress/water/meal behaviors preserved, and native/runtime evidence. |
 | `food-diary` — PWA `#comida` | `units/food-diary/behavior.yaml`; `units/food-diary/bindings.yaml`; `units/food-diary/unit_decomposition.yaml` | Read shared client modules and manual-meal state flow; preserve unit conversions, history/removal, and totals; report verification evidence. |
-| `recipe-library` — PWA `#recetas` | `units/recipe-library/behavior.yaml`; `units/recipe-library/bindings.yaml`; `units/recipe-library/unit_decomposition.yaml` | Read frozen ingredient-search contract/seam, shared client modules, and recipe-to-calendar flow. Report recipe nutrition, recommendations/filters, search/manual fallback, saving and diary actions. |
+| `recipe-library` — PWA `#recetas` | `units/recipe-library/behavior.yaml`; `units/recipe-library/bindings.yaml`; `units/recipe-library/unit_decomposition.yaml` | Read ADR-0009 and the direct Open Food Facts client contract, shared client modules, and recipe-to-calendar flow. Report recipe nutrition, recommendations/filters, search/manual fallback, saving and diary actions. |
 | `photo-meal` — PWA `#foto` | `units/photo-meal/behavior.yaml`; `units/photo-meal/bindings.yaml`; `units/photo-meal/unit_decomposition.yaml` | Read frozen photo contract/seam and photo-to-diary flow. Report supported formats/size, consent/submit flow, valid estimate handling, errors, and key remains server-side. |
 | `meal-calendar` — PWA `#agua` (displayed as Calendario/Plan) | `units/meal-calendar/behavior.yaml`; `units/meal-calendar/bindings.yaml`; `units/meal-calendar/unit_decomposition.yaml` | Read recipe/calendar state flow and shared modules. Report month/week plan editing, optional breakfast, overwrite/missing-category branches, and persistence. |
 | `cycle-tracker` — PWA `#ciclo` | `units/cycle-tracker/behavior.yaml`; `units/cycle-tracker/bindings.yaml`; `units/cycle-tracker/unit_decomposition.yaml` | Read `data-model.md` and migration boundary. Report private local periods/notes, date validation, estimates/disclaimers, and persistence; do not represent estimates as medical data. |
 | `app-settings` — Ajustes dialog | `units/app-settings/behavior.yaml`; `units/app-settings/bindings.yaml`; `units/app-settings/unit_decomposition.yaml` | Read goals/theme state flows, shared UI modules, and migration boundary. Report all goals and four themes preserved, and local persistence. |
 | `meal-analysis-api` — `POST /api/analyze-meal` | `units/meal-analysis-api/behavior.yaml`; `units/meal-analysis-api/bindings.yaml`; `units/meal-analysis-api/unit_decomposition.yaml` | Read its frozen wire contract, declared seam, shared ASP.NET host, and migration boundary. Report server route/provider behavior unchanged, credential boundary, and any approved divergence. |
-| `ingredient-search-api` — `GET /api/ingredients/search` | `units/ingredient-search-api/behavior.yaml`; `units/ingredient-search-api/bindings.yaml`; `units/ingredient-search-api/unit_decomposition.yaml` | Read its frozen wire contract, declared seam, shared ASP.NET host, and migration boundary. Report route/search mapping/error behavior unchanged and any approved divergence. |
+| `ingredient-search-api` — retired | Historical artifacts under `units/ingredient-search-api/` | The route and backend service were removed by ADR-0009. Do not restore them; use the direct client contract in `wire_contracts.yaml`. |
 
 ### Required completion evidence
 

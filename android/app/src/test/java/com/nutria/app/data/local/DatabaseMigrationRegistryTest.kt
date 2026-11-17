@@ -7,7 +7,7 @@ import org.junit.Test
 class DatabaseMigrationRegistryTest {
     @Test
     fun featureMigrationsAreRegisteredInContinuousVersionOrder() {
-        assertTrue(LocalDatabaseMigrations.SCHEMA_VERSION >= 6)
+        assertTrue(LocalDatabaseMigrations.SCHEMA_VERSION >= 8)
         assertTrue(LocalDatabaseMigrations.all.isNotEmpty())
         assertTrue(LocalDatabaseMigrations.all.asList().zipWithNext().all { (first, next) ->
             first.endVersion == next.startVersion
@@ -16,5 +16,7 @@ class DatabaseMigrationRegistryTest {
         assertEquals(LocalDatabaseMigrations.SCHEMA_VERSION, LocalDatabaseMigrations.all.last().endVersion)
         assertTrue(LocalDatabaseMigrations.all.any { it.startVersion == 4 && it.endVersion == 5 })
         assertTrue(LocalDatabaseMigrations.all.any { it.startVersion == 5 && it.endVersion == 6 })
+        assertTrue(LocalDatabaseMigrations.all.any { it.startVersion == 6 && it.endVersion == 7 })
+        assertTrue(LocalDatabaseMigrations.all.any { it.startVersion == 7 && it.endVersion == 8 })
     }
 }

@@ -1,10 +1,15 @@
 package com.nutria.app.feature.cycle
 
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.ui.Modifier
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.ui.test.assertIsDisplayed
+import androidx.compose.ui.test.assertIsEnabled
 import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
+import androidx.compose.ui.test.performScrollTo
 import androidx.compose.ui.test.performTextInput
 import com.nutria.app.app.SpanishFormats
 import com.nutria.app.core.data.CycleRepository
@@ -43,18 +48,22 @@ class CycleScreenTest {
         val repository = FakeCycleRepository()
         composeRule.setContent {
             MaterialTheme {
-                CycleScreen(repository = repository)
+                CycleScreen(repository = repository, modifier = Modifier.verticalScroll(rememberScrollState()))
             }
         }
 
-        composeRule.onNodeWithText("Inicio (dd/MM/aaaa)").performTextInput(SpanishFormats.formatDate(today))
-        composeRule.onNodeWithText("Guardar período").performClick()
-        composeRule.waitForIdle()
+        composeRule.onNodeWithText("Inicio (dd/MM/aaaa)")
+            .performScrollTo()
+            .performTextInput(SpanishFormats.formatDate(today))
+        composeRule.onNodeWithText("Guardar período").performScrollTo().performClick()
+        composeRule.waitUntil(timeoutMillis = 5_000) {
+            repository.periods.value.any { it.startDate == today }
+        }
 
         assertEquals(today, repository.periods.value.single().startDate)
         composeRule.onNodeWithText(
             "Inicio: ${SpanishFormats.formatDate(today)} · Fin: Sin finalizar",
-        ).assertIsDisplayed()
+        ).performScrollTo().assertIsDisplayed()
     }
 
     @Test
@@ -70,13 +79,24 @@ class CycleScreenTest {
         val repository = FakeCycleRepository(initialEntries = listOf(savedEntry))
         composeRule.setContent {
             MaterialTheme {
-                CycleScreen(repository = repository)
+                CycleScreen(repository = repository, modifier = Modifier.verticalScroll(rememberScrollState()))
             }
         }
 
-        composeRule.onNodeWithText("Nota opcional").performTextInput(" actualizada")
-        composeRule.onNodeWithText("Guardar registro de hoy").performClick()
-        composeRule.waitForIdle()
+        composeRule.waitUntil(timeoutMillis = 5_000) {
+            runCatching {
+                composeRule.onNodeWithText("Guardar registro de hoy").assertIsEnabled()
+            }.isSuccess
+        }
+        composeRule.onNodeWithText("Nota opcional")
+            .performScrollTo()
+            .performClick()
+            .performTextInput(" actualizada")
+        composeRule.onNodeWithText("nota privada actualizada").performScrollTo().assertIsDisplayed()
+        composeRule.onNodeWithText("Guardar registro de hoy").performScrollTo().performClick()
+        composeRule.waitUntil(timeoutMillis = 5_000) {
+            repository.entries.value.singleOrNull()?.note == "nota privada actualizada"
+        }
 
         assertEquals(
             savedEntry.copy(note = "nota privada actualizada"),
@@ -91,7 +111,7 @@ class CycleScreenTest {
         val repository = FakeCycleRepository(initialPeriods = listOf(period))
         composeRule.setContent {
             MaterialTheme {
-                CycleScreen(repository = repository)
+                CycleScreen(repository = repository, modifier = Modifier.verticalScroll(rememberScrollState()))
             }
         }
 

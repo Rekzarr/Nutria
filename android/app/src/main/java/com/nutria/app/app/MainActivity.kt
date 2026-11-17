@@ -51,8 +51,11 @@ import com.nutria.app.R
 import com.nutria.app.feature.activity.ActivityFeatureScreen
 import com.nutria.app.feature.activity.HealthConnectStepsFeature
 import com.nutria.app.core.data.AppTheme
+import com.nutria.app.core.data.CalendarPreferencesRepository
+import com.nutria.app.core.data.CalendarRepository
 import com.nutria.app.core.data.CycleRepository
 import com.nutria.app.core.data.GoalsRepository
+import com.nutria.app.core.data.RecipeRepository
 import com.nutria.app.core.data.SettingsPreferences
 import com.nutria.app.core.data.SettingsPreferencesRepository
 import com.nutria.app.feature.settings.SettingsScreen
@@ -62,13 +65,17 @@ import com.nutria.app.feature.diary.DiaryViewModel
 import com.nutria.app.feature.diary.DiaryViewModelFactory
 import com.nutria.app.feature.diary.WaterLogCard
 import com.nutria.app.feature.cycle.CycleScreen
+import com.nutria.app.feature.calendar.MealCalendarScreen
 import com.nutria.app.feature.photo.PhotoAnalysisScreen
+import com.nutria.app.feature.recipes.RecipesScreen
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.launch
 
 class MainActivity : ComponentActivity() {
     private var diaryViewModel by mutableStateOf<DiaryViewModel?>(null)
     private var cycleRepository by mutableStateOf<CycleRepository?>(null)
+    private var recipeRepository by mutableStateOf<RecipeRepository?>(null)
+    private var calendarRepository by mutableStateOf<CalendarRepository?>(null)
     private var storageInitError by mutableStateOf<String?>(null)
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -77,6 +84,9 @@ class MainActivity : ComponentActivity() {
             val app = application as NutriaApplication
             val goalsRepository = remember(app) { app.goalsRepository() }
             val preferencesRepository = remember(app) { app.settingsPreferencesRepository() }
+            val calendarPreferencesRepository = remember(app) { app.calendarPreferencesRepository() }
+            val recommendationPreferencesRepository =
+                remember(app) { app.recommendationPreferencesRepository() }
             val apiClientFactory = remember(app) { app.apiClientFactory() }
             val preferences by preferencesRepository.observeSettings()
                 .collectAsState(initial = SettingsPreferences())
@@ -94,6 +104,8 @@ class MainActivity : ComponentActivity() {
                                 DiaryViewModelFactory(repository),
                             )[DiaryViewModel::class.java]
                             cycleRepository = (application as NutriaApplication).cycleRepository()
+                            recipeRepository = (application as NutriaApplication).recipeRepository()
+                            calendarRepository = (application as NutriaApplication).calendarRepository()
                             storageInitError = null
                         } catch (cancelled: CancellationException) {
                             throw cancelled
@@ -107,6 +119,10 @@ class MainActivity : ComponentActivity() {
                         apiClientFactory = apiClientFactory,
                         diaryViewModel = diaryViewModel,
                         cycleRepository = cycleRepository,
+                        recipeRepository = recipeRepository,
+                        calendarRepository = calendarRepository,
+                        calendarPreferencesRepository = calendarPreferencesRepository,
+                        recommendationPreferencesRepository = recommendationPreferencesRepository,
                         storageInitError = storageInitError,
                         goalsRepository = goalsRepository,
                         preferencesRepository = preferencesRepository,
@@ -125,6 +141,10 @@ private fun NutriaNavigationShell(
     apiClientFactory: com.nutria.app.data.remote.ConfiguredNutriaApiClientFactory,
     diaryViewModel: DiaryViewModel?,
     cycleRepository: CycleRepository?,
+    recipeRepository: RecipeRepository?,
+    calendarRepository: CalendarRepository?,
+    calendarPreferencesRepository: CalendarPreferencesRepository,
+    recommendationPreferencesRepository: com.nutria.app.core.data.RecommendationPreferencesRepository,
     storageInitError: String?,
     goalsRepository: GoalsRepository,
     preferencesRepository: SettingsPreferencesRepository,
@@ -247,11 +267,16 @@ private fun NutriaNavigationShell(
                 contentResolver = contentResolver,
                 apiClientFactory = apiClientFactory,
                 cycleRepository = cycleRepository,
+                recipeRepository = recipeRepository,
+                calendarRepository = calendarRepository,
+                calendarPreferencesRepository = calendarPreferencesRepository,
+                recommendationPreferencesRepository = recommendationPreferencesRepository,
                 storageInitError = storageInitError,
                 goalsRepository = goalsRepository,
                 preferencesRepository = preferencesRepository,
                 onPreviewTheme = onPreviewTheme,
                 onOpenActivity = { navigateTo(AppDestination.ACTIVIDAD) },
+                onOpenRecipes = { navigateTo(AppDestination.RECETAS) },
                 modifier = Modifier
                     .fillMaxSize()
                     .padding(contentPadding)
@@ -269,11 +294,16 @@ private fun ShellDestinationContent(
     destination: AppDestination,
     diaryViewModel: DiaryViewModel?,
     cycleRepository: CycleRepository?,
+    recipeRepository: RecipeRepository?,
+    calendarRepository: CalendarRepository?,
+    calendarPreferencesRepository: CalendarPreferencesRepository,
+    recommendationPreferencesRepository: com.nutria.app.core.data.RecommendationPreferencesRepository,
     storageInitError: String?,
     goalsRepository: GoalsRepository,
     preferencesRepository: SettingsPreferencesRepository,
     onPreviewTheme: (AppTheme) -> Unit,
     onOpenActivity: () -> Unit,
+    onOpenRecipes: () -> Unit,
     modifier: Modifier = Modifier
 ) {
     if (destination == AppDestination.AJUSTES) {
@@ -315,7 +345,9 @@ private fun ShellDestinationContent(
             }
             AppDestination.COMIDA -> {
                 if (diaryViewModel != null) {
-                    DiaryScreen(viewModel = diaryViewModel)
+                    DiaryScreen(
+                        viewModel = diaryViewModel,
+                    )
                 } else {
                     Card(modifier = Modifier.fillMaxWidth()) {
                         Text(
@@ -341,6 +373,44 @@ private fun ShellDestinationContent(
                             ?: stringResource(R.string.shell_storage_unavailable),
                         color = MaterialTheme.colorScheme.error,
                     )
+                }
+            }
+            AppDestination.RECETAS -> {
+                if (recipeRepository != null) {
+                    RecipesScreen(
+                        contentResolver = contentResolver,
+                        repository = recipeRepository,
+                        recommendationPreferencesRepository = recommendationPreferencesRepository,
+                        diaryViewModel = diaryViewModel,
+                    )
+                } else {
+                    Card(modifier = Modifier.fillMaxWidth()) {
+                        Text(
+                            text = storageInitError
+                                ?: "Preparando el almacenamiento privado de tus recetas…",
+                            style = MaterialTheme.typography.bodyLarge,
+                            modifier = Modifier.padding(20.dp),
+                        )
+                    }
+                }
+            }
+            AppDestination.PLAN -> {
+                if (calendarRepository != null && recipeRepository != null) {
+                    MealCalendarScreen(
+                        calendarRepository = calendarRepository,
+                        recipeRepository = recipeRepository,
+                        preferencesRepository = calendarPreferencesRepository,
+                        onOpenRecipes = onOpenRecipes,
+                    )
+                } else {
+                    Card(modifier = Modifier.fillMaxWidth()) {
+                        Text(
+                            text = storageInitError
+                                ?: "Preparando el calendario privado de tus comidas…",
+                            style = MaterialTheme.typography.bodyLarge,
+                            modifier = Modifier.padding(20.dp),
+                        )
+                    }
                 }
             }
             AppDestination.CICLO -> {

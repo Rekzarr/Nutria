@@ -1367,40 +1367,83 @@ async function searchIngredient(row) {
   results.hidden = true;
   status.textContent = "Buscando en Open Food Facts…";
   try {
-    const response = await fetch(`/api/ingredients/search?query=${encodeURIComponent(query)}`);
-  const data = await response.json();
+    const url = new URL("https://world.openfoodfacts.org/cgi/search.pl");
+    url.search = new URLSearchParams({
+      search_terms: query,
+      search_simple: "1",
+      action: "process",
+      json: "1",
+      lc: "es",
+      page_size: "8",
+      fields: "code,product_name_es,product_name,brands,nutriments",
+    });
+    const response = await fetch(url);
     if (!response.ok) {
-      throw new Error(data.title || `La búsqueda respondió con el estado ${response.status}.`);
+      if (response.status === 429) {
+        throw new Error("Open Food Facts ha limitado las búsquedas. Espera un momento e inténtalo de nuevo.");
+      }
+      throw new Error(`Open Food Facts respondió con el estado ${response.status}.`);
     }
-    const products = Array.isArray(data.products) ? data.products : [];
+    const data = await response.json();
+    const products = (Array.isArray(data.products) ? data.products : [])
+      .map((product) => {
+        const nutrients = product.nutriments || {};
+        const readNutrient = (value) => {
+          if (value === null || value === undefined || value === "") return null;
+          const number = Number(value);
+          return Number.isFinite(number) && number >= 0 ? number : null;
+        };
+        const caloriesFromKj = readNutrient(nutrients["energy-kj_100g"]);
+        const calories = readNutrient(nutrients["energy-kcal_100g"]) ??
+          (caloriesFromKj === null ? null : caloriesFromKj / 4.184);
+        const name = product.product_name_es?.trim() || product.product_name?.trim();
+        const values = {
+          code: product.code,
+          name,
+          brand: product.brands || "",
+          calories,
+          protein: readNutrient(nutrients.proteins_100g),
+          carbs: readNutrient(nutrients.carbohydrates_100g),
+          fat: readNutrient(nutrients.fat_100g),
+        };
+        return values.code && values.name &&
+          [values.calories, values.protein, values.carbs, values.fat]
+            .every((value) => Number.isFinite(value) && value >= 0) &&
+          values.calories <= 10000 &&
+          [values.protein, values.carbs, values.fat].every((value) => value <= 1000)
+          ? values
+          : null;
+      })
+      .filter(Boolean)
+      .slice(0, 8);
     ingredientSearchResults.set(row, products);
-  results.replaceChildren();
+    results.replaceChildren();
     products.forEach((product, index) => {
       const label = product.brand ? `${product.name} · ${product.brand}` : product.name;
-    const option = document.createElement("button");
-    option.type = "button";
-    option.className = "ingredient-result-option";
-    option.dataset.resultIndex = String(index);
-    option.setAttribute("role", "option");
-    option.setAttribute("aria-selected", "false");
-    const productName = document.createElement("strong");
-    productName.textContent = label;
-    const nutrition = document.createElement("span");
-    nutrition.textContent = `${numberFormat.format(Math.round(product.calories))} kcal · P ${numberFormat.format(Math.round(product.protein))} g · C ${numberFormat.format(Math.round(product.carbs))} g · G ${numberFormat.format(Math.round(product.fat))} g por 100 g`;
-    option.append(productName, nutrition);
-    results.append(option);
+      const option = document.createElement("button");
+      option.type = "button";
+      option.className = "ingredient-result-option";
+      option.dataset.resultIndex = String(index);
+      option.setAttribute("role", "option");
+      option.setAttribute("aria-selected", "false");
+      const productName = document.createElement("strong");
+      productName.textContent = label;
+      const nutrition = document.createElement("span");
+      nutrition.textContent = `${numberFormat.format(Math.round(product.calories))} kcal · P ${numberFormat.format(Math.round(product.protein))} g · C ${numberFormat.format(Math.round(product.carbs))} g · G ${numberFormat.format(Math.round(product.fat))} g por 100 g`;
+      option.append(productName, nutrition);
+      results.append(option);
     });
-  results.hidden = products.length === 0;
+    results.hidden = products.length === 0;
     status.textContent = products.length
-    ? `${products.length} resultados. Pulsa el alimento que coincida para importar sus nutrientes.`
+      ? `${products.length} resultados. Pulsa el alimento que coincida para importar sus nutrientes.`
       : "No hay resultados con valores nutricionales completos. Puedes introducirlos manualmente.";
   } catch (error) {
     console.error("No se pudieron buscar los nutrientes del ingrediente.", error);
     ingredientSearchResults.delete(row);
-  results.replaceChildren();
-  results.hidden = true;
+    results.replaceChildren();
+    results.hidden = true;
     status.textContent = error instanceof TypeError
-      ? "No se pudo conectar con Nutria. Comprueba que la aplicación esté ejecutándose y vuelve a intentarlo."
+      ? "No se pudo conectar con Open Food Facts. Comprueba tu conexión e inténtalo de nuevo."
       : `No se pudo completar la búsqueda: ${error.message}`;
   } finally {
     button.disabled = false;

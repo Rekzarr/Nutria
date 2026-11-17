@@ -84,7 +84,11 @@ class SharedDomainRulesTest {
                 category = if (index == 5) RecipeCategory.DINNER else RecipeCategory.MEAL,
                 prepMinutes = if (index == 4) 45 else 30,
                 complexity = if (index == 3) RecipeComplexity.ADVANCED else RecipeComplexity.EASY,
-                calories = if (index == 2) 551.0 else 400.0,
+                calories = when (index) {
+                    2 -> 551.0
+                    6 -> 550.5
+                    else -> 400.0
+                },
             )
         }
         val saved = listOf(

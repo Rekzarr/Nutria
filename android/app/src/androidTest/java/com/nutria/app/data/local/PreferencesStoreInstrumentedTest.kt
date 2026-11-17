@@ -4,6 +4,9 @@ import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.test.platform.app.InstrumentationRegistry
 import com.nutria.app.core.data.AppTheme
 import com.nutria.app.core.data.SettingsPreferences
+import com.nutria.app.core.model.ComplexityFilter
+import com.nutria.app.core.model.RecommendationCategory
+import com.nutria.app.core.model.RecommendationFilter
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.runBlocking
 import org.junit.Assert.assertEquals
@@ -21,16 +24,35 @@ class PreferencesStoreInstrumentedTest {
         store.setRecommendationFilters(emptySet())
         store.setBreakfastEnabled(false)
         assertFalse(store.preferences.first().breakfastEnabled)
+        assertFalse(store.observeBreakfastEnabled().first())
         store.setServiceBaseUrl(null)
         store.setTheme(NutriaTheme.OCEAN)
-        store.setRecommendationFilters(setOf("vegetarian"))
+        store.saveRecommendationFilter(
+            RecommendationFilter(
+                maxPrepMinutes = 45,
+                complexity = ComplexityFilter.MEDIUM,
+                category = RecommendationCategory.DINNER,
+            ),
+        )
         store.setBreakfastEnabled(true)
         store.setServiceBaseUrl("https://nutria.example.test")
 
         val stored = store.preferences.first()
         assertEquals(NutriaTheme.OCEAN, stored.theme)
-        assertEquals(setOf("vegetarian"), stored.recommendationFilters)
+        assertEquals(
+            setOf("maxPrepMinutes=45", "complexity=MEDIUM", "category=DINNER"),
+            stored.recommendationFilters,
+        )
+        assertEquals(
+            RecommendationFilter(
+                maxPrepMinutes = 45,
+                complexity = ComplexityFilter.MEDIUM,
+                category = RecommendationCategory.DINNER,
+            ),
+            store.observeRecommendationFilter().first(),
+        )
         assertEquals(true, stored.breakfastEnabled)
+        assertEquals(true, store.observeBreakfastEnabled().first())
         assertEquals("https://nutria.example.test", stored.serviceBaseUrl)
 
         store.saveSettings(
@@ -42,5 +64,6 @@ class PreferencesStoreInstrumentedTest {
         val settings = store.observeSettings().first()
         assertEquals(AppTheme.CORAL, settings.theme)
         assertEquals("https://api.nutria.example.test/", settings.serviceBaseUrl)
+        assertEquals(true, store.observeBreakfastEnabled().first())
     }
 }

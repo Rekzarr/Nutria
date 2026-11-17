@@ -35,18 +35,15 @@ internal class WorkoutRoomRepository(
         val dao = openDatabase().workoutDao()
         emitAll(
             dao.observeRecentSessions(limit.coerceIn(1, MAX_RECENT_SESSIONS))
-                .map { rows ->
-                    rows.map { row ->
-                        WorkoutSessionSummary(
-                            session = toDomain(row.session),
-                            sampleCount = row.sampleCount,
-                            hadInterruption = row.hadInterruption,
-                            recoveryDetected = row.recoveryDetected,
-                            interruptionObservedAt = row.interruptionObservedAtEpochMs
-                                ?.let(Instant::ofEpochMilli),
-                        )
-                    }
-                },
+                .map { rows -> rows.map(::toSummary) },
+        )
+    }
+
+    override fun observeSessionSummaries(localDate: LocalDate): Flow<List<WorkoutSessionSummary>> = flow {
+        val dao = openDatabase().workoutDao()
+        emitAll(
+            dao.observeSessionSummaries(localDate.toString())
+                .map { rows -> rows.map(::toSummary) },
         )
     }
 
@@ -243,6 +240,15 @@ internal class WorkoutRoomRepository(
         zoneId = ZoneId.of(entity.zoneId),
         status = WorkoutSessionStatus.valueOf(entity.status),
         endedAt = entity.endedAtEpochMs?.let(Instant::ofEpochMilli),
+    )
+
+    private fun toSummary(row: WorkoutSessionWithSampleCount) = WorkoutSessionSummary(
+        session = toDomain(row.session),
+        sampleCount = row.sampleCount,
+        hadInterruption = row.hadInterruption,
+        recoveryDetected = row.recoveryDetected,
+        interruptionObservedAt = row.interruptionObservedAtEpochMs
+            ?.let(Instant::ofEpochMilli),
     )
 
     private fun WorkoutEndStatus.toSessionStatus() = when (this) {

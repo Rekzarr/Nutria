@@ -9,11 +9,13 @@ import androidx.room.OnConflictStrategy
 import androidx.room.PrimaryKey
 import androidx.room.Query
 import com.nutria.app.core.data.DiaryRepository
+import com.nutria.app.core.model.DailyIntakeActivity
 import com.nutria.app.core.model.MealEntry
 import com.nutria.app.core.model.MealSource
 import com.nutria.app.core.model.Nutrients
 import com.nutria.app.core.model.WaterEvent
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
@@ -96,6 +98,16 @@ internal data class WaterEventEntity(
     )
 }
 
+internal data class DailyMealCountEntity(
+    @ColumnInfo(name = "local_date") val localDate: String,
+    @ColumnInfo(name = "meal_count") val mealCount: Int,
+)
+
+internal data class DailyWaterTotalEntity(
+    @ColumnInfo(name = "local_date") val localDate: String,
+    @ColumnInfo(name = "water_millilitres") val waterMillilitres: Long,
+)
+
 @Dao
 internal interface DiaryDao {
     @Query(
@@ -116,6 +128,9 @@ internal interface DiaryDao {
     )
     fun observeMealHistory(fromInclusive: String, throughInclusive: String): Flow<List<MealRecordEntity>>
 
+    @Query("SELECT local_date, COUNT(*) AS meal_count FROM diary_meals GROUP BY local_date")
+    fun observeDailyMealCounts(): Flow<List<DailyMealCountEntity>>
+
     @Insert(onConflict = OnConflictStrategy.ABORT)
     suspend fun insertMeal(meal: MealRecordEntity)
 
@@ -133,6 +148,12 @@ internal interface DiaryDao {
         """,
     )
     fun observeWaterEvents(date: String): Flow<List<WaterEventEntity>>
+
+    @Query(
+        "SELECT local_date, SUM(amount_millilitres) AS water_millilitres " +
+            "FROM water_events GROUP BY local_date",
+    )
+    fun observeDailyWaterTotals(): Flow<List<DailyWaterTotalEntity>>
 
     @Query("SELECT COALESCE(MAX(sequence), 0) FROM water_events WHERE local_date = :date")
     suspend fun maxWaterSequence(date: String): Long
@@ -177,6 +198,20 @@ internal class RoomDiaryRepository(
     ): Flow<List<MealEntry>> =
         dao.observeMealHistory(fromInclusive.toString(), throughInclusive.toString())
             .map { meals -> meals.map(MealRecordEntity::toDomain) }
+
+    override fun observeIntakeActivity() = combine(
+        dao.observeDailyMealCounts(),
+        dao.observeDailyWaterTotals(),
+    ) { mealCounts, waterTotals ->
+        val mealsByDate = mealCounts.associateBy { LocalDate.parse(it.localDate) }
+        val waterByDate = waterTotals.associateBy { LocalDate.parse(it.localDate) }
+        (mealsByDate.keys + waterByDate.keys).associateWith { date ->
+            DailyIntakeActivity(
+                mealCount = mealsByDate[date]?.mealCount ?: 0,
+                waterMillilitres = waterByDate[date]?.waterMillilitres ?: 0L,
+            )
+        }
+    }
 
     override suspend fun addMeal(entry: MealEntry) = withContext(Dispatchers.IO) {
         dao.insertMeal(MealRecordEntity.fromDomain(entry))

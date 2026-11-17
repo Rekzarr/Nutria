@@ -14,6 +14,7 @@ import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -52,6 +53,7 @@ fun HealthConnectStepsFeature(
     lifecycleOwner: LifecycleOwner,
     compact: Boolean,
     onOpenActivity: () -> Unit = {},
+    localDate: LocalDate = LocalDate.now(),
 ) {
     val context = LocalContext.current
     val repository = remember(context) {
@@ -64,7 +66,7 @@ fun HealthConnectStepsFeature(
     val refresh: suspend () -> Unit = {
         isLoading = true
         try {
-            val result = repository.readDailySteps(LocalDate.now())
+            val result = repository.readDailySteps(localDate)
             stepsState = when (result) {
                 is HealthConnectStepsState.PermissionRequired ->
                     HealthConnectPermissionState.missingGrant(
@@ -96,6 +98,11 @@ fun HealthConnectStepsFeature(
         onDispose { lifecycleOwner.lifecycle.removeObserver(observer) }
     }
 
+    LaunchedEffect(localDate) {
+        stepsState = null
+        latestRefresh()
+    }
+
     val requestedPermission = remember {
         HealthPermission.getReadPermission(StepsRecord::class)
     }
@@ -108,12 +115,13 @@ fun HealthConnectStepsFeature(
             coroutineScope.launch { refresh() }
         } else {
             HealthConnectPermissionHistory.deniedInThisProcess = true
-            stepsState = HealthConnectStepsState.PermissionDenied(LocalDate.now())
+            stepsState = HealthConnectStepsState.PermissionDenied(localDate)
         }
     }
 
     HealthConnectStepsContent(
         state = stepsState,
+        localDate = localDate,
         isLoading = isLoading,
         compact = compact,
         onRefresh = { coroutineScope.launch { refresh() } },
@@ -133,6 +141,7 @@ private object HealthConnectPermissionHistory {
 @Composable
 internal fun HealthConnectStepsContent(
     state: HealthConnectStepsState?,
+    localDate: LocalDate = state?.localDate ?: LocalDate.now(),
     isLoading: Boolean,
     compact: Boolean,
     onRefresh: () -> Unit,
@@ -140,13 +149,21 @@ internal fun HealthConnectStepsContent(
     onOpenProvider: () -> Unit,
     onOpenActivity: () -> Unit = {},
 ) {
+    val title = if (localDate == LocalDate.now()) {
+        stringResource(R.string.health_steps_title)
+    } else {
+        stringResource(
+            R.string.health_steps_date_title,
+            SpanishFormats.formatDate(localDate),
+        )
+    }
     Card(modifier = Modifier.fillMaxWidth()) {
         Column(
             modifier = Modifier.padding(20.dp),
             verticalArrangement = Arrangement.spacedBy(12.dp)
         ) {
             Text(
-                text = stringResource(R.string.health_steps_title),
+                text = title,
                 style = MaterialTheme.typography.titleLarge
             )
             if (!compact) {
@@ -197,7 +214,14 @@ internal fun HealthConnectStepsContent(
                 }
                 is HealthConnectStepsState.NoData -> {
                     Text(
-                        text = stringResource(R.string.health_steps_no_data),
+                        text = if (state.localDate == LocalDate.now()) {
+                            stringResource(R.string.health_steps_no_data)
+                        } else {
+                            stringResource(
+                                R.string.health_steps_no_data_for_date,
+                                SpanishFormats.formatDate(state.localDate),
+                            )
+                        },
                         style = MaterialTheme.typography.bodyLarge,
                         modifier = liveHealthStatusModifier,
                     )

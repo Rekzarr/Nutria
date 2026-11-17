@@ -6,6 +6,7 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Card
+import androidx.compose.material3.LinearProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -55,6 +56,7 @@ fun DailyNutritionSummaryCard(
                             SpanishFormats.formatNumber(summary.consumed.caloriesKcal),
                             SpanishFormats.formatNumber(goals.caloriesKcal.toDouble()),
                         ),
+                        progress = summary.consumed.caloriesKcal / goals.caloriesKcal,
                     )
                     Text(
                         text = stringResource(
@@ -64,6 +66,46 @@ fun DailyNutritionSummaryCard(
                         style = MaterialTheme.typography.bodySmall,
                         color = MaterialTheme.colorScheme.onSurfaceVariant,
                     )
+                    Text(
+                        text = when (diary.careStreakDays) {
+                            0 -> stringResource(R.string.home_streak_zero)
+                            1 -> stringResource(R.string.home_streak_one)
+                            else -> stringResource(R.string.home_streak_many, diary.careStreakDays)
+                        },
+                        style = MaterialTheme.typography.bodyMedium,
+                        color = MaterialTheme.colorScheme.primary,
+                    )
+                    NutritionMetricRow(
+                        label = stringResource(R.string.home_water),
+                        value = stringResource(
+                            R.string.home_water_values,
+                            SpanishFormats.formatNumber(diary.waterMillilitres.toDouble()),
+                            SpanishFormats.formatNumber(goals.waterMillilitres.toDouble()),
+                        ),
+                        progress = diary.waterMillilitres.toDouble() / goals.waterMillilitres,
+                    )
+                    Text(
+                        text = stringResource(R.string.home_meal_count, diary.todayMeals.size),
+                        style = MaterialTheme.typography.labelLarge,
+                    )
+                    if (diary.todayMeals.isEmpty()) {
+                        Text(
+                            text = stringResource(R.string.home_meals_empty),
+                            style = MaterialTheme.typography.bodySmall,
+                            color = MaterialTheme.colorScheme.onSurfaceVariant,
+                        )
+                    } else {
+                        diary.todayMeals.forEach { meal ->
+                            Text(
+                                text = stringResource(
+                                    R.string.home_meal_summary,
+                                    meal.name,
+                                    SpanishFormats.formatNumber(meal.nutrients.caloriesKcal),
+                                ),
+                                style = MaterialTheme.typography.bodySmall,
+                            )
+                        }
+                    }
                     NutritionMetricRow(
                         label = stringResource(R.string.home_nutrition_protein),
                         value = stringResource(
@@ -71,6 +113,7 @@ fun DailyNutritionSummaryCard(
                             SpanishFormats.formatNumber(summary.consumed.proteinGrams),
                             SpanishFormats.formatNumber(goals.proteinGrams),
                         ),
+                        progress = summary.consumed.proteinGrams / goals.proteinGrams,
                     )
                     NutritionMetricRow(
                         label = stringResource(R.string.home_nutrition_carbohydrates),
@@ -79,6 +122,7 @@ fun DailyNutritionSummaryCard(
                             SpanishFormats.formatNumber(summary.consumed.carbohydratesGrams),
                             SpanishFormats.formatNumber(goals.carbohydratesGrams),
                         ),
+                        progress = summary.consumed.carbohydratesGrams / goals.carbohydratesGrams,
                     )
                     NutritionMetricRow(
                         label = stringResource(R.string.home_nutrition_fat),
@@ -87,6 +131,7 @@ fun DailyNutritionSummaryCard(
                             SpanishFormats.formatNumber(summary.consumed.fatGrams),
                             SpanishFormats.formatNumber(goals.fatGrams),
                         ),
+                        progress = summary.consumed.fatGrams / goals.fatGrams,
                     )
                 }
             }
@@ -95,12 +140,22 @@ fun DailyNutritionSummaryCard(
 }
 
 @Composable
-private fun NutritionMetricRow(label: String, value: String) {
-    Row(
-        modifier = Modifier.fillMaxWidth(),
-        horizontalArrangement = Arrangement.SpaceBetween,
-    ) {
-        Text(label, style = MaterialTheme.typography.bodyMedium)
-        Text(value, style = MaterialTheme.typography.bodyMedium)
+private fun NutritionMetricRow(
+    label: String,
+    value: String,
+    progress: Double,
+) {
+    Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.SpaceBetween,
+        ) {
+            Text(label, style = MaterialTheme.typography.bodyMedium)
+            Text(value, style = MaterialTheme.typography.bodyMedium)
+        }
+        LinearProgressIndicator(
+            progress = { progress.toFloat().coerceIn(0f, 1f) },
+            modifier = Modifier.fillMaxWidth(),
+        )
     }
 }

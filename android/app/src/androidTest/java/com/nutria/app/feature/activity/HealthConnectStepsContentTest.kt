@@ -38,7 +38,8 @@ class HealthConnectStepsContentTest {
             }
         }
 
-        composeRule.onNodeWithText("No hay datos de pasos para hoy en Health Connect")
+        composeRule.onNodeWithText("Pasos del 14/11/2026").assertIsDisplayed()
+        composeRule.onNodeWithText("No hay datos de pasos del 14/11/2026 en Health Connect")
             .assertIsDisplayed()
         assertTrue(composeRule.onAllNodesWithText("0 pasos").fetchSemanticsNodes().isEmpty())
         assertTrue(composeRule.onAllNodesWithText("Fuente: Health Connect").fetchSemanticsNodes().isEmpty())
@@ -61,7 +62,7 @@ class HealthConnectStepsContentTest {
         }
 
         composeRule.onNodeWithText(
-            "Para consultar tus pasos, permite la lectura de pasos en Health Connect. Nutria no solicita otros datos de salud."
+            "Para consultar los pasos de este día, permite la lectura de pasos en Health Connect. Nutria no solicita otros datos de salud."
         ).assertIsDisplayed()
         composeRule.onNodeWithText("Permitir acceso a pasos").performClick()
         assertTrue(requested)

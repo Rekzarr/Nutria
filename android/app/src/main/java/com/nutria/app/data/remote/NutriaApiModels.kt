@@ -48,11 +48,13 @@ data class NutriaApiError(
     val serverTitle: String? = null,
 )
 
-interface NutriaApiRepository {
-    suspend fun searchIngredients(query: String): NutriaApiResult<List<IngredientProduct>>
-
+interface MealAnalysisApiRepository {
     suspend fun analyzeMeal(
         photo: MealPhoto,
         name: String? = null,
     ): NutriaApiResult<MealAnalysis>
+}
+
+fun interface IngredientSearchRepository {
+    suspend fun searchIngredients(query: String): NutriaApiResult<List<IngredientProduct>>
 }

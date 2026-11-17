@@ -47,17 +47,20 @@ import com.nutria.app.core.model.ConnectionFailure
 import com.nutria.app.core.model.HeartRateBandState
 import com.nutria.app.core.model.HeartRateFreshness
 import com.nutria.app.core.model.HeartRateRules
+import com.nutria.app.core.data.WorkoutSessionSummary
 import com.nutria.app.core.model.WorkoutSessionStatus
 import com.nutria.app.app.SpanishFormats
+import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.delay
 import java.time.Duration
 import java.time.Instant
+import java.time.LocalDate
 import java.time.ZoneId
 import java.time.format.DateTimeFormatter
 import java.util.Locale
 
 @Composable
-fun WorkoutFeatureScreen(modifier: Modifier = Modifier) {
+fun WorkoutFeatureScreen(selectedDate: LocalDate, modifier: Modifier = Modifier) {
     val context = LocalContext.current
     val lifecycle = LocalLifecycleOwner.current.lifecycle
     var service by remember { mutableStateOf<WorkoutBleService?>(null) }
@@ -85,6 +88,26 @@ fun WorkoutFeatureScreen(modifier: Modifier = Modifier) {
     }
 
     val ui = service?.uiState?.collectAsState()?.value ?: WorkoutBleService.WorkoutFeatureUiState()
+    var historySessions by remember(selectedDate) {
+        mutableStateOf<List<WorkoutSessionSummary>>(emptyList())
+    }
+    var historyLoading by remember(selectedDate) { mutableStateOf(true) }
+    var historyError by remember(selectedDate) { mutableStateOf(false) }
+    LaunchedEffect(service, selectedDate) {
+        val currentService = service ?: return@LaunchedEffect
+        historyLoading = true
+        historyError = false
+        currentService.observeSessionSummaries(selectedDate)
+            .catch {
+                historyLoading = false
+                historyError = true
+            }
+            .collect { sessions ->
+                historySessions = sessions
+                historyLoading = false
+            }
+    }
+
     var now by remember { mutableStateOf(Instant.now()) }
     LaunchedEffect(ui.latestReading, ui.session?.startedAt) {
         while (true) {
@@ -399,10 +422,14 @@ fun WorkoutFeatureScreen(modifier: Modifier = Modifier) {
             text = stringResource(R.string.workout_history_title),
             style = MaterialTheme.typography.titleLarge,
         )
-        if (ui.recentSessions.isEmpty()) {
-            Text(stringResource(R.string.workout_history_empty))
-        } else {
-            ui.recentSessions.forEach { summary ->
+        when {
+            historyLoading -> Text(stringResource(R.string.workout_history_loading))
+            historyError -> Text(
+                stringResource(R.string.workout_history_error),
+                color = MaterialTheme.colorScheme.error,
+            )
+            historySessions.isEmpty() -> Text(stringResource(R.string.workout_history_empty))
+            else -> historySessions.forEach { summary ->
                 val savedSession = summary.session
                 Card(modifier = Modifier.fillMaxWidth()) {
                     Column(

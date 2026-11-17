@@ -433,6 +433,9 @@ class WorkoutBleService : Service() {
         }
     }
 
+    fun observeSessionSummaries(localDate: LocalDate) =
+        workoutRepository.observeSessionSummaries(localDate)
+
     private suspend fun startWorkoutAfterForegroundPromotion() {
         if (!startupReady.await()) {
             stopForeground(STOP_FOREGROUND_REMOVE)

@@ -123,6 +123,23 @@ internal interface WorkoutDao {
     fun observeRecentSessions(limit: Int): Flow<List<WorkoutSessionWithSampleCount>>
 
     @Query(
+        "SELECT s.*, COUNT(h.id) AS sample_count, " +
+            "EXISTS(SELECT 1 FROM workout_events AS e WHERE e.session_id = s.id " +
+            "AND e.kind IN ('CONNECTION_LOST', 'USER_DISCONNECTED', 'BLUETOOTH_DISABLED', " +
+            "'PERMISSION_LOST', 'PROCESS_RECOVERY')) AS had_interruption " +
+            ", EXISTS(SELECT 1 FROM workout_events AS r WHERE r.session_id = s.id " +
+            "AND r.kind = 'PROCESS_RECOVERY') AS recovery_detected " +
+            ", (SELECT MIN(i.occurred_at_epoch_ms) FROM workout_events AS i WHERE i.session_id = s.id " +
+            "AND i.kind IN ('CONNECTION_LOST', 'USER_DISCONNECTED', 'BLUETOOTH_DISABLED', " +
+            "'PERMISSION_LOST', 'PROCESS_RECOVERY')) AS interruption_observed_at_epoch_ms " +
+            "FROM workout_sessions AS s " +
+            "LEFT JOIN heart_rate_samples AS h ON h.session_id = s.id " +
+            "WHERE s.local_date = :localDate " +
+            "GROUP BY s.id ORDER BY s.started_at_epoch_ms DESC",
+    )
+    fun observeSessionSummaries(localDate: String): Flow<List<WorkoutSessionWithSampleCount>>
+
+    @Query(
         "SELECT * FROM workout_events WHERE session_id = :sessionId " +
             "ORDER BY occurred_at_epoch_ms, id",
     )

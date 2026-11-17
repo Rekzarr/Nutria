@@ -79,4 +79,44 @@ class WorkoutPersistenceInstrumentedTest {
         assertTrue(repository.observeReadings(session.id).first().isEmpty())
         assertTrue(repository.observeEvents(session.id).first().isEmpty())
     }
+
+    @Test
+    fun selectedDayHistoryIncludesItsSummariesAndExcludesOtherDates() = runBlocking {
+        val selectedDate = LocalDate.of(2026, 11, 14)
+        val selectedStart = Instant.parse("2026-11-14T10:00:00Z")
+        val selectedSession = repository.startWorkout(
+            localDate = selectedDate,
+            zoneId = ZoneId.of("Europe/Madrid"),
+            startedAt = selectedStart,
+        )
+        repository.appendReceivedReading(
+            selectedSession.id,
+            HeartRateReading(83, selectedStart.plusSeconds(4)),
+        )
+        repository.recordInterruption(
+            selectedSession.id,
+            WorkoutEvent(
+                selectedSession.id,
+                WorkoutEventKind.CONNECTION_LOST,
+                selectedStart.plusSeconds(12),
+            ),
+        )
+
+        val otherDate = selectedDate.plusDays(1)
+        val otherSession = repository.startWorkout(
+            localDate = otherDate,
+            zoneId = ZoneId.of("Europe/Madrid"),
+            startedAt = selectedStart.plusSeconds(86_400),
+        )
+
+        val selectedSummaries = repository.observeSessionSummaries(selectedDate).first()
+        assertEquals(listOf(selectedSession.id), selectedSummaries.map { it.session.id })
+        assertEquals(1, selectedSummaries.single().sampleCount)
+        assertTrue(selectedSummaries.single().hadInterruption)
+
+        assertEquals(
+            listOf(otherSession.id),
+            repository.observeSessionSummaries(otherDate).first().map { it.session.id },
+        )
+    }
 }

@@ -1,9 +1,7 @@
 batch_id: "t22"
-completed_tasks: []
-blocked_tasks:
-  - task_id: "T016"
-    reason: "Implementation and host tests are present, but the required full Gradle build fails at :app:lintDebug on shared-project findings; final task completion is blocked pending a clean full verification run."
-    required_task_ids: []
+completed_tasks:
+  - "T016"
+blocked_tasks: []
 files_changed:
   T016:
     - file: "android/app/src/main/java/com/nutria/app/data/local/NutritionGoalsRoom.kt"
@@ -93,13 +91,13 @@ evidence_mapping:
       evidence: "SettingsValidationTest and the 58-test JVM suite pass."
     - upstream: "artifacts/t5-ux.md#Ajustes-—-goals,-theme-and-privacy"
       output: "SettingsScreen.kt and SettingsScreenTest.kt"
-      evidence: "Compose instrumentation sources compile; runtime is not executed."
+      evidence: "SettingsScreenTest passed in the connected Android 13 instrumentation run."
     - upstream: "artifacts/t6-dba.md#Persistence-ownership"
       output: "NutritionGoalsRoom.kt; PreferencesStore.kt; NutriaDatabase.kt"
       evidence: "Repository and preference persistence tests are present; unit suite passes."
     - upstream: "artifacts/t8-teamlead-plan.md#T016"
       output: "Settings feature files and this checkpoint"
-      evidence: "Implementation is present; full build is blocked by shared lint errors."
+      evidence: "The subsequent clean full Gradle build and connected instrumentation run passed."
     - upstream: "artifacts/t1-pm-spec.md#REQ-019"
       output: "ConfiguredNutriaApiClientFactory.kt and SettingsScreen.kt"
       evidence: "Existing typed client is configured from the service URL; no API-key field is added."
@@ -125,38 +123,32 @@ traceability:
       - "android/app/src/main/java/com/nutria/app/feature/settings/SettingsValidation.kt"
       - "android/app/src/main/java/com/nutria/app/feature/settings/SettingsScreen.kt"
       - "android/app/src/main/java/com/nutria/app/data/local/NutritionGoalsRoom.kt"
-    status: "blocked"
+    status: "completed"
   - requirement: "REQ-022"
     plan_item: "4.5"
     task: "T016"
     files:
       - "android/app/src/main/java/com/nutria/app/feature/settings/SettingsScreen.kt"
-    status: "blocked"
+    status: "completed"
   - requirement: "REQ-026"
     plan_item: "4.5"
     task: "T016"
     files:
       - "android/app/src/main/java/com/nutria/app/feature/settings/SettingsScreen.kt"
-    status: "blocked"
+    status: "completed"
 protocol_violation: false
 errors:
-  - "Full verification command failed at :app:lintDebug with 68 errors, 24 warnings, and 1 hint in shared-project sources; no t22 settings source appears in the lint report."
+  - "An earlier full verification attempt failed at :app:lintDebug with 68 findings in shared-project sources; this was resolved by the subsequent clean verification run."
 warnings:
-  - severity: HIGH
-    message: "Do not mark T016 complete until shared lint failures are resolved and the full Gradle command passes."
   - severity: INFO
-    message: "Compose and Room instrumentation tests compile but are not executed because adb reports no connected device and the emulator is unavailable."
+    message: "Actual Health Connect provider access and physical BLE band behavior remain outside this batch's device evidence."
 test_results:
   T016:
-    command: ".\\gradlew.bat :app:testDebugUnitTest --rerun-tasks --no-daemon --max-workers=1"
-    passed: 58
+    command: ".\\gradlew.bat clean test build assembleDebugAndroidTest --no-daemon --no-parallel --max-workers=1"
+    passed: 71
     failed: 0
     skipped: 0
     failures: []
     additional_validation:
-      - command: ".\\gradlew.bat :app:compileDebugAndroidTestKotlin --rerun-tasks --no-daemon --max-workers=1"
-        result: "passed"
-      - command: ".\\gradlew.bat test build assembleDebugAndroidTest --no-daemon --max-workers=1"
-        result: "failed at :app:lintDebug (68 errors, 24 warnings, 1 hint)"
-      - command: "adb devices -l"
-        result: "no connected devices; instrumentation runtime skipped"
+      - command: ".\\gradlew.bat connectedDebugAndroidTest --no-daemon --no-parallel --max-workers=1"
+        result: "passed on OPPO CPH2197 / Android 13 (28 tests, 0 failures, 0 errors, 0 skipped)"

@@ -1,5 +1,6 @@
 package com.nutria.app.feature.diary
 
+import com.nutria.app.data.remote.IngredientProduct
 import com.nutria.app.core.model.FoodAmount
 import com.nutria.app.core.model.FoodUnit
 import com.nutria.app.core.model.Nutrients
@@ -14,6 +15,14 @@ data class FoodEntryDraft(
     val proteinPer100Grams: String = "",
     val carbohydratesPer100Grams: String = "",
     val fatPer100Grams: String = "",
+)
+
+fun FoodEntryDraft.withIngredientProduct(product: IngredientProduct): FoodEntryDraft = copy(
+    name = product.name.take(MAX_FOOD_NAME_LENGTH),
+    caloriesPer100Grams = product.caloriesPer100g.toString(),
+    proteinPer100Grams = product.proteinPer100g.toString(),
+    carbohydratesPer100Grams = product.carbsPer100g.toString(),
+    fatPer100Grams = product.fatPer100g.toString(),
 )
 
 data class ValidatedFoodEntry(
@@ -108,5 +117,6 @@ object FoodEntryValidator {
             .toDoubleOrNull()
             ?.takeIf { it.isFinite() && it >= 0.0 }
 
-    private const val MAX_FOOD_NAME_LENGTH = 60
 }
+
+private const val MAX_FOOD_NAME_LENGTH = 60

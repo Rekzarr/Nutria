@@ -8,6 +8,8 @@ import com.nutria.app.core.model.MealEntry
 import com.nutria.app.core.model.MealSource
 import com.nutria.app.core.model.WaterEvent
 import com.nutria.app.core.model.Nutrients
+import com.nutria.app.core.model.DailyIntakeActivity
+import com.nutria.app.core.model.StreakRules
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -30,11 +32,13 @@ data class DiaryUiState(
     val todayMeals: List<MealEntry> = emptyList(),
     val mealHistory: List<MealEntry> = emptyList(),
     val waterEvents: List<com.nutria.app.core.model.WaterEvent> = emptyList(),
+    val careStreakDays: Int = 0,
     val storageError: String? = null,
     val successMessage: String? = null,
 ) {
     val waterMillilitres: Int get() = waterEvents.sumOf { it.amountMillilitres }
     val canUndoWater: Boolean get() = waterEvents.isNotEmpty()
+    val canClearToday: Boolean get() = todayMeals.isNotEmpty() || waterEvents.isNotEmpty()
 }
 
 @OptIn(ExperimentalCoroutinesApi::class)
@@ -51,13 +55,14 @@ class DiaryViewModel(
             repository.observeMeals(date),
             repository.observeMealHistory(date.minusDays(HISTORY_DAYS.toLong() - 1L), date),
             repository.observeWaterEvents(date),
-        ) { meals, history, water ->
-            DiaryData(date, meals, history, water)
+            repository.observeIntakeActivity(),
+        ) { meals, history, water, dailyActivity ->
+            DiaryData(date, meals, history, water, dailyActivity)
         }
     }.catch { failure ->
         if (failure is CancellationException) throw failure
         storageError.value = STORAGE_FAILURE_MESSAGE
-        emit(DiaryData(currentDate.value, emptyList(), emptyList(), emptyList()))
+        emit(DiaryData(currentDate.value, emptyList(), emptyList(), emptyList(), emptyMap()))
     }
 
     val state: StateFlow<DiaryUiState> = combine(
@@ -70,6 +75,7 @@ class DiaryViewModel(
             todayMeals = data.todayMeals,
             mealHistory = data.history,
             waterEvents = data.waterEvents,
+            careStreakDays = StreakRules.careStreak(data.date, data.dailyActivity),
             storageError = error,
             successMessage = success,
         )
@@ -115,6 +121,23 @@ class DiaryViewModel(
         }
     }
 
+    suspend fun addRecipeServing(name: String, nutrients: Nutrients): Boolean {
+        val normalizedName = name.trim()
+        require(normalizedName.isNotEmpty() && normalizedName.length <= MAX_MEAL_NAME_LENGTH)
+        return mutate(success = "Una ración de $normalizedName se añadió a tu día.") {
+            repository.addMeal(
+                MealEntry(
+                    id = UUID.randomUUID().toString(),
+                    localDate = currentDate.value,
+                    name = normalizedName,
+                    nutrients = nutrients,
+                    source = MealSource.RECIPE,
+                    recordedAt = Instant.now(clock),
+                ),
+            )
+        }
+    }
+
     suspend fun addWater(amountMillilitres: Int): Boolean {
         require(amountMillilitres == SMALL_WATER_INCREMENT || amountMillilitres == LARGE_WATER_INCREMENT)
         return mutate(
@@ -150,6 +173,12 @@ class DiaryViewModel(
         }
     }
 
+    suspend fun clearTodayIntake(): Boolean = mutate(
+        success = "Las comidas y el agua de hoy se han eliminado.",
+    ) {
+        repository.clearMealsAndWater(currentDate.value)
+    }
+
     fun clearStatus() {
         storageError.value = null
         successMessage.value = null
@@ -175,6 +204,7 @@ class DiaryViewModel(
         val todayMeals: List<MealEntry>,
         val history: List<MealEntry>,
         val waterEvents: List<WaterEvent>,
+        val dailyActivity: Map<LocalDate, DailyIntakeActivity>,
     )
 
     companion object {

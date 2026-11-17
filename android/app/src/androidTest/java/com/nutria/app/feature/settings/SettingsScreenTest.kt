@@ -42,7 +42,7 @@ class SettingsScreenTest {
             }
         }
 
-        composeRule.onNodeWithText("Verde natural").assertIsDisplayed()
+        composeRule.onNodeWithText("Verde natural").performScrollTo().assertIsDisplayed()
         composeRule.onNodeWithText("Lavanda").performScrollTo().assertIsDisplayed()
         composeRule.onNodeWithText("Coral").performScrollTo().assertIsDisplayed()
         composeRule.onNodeWithText("Azul océano").performScrollTo().performClick()

@@ -19,19 +19,20 @@ contracts:
   - name: native-client-ingredient-search
     unit: recipe-library
     type: rest
-    stability: frozen
-    source_loc: "Endpoints/OpenFoodFactsEndpoints.cs:27"
+    stability: must_preserve
+    source_loc: "android/app/src/main/java/com/nutria/app/data/remote/OpenFoodFactsClient.kt"
     contract:
       method: "GET"
-      path: "/api/ingredients/search"
-      request: "UTF-8 query parameter query, trimmed and constrained to 1–80 characters"
-      response: "200 JSON: { products: [{ code, name, brand, calories, protein, carbs, fat }] }; nutrients are per 100 g"
-      error: "400 invalid/empty query; 429 rate limited; 502 provider/network/invalid JSON; 504 timeout; ProblemDetails title is user-facing"
-      auth: "No API authentication is configured in the inspected backend."
+      path: "https://world.openfoodfacts.org/cgi/search.pl"
+      request: "UTF-8 search_terms query, trimmed and constrained to 1–80 characters; Spanish localization; at most 8 products; Android sends User-Agent Nutria/1.0"
+      response: "Provider JSON mapped by the clients to code, name, brand, calories, protein, carbs, fat per 100 g; kcal may be derived from kJ"
+      error: "Empty query is rejected locally; network, provider rate limit, HTTP and invalid response errors are shown to the user"
+      auth: "No provider credential is required."
     target_contract:
-      method: "Android HTTP client GET to the configured existing backend base URL plus /api/ingredients/search?query={encoded term}"
-      notes: "URL-encode the Spanish ingredient query, parse the same products wrapper and nutrient names, and preserve the per-100-g interpretation and error states."
-    semantic_divergence: []
+      method: "Android and PWA HTTP GET directly to Open Food Facts; no Nutria route or configured backend URL is used for ingredient search"
+      notes: "The old GET /api/ingredients/search route is retired. See ADR-0009; preserve source attribution, explicit user-triggered search, result filtering, and manual-entry fallback."
+    semantic_divergence:
+      - "Approved by ADR-0009: direct Open Food Facts search replaces the frozen Nutria proxy contract."
 
   - name: server-to-openai-responses
     unit: meal-analysis-api
@@ -50,19 +51,3 @@ contracts:
       notes: "Do not transfer provider credentials or direct provider calls to the mobile application; retain server validation, schema, and safe error mapping."
     semantic_divergence: []
 
-  - name: server-to-openfoodfacts-search
-    unit: ingredient-search-api
-    type: rest
-    stability: must_preserve
-    source_loc: "Services/OpenFoodFactsService.cs:12"
-    contract:
-      method: "GET"
-      path: "https://world.openfoodfacts.org/cgi/search.pl"
-      request: "search_terms, search_simple=1, action=process, json=1, lc=es, page_size=8, fields=code,product_name_es,product_name,brands,nutriments; User-Agent Nutria/1.0; Accept application/json"
-      response: "Provider products mapped to at most eight complete results; kcal is read directly or converted from kJ; protein/carbs/fat and kcal are per 100 g"
-      error: "Up to three attempts for timeout/429/5xx with short increasing delay; final failure is mapped by the Nutria endpoint"
-      auth: "No provider credential is configured in the inspected service."
-    target_contract:
-      method: "Keep the server-side Open Food Facts integration behind GET /api/ingredients/search"
-      notes: "The Android client calls Nutria's existing endpoint, not the provider directly, and retains server-side localization, filtering, retries, and product mapping."
-    semantic_divergence: []

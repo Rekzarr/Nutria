@@ -6,6 +6,7 @@ import java.time.YearMonth
 import java.time.temporal.TemporalAdjusters
 import java.util.Locale
 import kotlin.random.Random
+import kotlin.math.roundToInt
 
 object RecommendationRules {
     const val MAX_RECOMMENDATION_CALORIES = 550
@@ -33,7 +34,7 @@ object RecommendationRules {
                 candidate.prepMinutes <= filter.maxPrepMinutes &&
                 complexityMatches &&
                 categoryMatches &&
-                kotlin.math.round(calories) <= MAX_RECOMMENDATION_CALORIES
+                calories.roundToInt() <= MAX_RECOMMENDATION_CALORIES
         }
     }
 

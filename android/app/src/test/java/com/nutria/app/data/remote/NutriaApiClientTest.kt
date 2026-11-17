@@ -41,62 +41,6 @@ class NutriaApiClientTest {
     }
 
     @Test
-    fun ingredientSearchTrimsAndUtf8EncodesQueryAndMapsPer100gValues() = runBlocking {
-        server.enqueue(
-            jsonResponse(
-                """{"products":[{"code":"123","name":"Té verde","brand":"Marca","calories":42,"protein":3.1,"carbs":6.2,"fat":1.4}]}""",
-            ),
-        )
-
-        val result = client.searchIngredients("  ñame y té  ")
-        val request = server.takeRequest()
-
-        assertTrue(result is NutriaApiResult.Success)
-        val product = (result as NutriaApiResult.Success).value.single()
-        assertEquals("Té verde", product.name)
-        assertEquals(42.0, product.caloriesPer100g, 0.0)
-        assertEquals(3.1, product.proteinPer100g, 0.0)
-        assertEquals("/api/ingredients/search", request.requestUrl?.encodedPath)
-        assertEquals("ñame y té", request.requestUrl?.queryParameter("query"))
-        assertEquals("GET", request.method)
-    }
-
-    @Test
-    fun emptyIngredientResultsAreSuccessfulAndNotAnError() = runBlocking {
-        server.enqueue(jsonResponse("""{"products":[]}"""))
-
-        val result = client.searchIngredients("lentejas")
-
-        assertEquals(NutriaApiResult.Success(emptyList<IngredientProduct>()), result)
-    }
-
-    @Test
-    fun invalidIngredientQueryDoesNotSendARequest() = runBlocking {
-        val result = client.searchIngredients("   ")
-
-        assertEquals(NutriaApiErrorKind.INVALID_INPUT, (result as NutriaApiResult.Failure).error.kind)
-        assertEquals(0, server.requestCount)
-    }
-
-    @Test
-    fun ingredientProblemDetailsTitleAndRateLimitArePreserved() = runBlocking {
-        server.enqueue(
-            MockResponse()
-                .setResponseCode(429)
-                .setHeader("Content-Type", "application/problem+json")
-                .setBody("""{"title":"Espera antes de buscar de nuevo."}"""),
-        )
-
-        val result = client.searchIngredients("arroz")
-        val error = (result as NutriaApiResult.Failure).error
-
-        assertEquals(NutriaApiErrorKind.RATE_LIMITED, error.kind)
-        assertEquals(429, error.httpStatus)
-        assertEquals("Espera antes de buscar de nuevo.", error.message)
-        assertEquals(error.message, error.serverTitle)
-    }
-
-    @Test
     fun analysisMapsFrozenServerErrorStatusesToActionableKinds() = runBlocking {
         val expected = listOf(
             400 to NutriaApiErrorKind.INVALID_INPUT,

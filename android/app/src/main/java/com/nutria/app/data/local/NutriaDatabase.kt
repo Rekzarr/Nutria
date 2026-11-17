@@ -51,6 +51,9 @@ internal interface StorageMetadataDao {
         WorkoutEventEntity::class,
         HeartRateSampleEntity::class,
         NutritionGoalsEntity::class,
+        SavedRecipeEntity::class,
+        RecipeIngredientEntity::class,
+        CalendarAssignmentEntity::class,
     ],
     version = LocalDatabaseMigrations.SCHEMA_VERSION,
     exportSchema = true,
@@ -61,6 +64,8 @@ internal abstract class NutriaDatabase : RoomDatabase() {
     abstract fun cycleDao(): CycleDao
     abstract fun workoutDao(): WorkoutDao
     abstract fun nutritionGoalsDao(): NutritionGoalsDao
+    abstract fun recipeDao(): RecipeDao
+    abstract fun calendarDao(): CalendarDao
 }
 
 /**
@@ -69,7 +74,7 @@ internal abstract class NutriaDatabase : RoomDatabase() {
  * destructive fallback.
  */
 internal object LocalDatabaseMigrations {
-    const val SCHEMA_VERSION = 6
+    const val SCHEMA_VERSION = 8
     private val MIGRATION_1_2 = object : Migration(1, 2) {
         override fun migrate(db: SupportSQLiteDatabase) {
             db.execSQL(
@@ -271,6 +276,76 @@ internal object LocalDatabaseMigrations {
         }
     }
 
+    private val MIGRATION_6_7 = object : Migration(6, 7) {
+        override fun migrate(db: SupportSQLiteDatabase) {
+            db.execSQL(
+                """
+                CREATE TABLE IF NOT EXISTS `saved_recipes` (
+                    `id` TEXT NOT NULL,
+                    `name` TEXT NOT NULL,
+                    `category` TEXT NOT NULL,
+                    `recommendation_id` TEXT,
+                    `servings` INTEGER NOT NULL,
+                    `prep_minutes` INTEGER,
+                    `complexity` TEXT,
+                    `instructions` TEXT NOT NULL DEFAULT '',
+                    PRIMARY KEY(`id`)
+                )
+                """.trimIndent(),
+            )
+            db.execSQL(
+                """
+                CREATE TABLE IF NOT EXISTS `recipe_ingredients` (
+                    `recipe_id` TEXT NOT NULL,
+                    `position` INTEGER NOT NULL,
+                    `name` TEXT NOT NULL,
+                    `edible_milli_grams` INTEGER NOT NULL,
+                    `calories_milli_kcal` INTEGER NOT NULL,
+                    `protein_milli_grams` INTEGER NOT NULL,
+                    `carbohydrates_milli_grams` INTEGER NOT NULL,
+                    `fat_milli_grams` INTEGER NOT NULL,
+                    PRIMARY KEY(`recipe_id`, `position`),
+                    FOREIGN KEY(`recipe_id`) REFERENCES `saved_recipes`(`id`)
+                        ON UPDATE NO ACTION ON DELETE CASCADE
+                )
+                """.trimIndent(),
+            )
+            db.execSQL(
+                "CREATE INDEX IF NOT EXISTS `index_recipe_ingredients_recipe_id` " +
+                    "ON `recipe_ingredients` (`recipe_id`)",
+            )
+        }
+    }
+
+    private val MIGRATION_7_8 = object : Migration(7, 8) {
+        override fun migrate(db: SupportSQLiteDatabase) {
+            db.execSQL(
+                """
+                CREATE TABLE IF NOT EXISTS `calendar_assignments` (
+                    `local_date` TEXT NOT NULL,
+                    `slot` TEXT NOT NULL,
+                    `recipe_id` TEXT NOT NULL,
+                    PRIMARY KEY(`local_date`, `slot`),
+                    FOREIGN KEY(`recipe_id`) REFERENCES `saved_recipes`(`id`)
+                        ON UPDATE NO ACTION ON DELETE CASCADE
+                )
+                """.trimIndent(),
+            )
+            db.execSQL(
+                "CREATE INDEX IF NOT EXISTS `index_calendar_assignments_recipe_id` " +
+                    "ON `calendar_assignments` (`recipe_id`)",
+            )
+        }
+    }
+
     val all: Array<Migration> =
-        arrayOf(MIGRATION_1_2, MIGRATION_2_3, MIGRATION_3_4, MIGRATION_4_5, MIGRATION_5_6)
+        arrayOf(
+            MIGRATION_1_2,
+            MIGRATION_2_3,
+            MIGRATION_3_4,
+            MIGRATION_4_5,
+            MIGRATION_5_6,
+            MIGRATION_6_7,
+            MIGRATION_7_8,
+        )
 }

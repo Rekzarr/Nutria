@@ -2,6 +2,7 @@ package com.nutria.app.app
 
 import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.junit4.createAndroidComposeRule
+import androidx.compose.ui.test.onAllNodesWithText
 import androidx.compose.ui.test.onNodeWithContentDescription
 import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
@@ -20,7 +21,7 @@ class NavigationShellTest {
         composeRule.onNodeWithContentDescription("Abrir navegación").performClick()
 
         listOf("Inicio", "Comida", "Recetas", "Foto", "Ciclo", "Plan", "Actividad")
-            .forEach { label -> composeRule.onNodeWithText(label).assertIsDisplayed() }
+            .forEach { label -> composeRule.onAllNodesWithText(label)[0].assertIsDisplayed() }
 
         composeRule.onNodeWithText("Comida").performClick()
         composeRule.waitForIdle()
@@ -37,7 +38,7 @@ class NavigationShellTest {
         composeRule.activity.onBackPressedDispatcher.onBackPressed()
         composeRule.waitForIdle()
 
-        composeRule.onNodeWithText("Inicio").assertIsDisplayed()
+        composeRule.onAllNodesWithText("Inicio")[0].assertIsDisplayed()
     }
 
     private fun openDrawerAndSelect(destination: String) {

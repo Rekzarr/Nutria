@@ -21,7 +21,7 @@ import java.util.concurrent.TimeUnit
 import kotlin.coroutines.resume
 
 /**
- * Typed access to the two existing Nutria server endpoints.
+ * Typed access to the Nutria photo-analysis endpoint.
  *
  * This client deliberately has no OpenAI/Open Food Facts credentials or provider URLs. It does
  * not persist request or response data; callers should invoke it only after the user action that
@@ -30,7 +30,7 @@ import kotlin.coroutines.resume
 class NutriaApiClient(
     baseUrl: String,
     allowCleartextForLocalDebug: Boolean = false,
-) : NutriaApiRepository {
+) : MealAnalysisApiRepository {
     private val serviceUrl = parseServiceUrl(baseUrl, allowCleartextForLocalDebug)
     private val gson = Gson()
     private val httpClient = OkHttpClient.Builder()
@@ -42,46 +42,6 @@ class NutriaApiClient(
         // In particular, do not replay a cost-bearing photo-analysis POST automatically.
         .retryOnConnectionFailure(false)
         .build()
-
-    override suspend fun searchIngredients(query: String): NutriaApiResult<List<IngredientProduct>> {
-        val trimmedQuery = query.trim()
-        if (trimmedQuery.length !in 1..MAX_QUERY_LENGTH) {
-            return failure(
-                NutriaApiErrorKind.INVALID_INPUT,
-                "Escribe un ingrediente de entre 1 y $MAX_QUERY_LENGTH caracteres.",
-            )
-        }
-
-        val url = endpoint("api", "ingredients", "search")
-            .newBuilder()
-            .addQueryParameter("query", trimmedQuery)
-            .build()
-        val request = Request.Builder().url(url).get().build()
-        return execute(request) { body ->
-            val dto = gson.fromJson(body, IngredientSearchResponseDto::class.java)
-                ?: return@execute null
-            val products = dto.products ?: return@execute null
-            if (products.size > MAX_PRODUCTS) return@execute null
-
-            products.map { product ->
-                val code = product.code?.takeIf(String::isNotBlank) ?: return@execute null
-                val name = product.name?.takeIf(String::isNotBlank) ?: return@execute null
-                val calories = product.calories?.takeIf { it.isValidNutrient() } ?: return@execute null
-                val protein = product.protein?.takeIf { it.isValidNutrient() } ?: return@execute null
-                val carbs = product.carbs?.takeIf { it.isValidNutrient() } ?: return@execute null
-                val fat = product.fat?.takeIf { it.isValidNutrient() } ?: return@execute null
-                IngredientProduct(
-                    code = code,
-                    name = name,
-                    brand = product.brand.orEmpty(),
-                    caloriesPer100g = calories,
-                    proteinPer100g = protein,
-                    carbsPer100g = carbs,
-                    fatPer100g = fat,
-                )
-            }
-        }
-    }
 
     override suspend fun analyzeMeal(
         photo: MealPhoto,
@@ -294,20 +254,6 @@ class NutriaApiClient(
         invokeOnCancellation { call.cancel() }
     }
 
-    private data class IngredientSearchResponseDto(
-        val products: List<IngredientProductDto>? = null,
-    )
-
-    private data class IngredientProductDto(
-        val code: String? = null,
-        val name: String? = null,
-        val brand: String? = null,
-        val calories: Double? = null,
-        val protein: Double? = null,
-        val carbs: Double? = null,
-        val fat: Double? = null,
-    )
-
     private data class MealAnalysisResponseDto(
         val name: String? = null,
         val calories: Double? = null,
@@ -321,10 +267,8 @@ class NutriaApiClient(
     )
 
     companion object {
-        const val MAX_QUERY_LENGTH = 80
         const val MAX_MEAL_NAME_LENGTH = 80
         const val MAX_PHOTO_BYTES = 10 * 1024 * 1024
-        const val MAX_PRODUCTS = 8
         private val SUPPORTED_IMAGE_TYPES = setOf("image/jpeg", "image/png", "image/webp")
 
         private fun Double.isValidNutrient(): Boolean = isFinite() && this >= 0.0
